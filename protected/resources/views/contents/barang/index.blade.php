@@ -10,23 +10,23 @@
 @endcomponent
 
 <div class="row">
-    <div class="col-xl-5">
+    <div class="col-xl-4">
         <div class="card">
             <div class="card-body">
-                <form action="" method="POST">
+                <form action="{{route('barang.store')}}" method="POST">
                     @csrf
                     <div class="mb-2">
                         <label class="form-label">Nama Barang</label>
-                        <input class="form-control" type="text" name="nama" placeholder="Masukkan nama kategori">
+                        <input class="form-control" type="text" name="nama" placeholder="Masukkan nama barang">
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Kode Barang</label>
-                        <input class="form-control" type="text" name="nama" placeholder="Kosongkan jika ingin terisi otomatis">
+                        <input class="form-control" type="text" name="kode" placeholder="Kosongkan jika ingin terisi otomatis">
                     </div>
-                    {{-- <div class="mb-2">
-                        <label class="form-label">Nama Pendek</label>
-                        <input class="form-control" type="text" name="nama_pendek" placeholder="Contoh: IPS">
-                    </div> --}}
+                    <div class="mb-2">
+                        <label class="form-label">Satuan</label>
+                        <input class="form-control" type="text" name="satuan" placeholder="Contoh: pcs, meter, kg">
+                    </div>
                     <div class="mb-2">
                         <label class="form-label">Deskripsi</label>
                         <textarea class="form-control" name="deskripsi" cols="30" rows="5"></textarea>
@@ -38,30 +38,30 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-7">
+    <div class="col-xl-8">
         <div class="card">
             <div class="card-body">
                 <div class="d-sm-flex flex-wrap">
                     <h4 class="card-title mb-4">Daftar Barang</h4>
                 </div>
 
-                <table id="datatable-kategori" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
+                <table id="datatable-barang" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
                     <thead>
                         <tr>
-                            <th>Nama Barang</th>
-                            {{-- <th>Nama Pendek</th> --}}
-                            <th>Deskripsi</th>
+                            <th>Kode</th>
+                            <th>Nama</th>
+                            <th>Satuan</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
-                        @foreach($dataBarang as $key => $i)
+                        @foreach($barang as $key => $i)
                         <tr>
-                            <td>{{ $i->nama }}</td>
                             <td>{{ $i->kode }}</td>
-                            <td>{{ $i->deskripsi }}</td>
+                            <td>{{ $i->nama }}</td>
+                            <td>{{ $i->satuan }}</td>
                             <td>
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">Aksi <i class="mdi mdi-chevron-down"></i></button>
@@ -86,11 +86,11 @@
 </form>
 <!-- end row -->
 
-<div id="modalKategori" class="modal fade" tabindex="-1" aria-labelledby="modalKategoriLabel" style="display: none;" aria-hidden="true">
+<div id="modalbarang" class="modal fade" tabindex="-1" aria-labelledby="modalbarangLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalKategoriLabel">Edit Kursus</h5>
+                <h5 class="modal-title" id="modalbarangLabel">Edit Barang</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form class="modal-form" action="" method="post">
@@ -98,8 +98,12 @@
                 @method('put')
                 <div class="modal-body">
                     <div class="mb-2">
-                        <label class="form-label">Nama Kursus</label>
-                        <input class="form-control edit-nama" type="text" name="nama" placeholder="Masukkan nama kursus">
+                        <label class="form-label">Nama Barang</label>
+                        <input class="form-control edit-nama" type="text" name="nama" placeholder="Masukkan nama barang">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Satuan</label>
+                        <input class="form-control edit-satuan" type="text" name="satuan" placeholder="Contoh: pcs, meter, kg">
                     </div>
                     {{-- <div class="mb-2">
                         <label class="form-label">Nama Pendek</label>
@@ -136,14 +140,15 @@
 @push('page-js')
 <script>
     $(document).ready(function() {
-        $("#datatable-kategori").dataTable();
+        $("#datatable-barang").dataTable();
 
         function getDetail(ids) {
-            $.get('kategori/' + ids + '/detail').done(function(response) {
+            $.get('barang/' + ids + '/detail').done(function(response) {
                 let res = response
                 if (!res.status) return
 
                 $('.edit-nama').val(res.data.nama)
+                $('.edit-satuan').val(res.data.satuan)
                 $('.edit-deskripsi').val(res.data.deskripsi)
 
                 setTimeout(() => {
@@ -153,18 +158,18 @@
         }
 
         function showModal() {
-            const myModal = new bootstrap.Modal('#modalKategori', {
+            const myModal = new bootstrap.Modal('#modalbarang', {
                 show: true
             })
             myModal.show()
         }
 
-        $('#datatable-kategori').on('click', '.edit-btn', function() {
+        $('#datatable-barang').on('click', '.edit-btn', function() {
             getDetail($(this).data('id'))
             $('.modal-form').attr('action', $(this).data('url'))
         })
 
-        $("#datatable-kategori").on("click", ".delete-btn", function() {
+        $("#datatable-barang").on("click", ".delete-btn", function() {
             const url = $(this).data("url");
             const form = $(".form-delete").attr("action", url);
 

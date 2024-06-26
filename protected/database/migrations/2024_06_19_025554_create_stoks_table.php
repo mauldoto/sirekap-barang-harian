@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('id_aktivitas')->nullable();
             $table->string('no_referensi')->unique();
             $table->date('tanggal');
+            $table->enum('type', ['masuk', 'keluar']);
             $table->timestamps();
         });
     }

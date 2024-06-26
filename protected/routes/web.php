@@ -24,40 +24,44 @@ Route::get('/', function () {
 
 Route::prefix('barang')->group(function () {
     Route::get('/', [BarangController::class, 'index'])->name('barang.index');
-    Route::get('/list', [BarangController::class, 'index'])->name('barang.list');
+    Route::get('/{id}/detail', [BarangController::class, 'detail'])->name('barang.detail');
     Route::post('/store', [BarangController::class, 'store'])->name('barang.store');
-    Route::post('/update', [BarangController::class, 'update'])->name('barang.update');
-    Route::post('/delete', [BarangController::class, 'delete'])->name('barang.delete');
+    Route::put('/{id}/update', [BarangController::class, 'update'])->name('barang.update');
+    Route::post('/{id}/delete', [BarangController::class, 'delete'])->name('barang.delete');
 });
 
 Route::prefix('lokasi')->group(function () {
     Route::get('/', [LokasiController::class, 'index'])->name('lokasi.index');
-    Route::get('/list', [LokasiController::class, 'index'])->name('lokasi.index');
-    Route::post('/create', [LokasiController::class, 'store'])->name('lokasi.store');
-    Route::post('/edit', [LokasiController::class, 'update'])->name('lokasi.update');
-    Route::post('/delete', [LokasiController::class, 'delete'])->name('lokasi.delete');
+    Route::post('/store', [LokasiController::class, 'store'])->name('lokasi.store');
+    Route::put('/{id}/update', [LokasiController::class, 'update'])->name('lokasi.update');
+    Route::post('/{id}/delete', [LokasiController::class, 'delete'])->name('lokasi.delete');
+
+    Route::prefix('/sublokasi')->group(function () {
+        Route::get('/', [LokasiController::class, 'index'])->name('sublokasi.index');
+        Route::post('/store', [LokasiController::class, 'substore'])->name('sublokasi.store');
+        Route::put('/{id}/update', [LokasiController::class, 'subupdate'])->name('sublokasi.update');
+        Route::post('/{id}/delete', [LokasiController::class, 'subdelete'])->name('sublokasi.delete');
+    });
 });
 
 Route::prefix('karyawan')->group(function () {
-    Route::get('/', [KaryawanController::class, 'index'])->name('index');
-    Route::get('/list', [KaryawanController::class, 'index'])->name('index');
-    Route::post('/create', [KaryawanController::class, 'store'])->name('store');
-    Route::post('/edit', [KaryawanController::class, 'update'])->name('update');
-    Route::post('/delete', [KaryawanController::class, 'delete'])->name('dekete');
+    Route::get('/', [KaryawanController::class, 'index'])->name('karyawan.index');
+    Route::get('/{id}/detail', [KaryawanController::class, 'detail'])->name('karyawan.detail');
+    Route::post('/store', [KaryawanController::class, 'store'])->name('karyawan.store');
+    Route::put('/{id}/update', [KaryawanController::class, 'update'])->name('karyawan.update');
+    Route::post('/{id}/delete', [KaryawanController::class, 'delete'])->name('karyawan.delete');
 });
 
 Route::prefix('stok')->group(function () {
     Route::get('/', [StokController::class, '']);
-    Route::get('/list', [StokController::class, '']);
-    Route::post('/create', [StokController::class, '']);
-    Route::post('/edit', [StokController::class, '']);
+    Route::post('/store', [StokController::class, '']);
+    Route::post('/update', [StokController::class, '']);
     Route::post('/delete', [StokController::class, '']);
 });
 
 Route::prefix('aktivitas')->group(function () {
     Route::get('/', [AktivitasController::class, '']);
-    Route::get('/list', [AktivitasController::class, '']);
-    Route::post('/create', [AktivitasController::class, '']);
-    Route::post('/edit', [AktivitasController::class, '']);
+    Route::post('/store', [AktivitasController::class, '']);
+    Route::post('/update', [AktivitasController::class, '']);
     Route::post('/delete', [AktivitasController::class, '']);
 });

@@ -19,21 +19,21 @@
                 <li class="menu-title" key="t-masters">Master Data</li>
 
                 <li>
-                    <a href="" class="waves-effect">
+                    <a href="{{route('barang.index')}}" class="waves-effect">
                         <i class='bx bx-book-bookmark'></i>
                         <span key="t-kursus">Barang</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="" class="waves-effect">
+                    <a href="{{route('karyawan.index')}}" class="waves-effect">
                         <i class='bx bx-group'></i>
                         <span key="t-siswa">Karyawan</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="" class="waves-effect">
+                    <a href="{{route('lokasi.index')}}" class="waves-effect">
                         <i class='bx bx-group'></i>
                         <span key="t-siswa">Lokasi</span>
                     </a>

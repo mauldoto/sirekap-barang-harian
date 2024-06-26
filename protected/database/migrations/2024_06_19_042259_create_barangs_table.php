@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('kode')->unique();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
+            $table->string('satuan');
             $table->timestamps();
         });
     }

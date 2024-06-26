@@ -13,11 +13,11 @@
     <div class="col-xl-5">
         <div class="card">
             <div class="card-body">
-                <form action="" method="POST">
+                <form action="{{route('karyawan.store')}}" method="POST">
                     @csrf
                     <div class="mb-2">
                         <label class="form-label">Nama Karyawan</label>
-                        <input class="form-control" type="text" name="nama" placeholder="Masukkan nama kategori">
+                        <input class="form-control" type="text" name="nama" placeholder="Masukkan nama karyawan">
                     </div>
                     {{-- <div class="mb-2">
                         <label class="form-label">Kode Karyawan</label>
@@ -45,9 +45,10 @@
                     <h4 class="card-title mb-4">Daftar Karyawan</h4>
                 </div>
 
-                <table id="datatable-kategori" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
+                <table id="datatable-karyawan" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
                     <thead>
                         <tr>
+                            <th>Kode</th>
                             <th>Nama Karyawan</th>
                             {{-- <th>Nama Pendek</th> --}}
                             <th>Deskripsi</th>
@@ -59,6 +60,7 @@
                     <tbody>
                         @foreach($karyawan as $key => $i)
                         <tr>
+                            <td>{{ $i->kode }}</td>
                             <td>{{ $i->nama }}</td>
                             <td>{{ $i->deskripsi }}</td>
                             <td>
@@ -85,11 +87,11 @@
 </form>
 <!-- end row -->
 
-<div id="modalKategori" class="modal fade" tabindex="-1" aria-labelledby="modalKategoriLabel" style="display: none;" aria-hidden="true">
+<div id="modalkaryawan" class="modal fade" tabindex="-1" aria-labelledby="modalkaryawanLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalKategoriLabel">Edit Kursus</h5>
+                <h5 class="modal-title" id="modalkaryawanLabel">Edit Kursus</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <form class="modal-form" action="" method="post">
@@ -97,8 +99,8 @@
                 @method('put')
                 <div class="modal-body">
                     <div class="mb-2">
-                        <label class="form-label">Nama Kursus</label>
-                        <input class="form-control edit-nama" type="text" name="nama" placeholder="Masukkan nama kursus">
+                        <label class="form-label">Nama Karyawan</label>
+                        <input class="form-control edit-nama" type="text" name="nama" placeholder="Masukkan nama karyawan">
                     </div>
                     {{-- <div class="mb-2">
                         <label class="form-label">Nama Pendek</label>
@@ -135,10 +137,10 @@
 @push('page-js')
 <script>
     $(document).ready(function() {
-        $("#datatable-kategori").dataTable();
+        $("#datatable-karyawan").dataTable();
 
         function getDetail(ids) {
-            $.get('kategori/' + ids + '/detail').done(function(response) {
+            $.get('karyawan/' + ids + '/detail').done(function(response) {
                 let res = response
                 if (!res.status) return
 
@@ -152,18 +154,18 @@
         }
 
         function showModal() {
-            const myModal = new bootstrap.Modal('#modalKategori', {
+            const myModal = new bootstrap.Modal('#modalkaryawan', {
                 show: true
             })
             myModal.show()
         }
 
-        $('#datatable-kategori').on('click', '.edit-btn', function() {
+        $('#datatable-karyawan').on('click', '.edit-btn', function() {
             getDetail($(this).data('id'))
             $('.modal-form').attr('action', $(this).data('url'))
         })
 
-        $("#datatable-kategori").on("click", ".delete-btn", function() {
+        $("#datatable-karyawan").on("click", ".delete-btn", function() {
             const url = $(this).data("url");
             const form = $(".form-delete").attr("action", url);
 
