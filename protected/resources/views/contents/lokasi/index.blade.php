@@ -132,7 +132,12 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Lokasi</label>
-                            <select class="form-control" name="lokasi" id=""></select>
+                            <select class="form-control" name="lokasi">
+                                <option value="">-- pilih lokasi --</option>
+                                @foreach($lokasi as $key => $lok)
+                                <option value="{{$lok->id}}">{{$lok->name . ' - ' . $lok->kode}}</option>
+                                @endforeach
+                            </select>
                         </div>
                         {{-- <div class="mb-2">
                             <label class="form-label">Nama Pendek</label>
