@@ -135,7 +135,7 @@
                             <select class="form-control" name="lokasi">
                                 <option value="">-- pilih lokasi --</option>
                                 @foreach($lokasi as $key => $lok)
-                                <option value="{{$lok->id}}">{{$lok->name . ' - ' . $lok->kode}}</option>
+                                <option value="{{$lok->id}}">{{$lok->nama . ' (' . $lok->kode . ')'}}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -182,9 +182,9 @@
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">Aksi <i class="mdi mdi-chevron-down"></i></button>
                                         <div class="dropdown-menu" style="">
-                                            <a class="dropdown-item edit-btn" href="#" data-url="{{route('sublokasi.update', $i->id)}}" data-id="{{$i->id}}">Edit</a>
+                                            <a class="dropdown-item edit-btn-sublokasi" href="#" data-url="{{route('sublokasi.update', $i->id)}}" data-id="{{$i->id}}">Edit</a>
                                             <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item delete-btn" style="color: red" href="#" data-url="{{route('sublokasi.delete', $i->id)}}">Hapus</a>
+                                            <a class="dropdown-item delete-btn-sublokasi" style="color: red" href="#" data-url="{{route('sublokasi.delete', $i->id)}}">Hapus</a>
                                         </div>
                                     </div>
                                 </td>
@@ -209,7 +209,7 @@
                     <h5 class="modal-title" id="modalSubLokasiLabel">Edit Sub lokasi</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-                <form class="modal-form" action="" method="post">
+                <form class="modal-form-sublokasi" action="" method="post">
                     @csrf
                     @method('put')
                     <div class="modal-body">
@@ -219,7 +219,12 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Lokasi</label>
-                            <select class="form-control edit-lokasi" name="lokasi" id=""></select>
+                            <select class="form-control edit-lokasi" name="lokasi">
+                                <option value="">-- pilih lokasi --</option>
+                                @foreach($lokasi as $key => $lok)
+                                <option value="{{$lok->id}}">{{$lok->nama . ' (' . $lok->kode . ')'}}</option>
+                                @endforeach
+                            </select>
                         </div>
 
                         <div class="mb-2">
@@ -315,6 +320,7 @@
 
                 $('.edit-nama-sublokasi').val(res.data.nama)
                 $('.edit-deskripsi-sublokasi').val(res.data.deskripsi)
+                $('.edit-lokasi').val(res.data.id_lokasi)
 
                 setTimeout(() => {
                     showModalSublokasi();
@@ -329,14 +335,14 @@
             myModal.show()
         }
 
-        $('#datatable-sublokasi').on('click', '.edit-btn', function() {
+        $('#datatable-sublokasi').on('click', '.edit-btn-sublokasi', function() {
             getDetailSublokasi($(this).data('id'))
-            $('.modal-form').attr('action', $(this).data('url'))
+            $('.modal-form-sublokasi').attr('action', $(this).data('url'))
         })
 
-        $("#datatable-sublokasi").on("click", ".delete-btn", function() {
+        $("#datatable-sublokasi").on("click", ".delete-btn-sublokasi", function() {
             const url = $(this).data("url");
-            const form = $(".form-delete").attr("action", url);
+            const form = $(".form-delete-sublokasi").attr("action", url);
 
             Swal.fire({
                 title: "Apakah anda yakin?"

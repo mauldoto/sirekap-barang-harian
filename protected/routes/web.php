@@ -34,12 +34,14 @@ Route::prefix('lokasi')->group(function () {
     Route::get('/', [LokasiController::class, 'index'])->name('lokasi.index');
     Route::post('/store', [LokasiController::class, 'store'])->name('lokasi.store');
     Route::put('/{id}/update', [LokasiController::class, 'update'])->name('lokasi.update');
+    Route::get('/{id}/detail', [LokasiController::class, 'detail'])->name('lokasi.detail');
     Route::post('/{id}/delete', [LokasiController::class, 'delete'])->name('lokasi.delete');
 
     Route::prefix('/sublokasi')->group(function () {
         Route::get('/', [LokasiController::class, 'index'])->name('sublokasi.index');
         Route::post('/store', [LokasiController::class, 'substore'])->name('sublokasi.store');
         Route::put('/{id}/update', [LokasiController::class, 'subupdate'])->name('sublokasi.update');
+        Route::get('/{id}/detail', [LokasiController::class, 'subdetail'])->name('sublokasi.detail');
         Route::post('/{id}/delete', [LokasiController::class, 'subdelete'])->name('sublokasi.delete');
     });
 });
