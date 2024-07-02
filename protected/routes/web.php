@@ -55,10 +55,12 @@ Route::prefix('karyawan')->group(function () {
 });
 
 Route::prefix('stok')->group(function () {
-    Route::get('/', [StokController::class, '']);
-    Route::post('/store', [StokController::class, '']);
-    Route::post('/update', [StokController::class, '']);
-    Route::post('/delete', [StokController::class, '']);
+    Route::get('/', [StokController::class, 'index'])->name('stok.index');
+    Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view');
+    Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store');
+    Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view');
+    Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store');
+    // Route::post('/delete', [StokController::class, '']);
 });
 
 Route::prefix('aktivitas')->group(function () {

@@ -42,15 +42,15 @@
                 <li class="menu-title" key="t-masters">Log Stok & Aktivitas</li>
 
                 <li>
-                    <a href="" class="waves-effect">
-                        <i class='bx bx-user-voice'></i>
+                    <a href="{{route('stok.index')}}" class="waves-effect">
+                        <i class='bx bx-archive'></i>
                         <span key="t-guru">Stok</span>
                     </a>
                 </li>
 
                 <li>
                     <a href="" class="waves-effect">
-                        <i class='bx bxs-grid'></i>
+                        <i class='bx bx-calendar-event'></i>
                         <span key="t-kursus">Aktivitas/Job</span>
                     </a>
                 </li>

@@ -13,6 +13,7 @@ return new class extends Migration
     {
         Schema::create('log_stok', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('id_stok');
             $table->unsignedBigInteger('id_barang');
             $table->double('qty');
             $table->timestamps();
