@@ -49,7 +49,7 @@
                 </li>
 
                 <li>
-                    <a href="" class="waves-effect">
+                    <a href="{{route('aktivitas.index')}}" class="waves-effect">
                         <i class='bx bx-calendar-event'></i>
                         <span key="t-kursus">Aktivitas/Job</span>
                     </a>

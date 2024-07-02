@@ -131,9 +131,9 @@ class LokasiController extends Controller
     public function substore(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nama_lokasi' => 'required|string',
+            'nama_sublokasi' => 'required|string',
             'kode' => 'nullable|string',
-            'deskripsi_lokasi' => 'nullable',
+            'deskripsi_sublokasi' => 'nullable',
             'lokasi' => 'required',
         ]);
  
