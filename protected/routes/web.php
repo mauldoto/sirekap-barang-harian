@@ -66,6 +66,7 @@ Route::prefix('stok')->group(function () {
 Route::prefix('aktivitas')->group(function () {
     Route::get('/', [AktivitasController::class, 'index'])->name('aktivitas.index');
     Route::get('/input', [AktivitasController::class, 'input'])->name('aktivitas.input');
+    Route::get('/lokasi/{id}', [AktivitasController::class, 'getSubLokasi'])->name('aktivitas.sublokasi');
     Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store');
     // Route::post('/update', [AktivitasController::class, '']);
     // Route::post('/delete', [AktivitasController::class, '']);

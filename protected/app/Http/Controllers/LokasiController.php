@@ -12,7 +12,7 @@ class LokasiController extends Controller
     public function index()
     {
         $lokasi = Lokasi::all();
-        $sublokasi = SubLokasi::all();
+        $sublokasi = SubLokasi::with('lokasi')->get();
         return view('contents.lokasi.index', compact('lokasi', 'sublokasi'));
     }
 

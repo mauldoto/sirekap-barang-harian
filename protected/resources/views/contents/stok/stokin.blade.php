@@ -52,7 +52,7 @@
                                     <div class="row">
                                         <div class="col-lg-5">
                                             {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
-                                            <select class="form-control" id="inputItem" data-name="item">
+                                            <select class="form-control select2" id="inputItem" data-name="item">
                                                 <option value=""> -- pilih barang --</option>
                                                 @foreach ($barang as $item)
                                                     <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
@@ -95,6 +95,7 @@
 @section('css')
 <link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <style>
     .items {
         margin-bottom: 4px !important;
@@ -107,6 +108,7 @@
 <script src="{{ URL::asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="{{ URL::asset('assets/libs/select2/js/select2.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/repeater.js') }}"></script>
 @endsection
 
@@ -114,35 +116,17 @@
 <script>
     $(document).ready(function() {
         $("#repeater").createRepeater({
-        showFirstItemToDefault: true,
+            showFirstItemToDefault: true,
         });
-        $("#datatable-stok").dataTable();
 
-        function getDetail(ids) {
-            $.get('stok/' + ids + '/detail').done(function(response) {
-                let res = response
-                if (!res.status) return
-
-                $('.edit-nama').val(res.data.nama)
-                $('.edit-deskripsi').val(res.data.deskripsi)
-
-                setTimeout(() => {
-                    showModal();
-                }, 500);
+        $(".repeater-add-btn").click(function(){
+            let select2Arr = $('.select2')
+            select2Arr.each(function(index, el) {
+                $(el).select2();
             })
-        }
-
-        function showModal() {
-            const myModal = new bootstrap.Modal('#modalstok', {
-                show: true
-            })
-            myModal.show()
-        }
-
-        $('#datatable-stok').on('click', '.edit-btn', function() {
-            getDetail($(this).data('id'))
-            $('.modal-form').attr('action', $(this).data('url'))
         })
+
+        $('.select2').select2();
 
         $("#datatable-stok").on("click", ".delete-btn", function() {
             const url = $(this).data("url");

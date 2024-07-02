@@ -10,4 +10,9 @@ class SubLokasi extends Model
     use HasFactory;
 
     protected $table = 'sub_lokasi';
+
+    public function lokasi()
+    {
+        return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id');
+    }
 }

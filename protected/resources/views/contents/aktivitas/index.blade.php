@@ -65,32 +65,6 @@
     $(document).ready(function() {
         $("#datatable-aktivitas").dataTable();
 
-        function getDetail(ids) {
-            $.get('aktivitas/' + ids + '/detail').done(function(response) {
-                let res = response
-                if (!res.status) return
-
-                $('.edit-nama').val(res.data.nama)
-                $('.edit-deskripsi').val(res.data.deskripsi)
-
-                setTimeout(() => {
-                    showModal();
-                }, 500);
-            })
-        }
-
-        function showModal() {
-            const myModal = new bootstrap.Modal('#modalaktivitas', {
-                show: true
-            })
-            myModal.show()
-        }
-
-        $('#datatable-aktivitas').on('click', '.edit-btn', function() {
-            getDetail($(this).data('id'))
-            $('.modal-form').attr('action', $(this).data('url'))
-        })
-
         $("#datatable-aktivitas").on("click", ".delete-btn", function() {
             const url = $(this).data("url");
             const form = $(".form-delete").attr("action", url);

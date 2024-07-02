@@ -56,6 +56,7 @@
                                 <label class="form-label">Sub Lokasi</label>
                                 <select class="form-control" name="sublokasi" id="sublokasi">
                                     <option value=""></option>
+                                    <option value="sdsd">sdsd</option>
                                 </select>
                             </div>
                         </div>
@@ -106,12 +107,32 @@
     $(document).ready(function() {
 
         $('.select2-teknisi').select2();
-        $('#lokasi').select2({
+
+        let selectLokasi = $('#lokasi').select2({
             'placeholder': ' -- pilih lokasi --'
         });
-        $('#sublokasi').select2({
+
+        let selectSubLokasi = $('#sublokasi').select2({
             'placeholder': ' -- pilih sublokasi --'
         });
+
+        selectLokasi.on('select2:select', function(){
+            selectSubLokasi.html('<option></option');
+            getSubLokasi($(this).val())
+        })
+
+        function getSubLokasi(ids) {
+            $.get('lokasi/' + ids).done(function(response) {
+                let res = response
+                if (!res.status) return
+
+                for (const data of res.data) {
+                    var newOption = new Option(data.nama, data.id, false, false);
+                    // Append it to the select
+                    selectSubLokasi.append(newOption).trigger('change');
+                }
+            })
+        }
 
         $("#datatable-stok").on("click", ".delete-btn", function() {
             const url = $(this).data("url");
