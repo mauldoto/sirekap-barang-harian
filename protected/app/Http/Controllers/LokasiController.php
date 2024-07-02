@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class LokasiController extends Controller
 {
@@ -39,6 +40,18 @@ class LokasiController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'nama_lokasi' => 'required|string',
+            'kode' => 'nullable|string',
+            'deskripsi_lokasi' => 'nullable',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $newLokasi = new Lokasi();
         $newLokasi->nama = $request->nama_lokasi;
         $newLokasi->deskripsi = $request->deskripsi_lokasi;
@@ -53,6 +66,17 @@ class LokasiController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'nama_lokasi' => 'required|string',
+            'deskripsi_lokasi' => 'nullable',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $lokasi = Lokasi::where('id', $id)->first();
         if (!$lokasi) {
             return back()->withErrors(['Lokasi tidak ditemukan.']);
@@ -106,6 +130,19 @@ class LokasiController extends Controller
 
     public function substore(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'nama_lokasi' => 'required|string',
+            'kode' => 'nullable|string',
+            'deskripsi_lokasi' => 'nullable',
+            'lokasi' => 'required',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $newSubLokasi = new SubLokasi();
         $newSubLokasi->nama = $request->nama_sublokasi;
         $newSubLokasi->id_lokasi = $request->lokasi;
@@ -121,13 +158,25 @@ class LokasiController extends Controller
 
     public function subupdate(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'nama_sublokasi' => 'required|string',
+            'deskripsi_sublokasi' => 'nullable',
+            'lokasi' => 'required',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $sublokasi = SubLokasi::where('id', $id)->first();
         if (!$sublokasi) {
             return back()->withErrors(['Sublokasi tidak ditemukan.']);
         }
 
-        $sublokasi->nama = $request->nama_lokasi;
-        $sublokasi->deskripsi = $request->deskripsi_lokasi;
+        $sublokasi->nama = $request->nama_sublokasi;
+        $sublokasi->deskripsi = $request->deskripsi_sublokasi;
 
         if (!$sublokasi->save()) {
             return back()->withErrors(['Sublokasi gagal terupdate.']);

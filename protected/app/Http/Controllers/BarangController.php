@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Barang;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class BarangController extends Controller
 {
@@ -37,6 +38,19 @@ class BarangController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'kode' => 'nullable|string',
+            'nama' => 'required|string',
+            'satuan' => 'required|string',
+            'deskripsi' => 'nullable',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $newBarang = new Barang();
         $newBarang->kode = $request->kode ? $request->kode : generateReference('B');
         $newBarang->nama = $request->nama;
@@ -52,6 +66,18 @@ class BarangController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string',
+            'satuan' => 'required|string',
+            'deskripsi' => 'nullable',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $barang = Barang::where('id', $id)->first();
         if (!$barang) {
             return back()->withErrors(['Barang tidak ditemukan.']);

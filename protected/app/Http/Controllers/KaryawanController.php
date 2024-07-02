@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class KaryawanController extends Controller
 {
@@ -37,6 +38,18 @@ class KaryawanController extends Controller
 
     public function store(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string',
+            'kode' => 'nullable|string',
+            'deskripsi' => 'nullable',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $newKaryawan = new Karyawan();
         $newKaryawan->kode = $request->kode ? $request->kode : generateReference('K');
         $newKaryawan->nama = $request->nama;
@@ -51,6 +64,17 @@ class KaryawanController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Validator::make($request->all(), [
+            'nama' => 'required|string',
+            'deskripsi' => 'nullable',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         $karyawan = Karyawan::where('id', $id)->first();
         if (!$karyawan) {
             return back()->withErrors(['karyawan tidak ditemukan.']);
