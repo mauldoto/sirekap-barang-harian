@@ -16,8 +16,8 @@
                 <div class="d-sm-flex flex-wrap justify-content-between">
                     <h4 class="card-title mb-4">Log Stok</h4>
                     <div class="button-group">
-                        <a class="btn btn-sm btn-success"><i class='bx bx-archive-in'></i> Stok Masuk</a>
-                        <a class="btn btn-sm btn-warning"><i class='bx bx-archive-out'></i> Stok Keluar</a>
+                        <a href="{{route('stok.masuk.view')}}" class="btn btn-sm btn-success"><i class='bx bx-archive-in'></i> Stok Masuk</a>
+                        <a href="{{route('stok.keluar.view')}}" class="btn btn-sm btn-warning"><i class='bx bx-archive-out'></i> Stok Keluar</a>
                         <a class="btn btn-sm btn-primary"><i class='bx bx-search-alt-2'></i> Cek Log</a>
                     </div>
                 </div>
@@ -33,23 +33,13 @@
 
 
                     <tbody>
-                        {{-- @foreach($stok as $key => $i)
+                        @foreach($stok as $key => $i)
                         <tr>
-                            <td>{{ $i->kode }}</td>
-                            <td>{{ $i->nama }}</td>
-                            <td>{{ $i->deskripsi }}</td>
-                            <td>
-                                <div class="btn-group">
-                                    <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">Aksi <i class="mdi mdi-chevron-down"></i></button>
-                                    <div class="dropdown-menu" style="">
-                                        <a class="dropdown-item edit-btn" href="#" data-url="{{route('stok.update', $i->id)}}" data-id="{{$i->id}}">Edit</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item delete-btn" style="color: red" href="#" data-url="{{route('stok.delete', $i->id)}}">Hapus</a>
-                                    </div>
-                                </div>
-                            </td>
+                            <td>{{ $i->barang->kode }}</td>
+                            <td>{{ $i->barang->nama }}</td>
+                            <td>{{ $i->sumqty }} ({{$i->barang->satuan}})</td>
                         </tr>
-                        @endforeach --}}
+                        @endforeach
                     </tbody>
                 </table>
             </div>

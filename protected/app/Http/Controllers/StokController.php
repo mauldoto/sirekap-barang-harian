@@ -12,7 +12,9 @@ class StokController extends Controller
 {
     public function index()
     {
-        $stok = Stok::all();
+        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'))
+            ->with('barang')
+            ->groupBy('id_barang')->get();
         return view('contents.stok.index', compact('stok'));
     }
 
@@ -24,7 +26,6 @@ class StokController extends Controller
 
     public function storeStokMasuk(Request $request)
     {
-        dd($request);
         DB::beginTransaction();
 
         $newStokIn = new Stok();
@@ -40,8 +41,8 @@ class StokController extends Controller
         foreach ($request->barang as $key => $barang) {
             $newLogStok = new LogStok();
             $newLogStok->id_stok = $newStokIn->id;
-            $newLogStok->id_barang = $barang->id;
-            $newLogStok->qty = $barang->qty;
+            $newLogStok->id_barang = $barang['item'];
+            $newLogStok->qty = $barang['qty'];
 
             if (!$newLogStok->save()) {
                 DB::rollBack();
@@ -62,7 +63,6 @@ class StokController extends Controller
 
     public function storeStokKeluar(Request $request)
     {
-        dd($request);
         DB::beginTransaction();
 
         $newStokOut = new Stok();
@@ -79,8 +79,8 @@ class StokController extends Controller
         foreach ($request->barang as $key => $barang) {
             $newLogStok = new LogStok();
             $newLogStok->id_stok = $newStokOut->id;
-            $newLogStok->id_barang = $barang->id;
-            $newLogStok->qty = -$barang->qty;
+            $newLogStok->id_barang = $barang['item'];
+            $newLogStok->qty = -$barang['qty'];
 
             if (!$newLogStok->save()) {
                 DB::rollBack();

@@ -38,7 +38,7 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         $newKaryawan = new Karyawan();
-        $newKaryawan->kode = rand(1000, 9999);
+        $newKaryawan->kode = $request->kode ? $request->kode : generateReference('K');
         $newKaryawan->nama = $request->nama;
         $newKaryawan->deskripsi = $request->deskripsi;
 

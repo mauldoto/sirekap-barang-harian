@@ -38,7 +38,7 @@ class BarangController extends Controller
     public function store(Request $request)
     {
         $newBarang = new Barang();
-        $newBarang->kode = $request->kode;
+        $newBarang->kode = $request->kode ? $request->kode : generateReference('B');
         $newBarang->nama = $request->nama;
         $newBarang->deskripsi = $request->deskripsi;
         $newBarang->satuan = $request->satuan;

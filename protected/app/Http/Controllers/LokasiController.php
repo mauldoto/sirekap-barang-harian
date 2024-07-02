@@ -42,7 +42,7 @@ class LokasiController extends Controller
         $newLokasi = new Lokasi();
         $newLokasi->nama = $request->nama_lokasi;
         $newLokasi->deskripsi = $request->deskripsi_lokasi;
-        $newLokasi->kode = 'L' . rand(100, 999);
+        $newLokasi->kode = $request->kode ? $request->kode : generateReference('L');
 
         if (!$newLokasi->save()) {
             return back()->withErrors(['Lokasi gagal tersimpan.']);
@@ -110,7 +110,7 @@ class LokasiController extends Controller
         $newSubLokasi->nama = $request->nama_sublokasi;
         $newSubLokasi->id_lokasi = $request->lokasi;
         $newSubLokasi->deskripsi = $request->deskripsi_sublokasi;
-        $newSubLokasi->kode = 'SL' . rand(100, 999);
+        $newSubLokasi->kode = $request->kode ? $request->kode : generateReference('SL');
 
         if (!$newSubLokasi->save()) {
             return back()->withErrors(['Sublokasi gagal tersimpan.']);
