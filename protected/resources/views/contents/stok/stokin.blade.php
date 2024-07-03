@@ -16,7 +16,7 @@
                 <div class="d-sm-flex flex-wrap justify-content-between">
                     <h4 class="card-title mb-4">Input Stok Masuk</h4>
                     <div class="button-group">
-                        <a class="btn btn-sm btn-warning"><i class='bx bx-search-alt-2'></i> Kembali</a>
+                        <a href="{{route('stok.index')}}" class="btn btn-sm btn-warning"><i class='bx bx-arrow-back'></i> Kembali</a>
                     </div>
                 </div>
 

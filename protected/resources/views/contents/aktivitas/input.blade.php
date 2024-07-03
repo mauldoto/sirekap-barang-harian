@@ -16,11 +16,11 @@
                 <div class="d-sm-flex flex-wrap justify-content-between">
                     <h4 class="card-title mb-4">Input Aktivitas</h4>
                     <div class="button-group">
-                        <a class="btn btn-sm btn-warning"><i class='bx bx-search-alt-2'></i> Kembali</a>
+                        <a href="{{route('aktivitas.index')}}" class="btn btn-sm btn-warning"><i class='bx bx-arrow-back'></i> Kembali</a>
                     </div>
                 </div>
 
-                <form action="{{route('karyawan.store')}}" method="post">
+                <form action="{{route('aktivitas.store')}}" method="post">
                     @csrf
                     <div class="mb-4 col-lg-5">
                         <label class="form-label">No Referensi</label>
@@ -32,11 +32,11 @@
                         <div class="row">
                             <div class="col-lg-5">
                                 <label class="form-label">Tanggal Berangkat</label>
-                                <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required>
+                                <input class="form-control" type="date" name="tanggal_berangkat" placeholder="Masukkan tanggal berangkat" required>
                             </div>
                             <div class="col-lg-5">
                                 <label class="form-label">Tanggal Pulang</label>
-                                <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required>
+                                <input class="form-control" type="date" name="tanggal_pulang" placeholder="Masukkan tanggal pulang" required>
                             </div>
                         </div>
                     </div>
@@ -70,6 +70,11 @@
                                 <option value="{{$teknisi->id}}">{{$teknisi->nama}}</option>
                             @endforeach
                         </select>
+                    </div>
+
+                    <div class="mb-2 col-lg-8">
+                        <label class="form-label">Deskripsi</label>
+                        <textarea class="form-control" name="deskripsi" id="desc" cols="30" rows="10"></textarea>
                     </div>
 
                     <div class="btn-submit mt-5 d-flex justify-content-end">

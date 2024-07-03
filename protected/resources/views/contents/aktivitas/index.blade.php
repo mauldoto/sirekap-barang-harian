@@ -26,19 +26,18 @@
                             <th>Tanggal</th>
                             <th>Lokasi</th>
                             <th>Sub Lokasi</th>
-                            <th>Teknisi</th>
                         </tr>
                     </thead>
 
 
                     <tbody>
-                        {{-- @foreach($aktivitas as $key => $i)
+                        @foreach($aktivitas as $key => $i)
                         <tr>
-                            <td>{{ $i->barang->kode }}</td>
-                            <td>{{ $i->barang->nama }}</td>
-                            <td>{{ $i->sumqty }} ({{$i->barang->satuan}})</td>
+                            <td>{{ $i->tanggal_berangkat }} s/d {{ $i->tanggal_pulang }}</td>
+                            <td>{{ $i->lokasi->nama }}</td>
+                            <td>{{ $i->sublokasi->nama }}</td>
                         </tr>
-                        @endforeach --}}
+                        @endforeach
                     </tbody>
                 </table>
             </div>
