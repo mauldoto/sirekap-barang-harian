@@ -7,6 +7,7 @@ use App\Models\AktivitasKaryawan;
 use App\Models\Karyawan;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -56,12 +57,21 @@ class AktivitasController extends Controller
             'teknisi' => 'required|array',
             'teknisi.*' => 'required',
             'deskripsi' => 'nullable',
+            'tanggal_berangkat' => 'required|date',
+            'tanggal_pulang' => 'required|date',
         ]);
  
         if ($validator->fails()) {
             return back()
                         ->withErrors($validator)
                         ->withInput();
+        }
+
+        $startDate = Carbon::createFromFormat('Y-m-d', $request->tanggal_berangkat);
+        $endDate = Carbon::createFromFormat('Y-m-d', $request->tanggal_pulang);
+
+        if ($startDate > $endDate) {
+            return back()->withErrors(['Tanggal berangkat tidak boleh lebih dari tanggal pulang.'])->withInput();
         }
 
         DB::beginTransaction();
