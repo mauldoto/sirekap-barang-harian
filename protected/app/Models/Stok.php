@@ -10,4 +10,9 @@ class Stok extends Model
     use HasFactory;
 
     protected $table = 'stok';
+
+    public function aktivitas()
+    {
+        return $this->belongsTo(Aktivitas::class, 'id_aktivitas', 'id');
+    }
 }

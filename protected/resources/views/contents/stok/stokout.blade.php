@@ -36,8 +36,11 @@
                     <div class="mb-2 col-lg-5">
                         <label class="form-label">Aktivitas/Job</label>
                         {{-- <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required> --}}
-                        <select class="form-control" name="aktivitas" id="ak">
+                        <select class="form-control select2" name="aktivitas" id="ak">
                             <option value=""> -- pilih aktivitas/job -- </option>
+                            @foreach ($aktivitas as $act)
+                                <option value="{{$act->id}}">{{ $act->no_referensi }} - {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
+                            @endforeach
                         </select>
                     </div>
 

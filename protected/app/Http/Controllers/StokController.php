@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Aktivitas;
 use App\Models\Barang;
 use App\Models\LogStok;
 use App\Models\Stok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Database\Eloquent\Builder;
 
 class StokController extends Controller
 {
@@ -17,6 +19,12 @@ class StokController extends Controller
             ->with('barang')
             ->groupBy('id_barang')->get();
         return view('contents.stok.index', compact('stok'));
+    }
+
+    public function log()
+    {
+        $stok = LogStok::with(['barang', 'stok' => ['aktivitas']])->get();
+        return view('contents.stok.log', compact('stok'));
     }
 
     public function viewStokMasuk()
@@ -59,7 +67,8 @@ class StokController extends Controller
     public function viewStokKeluar()
     {
         $barang = Barang::all();
-        return view('contents.stok.stokout', compact('barang'));
+        $aktivitas = Aktivitas::all();
+        return view('contents.stok.stokout', compact('barang', 'aktivitas'));
     }
 
     public function storeStokKeluar(Request $request)

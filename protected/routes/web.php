@@ -56,6 +56,7 @@ Route::prefix('karyawan')->group(function () {
 
 Route::prefix('stok')->group(function () {
     Route::get('/', [StokController::class, 'index'])->name('stok.index');
+    Route::get('/log', [StokController::class, 'log'])->name('stok.log');
     Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view');
     Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store');
     Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view');
