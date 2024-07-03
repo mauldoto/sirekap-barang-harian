@@ -2,10 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Aktivitas;
+use App\Models\AktivitasKaryawan;
 use App\Models\Karyawan;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class AktivitasController extends Controller
 {
@@ -42,8 +46,48 @@ class AktivitasController extends Controller
         return view('contents.aktivitas.input', compact('karyawan', 'lokasi'));
     }
 
-    public function store()
+    public function store(Request $request)
     {
-        
+        $validator = Validator::make($request->all(), [
+            'kode' => 'nullable|string',
+            'nama' => 'required|string',
+            'satuan' => 'required|string',
+            'deskripsi' => 'nullable',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
+        DB::beginTransaction();
+
+        $newActivity = new Aktivitas();
+        $newActivity->id_lokasi;
+        $newActivity->id_sublokasi;
+        $newActivity->tanggal_berangkat;
+        $newActivity->tanggal_pulang;
+        $newActivity->deskripsi = $request->deskripsi;
+
+        foreach ($request->teknisi as $key => $teknisi) {
+            $checkTeknisi = Karyawan::where('id', $teknisi)->first();
+            if (!$checkTeknisi) {
+                DB::rollBack();
+                return back()->withErrors(['Input data teknisi ke aktivitas gagal, data teknisi tidak ditemukan.'])->withInput();
+            }
+
+            $inpTeknisi = new AktivitasKaryawan();
+            $inpTeknisi->id_aktivitas = $newActivity->id;
+            $inpTeknisi->id_karyawan = $checkTeknisi->id;
+
+            if (!$inpTeknisi->save()) {
+                DB::rollBack();
+                return back()->withErrors(['Input data teknisi ke aktivitas gagal.'])->withInput();
+            }
+        }
+
+        DB::commit();
+        return back()->with(['success' => 'Input aktivitas berhasil.']);
     }
 }
