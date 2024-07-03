@@ -15,7 +15,8 @@ class AktivitasController extends Controller
 {
     public function index()
     {
-        return view('contents.aktivitas.index');
+        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi'])->get();
+        return view('contents.aktivitas.index', compact('aktivitas'));
     }
 
     public function getSubLokasi(Request $request, $ids)
@@ -49,9 +50,11 @@ class AktivitasController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'kode' => 'nullable|string',
-            'nama' => 'required|string',
-            'satuan' => 'required|string',
+            'noref' => 'required|string',
+            'lokasi' => 'required',
+            'sublokasi' => 'required',
+            'teknisi' => 'required|array',
+            'teknisi.*' => 'required',
             'deskripsi' => 'nullable',
         ]);
  
@@ -64,11 +67,17 @@ class AktivitasController extends Controller
         DB::beginTransaction();
 
         $newActivity = new Aktivitas();
-        $newActivity->id_lokasi;
-        $newActivity->id_sublokasi;
-        $newActivity->tanggal_berangkat;
-        $newActivity->tanggal_pulang;
+        $newActivity->no_referensi = $request->noref;
+        $newActivity->id_lokasi = $request->lokasi;
+        $newActivity->id_sub_lokasi = $request->sublokasi;
+        $newActivity->tanggal_berangkat = $request->tanggal_berangkat;
+        $newActivity->tanggal_pulang = $request->tanggal_pulang;
         $newActivity->deskripsi = $request->deskripsi;
+
+        if (!$newActivity->save()) {
+            DB::rollBack();
+            return back()->withErrors(['Input data aktivitas gagal.'])->withInput();
+        }
 
         foreach ($request->teknisi as $key => $teknisi) {
             $checkTeknisi = Karyawan::where('id', $teknisi)->first();
