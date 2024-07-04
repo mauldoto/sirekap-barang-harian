@@ -26,11 +26,11 @@ class AktivitasController extends Controller
         }
 
         $aktivitas = Aktivitas::with(['lokasi', 'sublokasi'])
-            ->where('tanggal', '>=', $startDate)
-            ->where('tanggal', '<=', $endDate)
+            ->where('tanggal_berangkat', '>=', $startDate)
+            ->where('tanggal_berangkat', '<=', $endDate)
             ->get();
-            
-        return view('contents.aktivitas.index', compact('aktivitas'));
+
+        return view('contents.aktivitas.index', compact('aktivitas', 'startDate', 'endDate'));
     }
 
     public function getSubLokasi(Request $request, $ids)
