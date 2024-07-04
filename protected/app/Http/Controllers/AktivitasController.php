@@ -14,9 +14,22 @@ use Illuminate\Support\Facades\Validator;
 
 class AktivitasController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi'])->get();
+        $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
+        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+
+        if ($startDate > $endDate) {
+            $temp = $startDate;
+            $startDate = $endDate;
+            $endDate = $temp;
+        }
+
+        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi'])
+            ->where('tanggal', '>=', $startDate)
+            ->where('tanggal', '<=', $endDate)
+            ->get();
+            
         return view('contents.aktivitas.index', compact('aktivitas'));
     }
 

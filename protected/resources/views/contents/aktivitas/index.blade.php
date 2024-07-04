@@ -20,6 +20,27 @@
                     </div>
                 </div>
 
+                <hr>
+
+                <form action="" method="GET">
+                    <div class="row">
+                            <div class="mb-2 col-lg-2">
+                                <label class="form-label">Dari</label>
+                                <input class="form-control" type="date" name="dari" placeholder="Masukkan tanggal" value="{{$startDate}}" required>
+                            </div>
+                            <div class="mb-2 col-lg-2">
+                                <label class="form-label">Sampai</label>
+                                <input class="form-control" type="date" name="ke" placeholder="Masukkan tanggal" value="{{$endDate}}" required>
+                            </div>
+                            <div class="mb-2 col-lg-2 d-flex align-items-end">
+                                <button class="btn btn-primary">Filter</button>
+                            </div>
+                    </div>
+                </form>
+
+
+                <hr>
+
                 <table id="datatable-aktivitas" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
                     <thead>
                         <tr>
