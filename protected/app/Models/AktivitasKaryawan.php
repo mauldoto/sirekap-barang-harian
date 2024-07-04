@@ -10,4 +10,9 @@ class AktivitasKaryawan extends Model
     use HasFactory;
 
     protected $table = 'aktivitas_karyawan';
+
+    public function karyawan()
+    {
+        return $this->belongsTo(Karyawan::class, 'id_karyawan', 'id');
+    }
 }

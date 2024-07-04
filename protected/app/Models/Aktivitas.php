@@ -18,4 +18,9 @@ class Aktivitas extends Model
     {
         return $this->belongsTo(SubLokasi::class, 'id_sub_lokasi', 'id');
     }
+
+    public function teknisi()
+    {
+        return $this->hasMany(AktivitasKaryawan::class, 'id_aktivitas', 'id');
+    }
 }
