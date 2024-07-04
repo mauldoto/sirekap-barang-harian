@@ -3,9 +3,9 @@
 
 <head>
     <meta charset="utf-8" />
-    <title> @yield('title') | LSM - Moodle</title>
+    <title> @yield('title') | Sirekap JPN</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta content="LSM Moodle Integration" name="description" />
+    <meta content="JPN Sirekap" name="description" />
     <meta content="bayemsore" name="author" />
     <!-- App favicon -->
     <link rel="shortcut icon" href="{{ URL::asset('assets/images/logo/Color-Icon-Logo-8.png')}}">
