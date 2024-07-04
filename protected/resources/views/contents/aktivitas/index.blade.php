@@ -47,6 +47,7 @@
                             <th>Tanggal</th>
                             <th>Lokasi</th>
                             <th>Sub Lokasi</th>
+                            <th>Aksi</th>
                         </tr>
                     </thead>
 
@@ -57,6 +58,11 @@
                             <td>{{ $i->tanggal_berangkat }} s/d {{ $i->tanggal_pulang }}</td>
                             <td>{{ $i->lokasi->nama }}</td>
                             <td>{{ $i->sublokasi->nama }}</td>
+                            <td class="text-center">
+                                <button class="btn btn-secondary detail-btn" data-id="{{$i->id}}">
+                                    <i class='bx bx-search-alt-2'></i>
+                                </button>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -64,6 +70,44 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="modalDetail" class="modal fade" tabindex="-1" aria-labelledby="detailLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailLabel">Detail </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            
+            <div class="modal-body">
+                <table class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
+                    <tbody>
+                        <tr>
+                            <td>Kode Aktivitas</td>
+                            <td>:</td>
+                            <td class="ka"></td>
+                        </tr>
+                        <tr>
+                            <td>Tanggal</td>
+                            <td>:</td>
+                            <td class="tanggal"></td>
+                        </tr>
+                        <tr>
+                            <td>Teknisi</td>
+                            <td>:</td>
+                            <td class="teknisi"></td>
+                        </tr>
+                        <tr>
+                            <td>Deskripsi</td>
+                            <td>:</td>
+                            <td class="deskripsi"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
 </div>
 
 @endsection
@@ -84,6 +128,39 @@
 <script>
     $(document).ready(function() {
         $("#datatable-aktivitas").dataTable();
+
+        function getDetailAktivitas(ids) {
+            $.get('aktivitas/' + ids + '/detail').done(function(response) {
+                let res = response
+                if (!res.status) return
+
+                console.log(res);
+                $('.ka').html(res.data.no_referensi)
+                $('.tanggal').html(res.data.tanggal_berangkat + ' - ' +res.data.tanggal_pulang)
+
+                let tempTeknisi = ''
+                for (const teknisi of res.data.teknisi) {
+                    tempTeknisi += '- ' + teknisi.karyawan.nama + '<br/>'
+                }
+                $('.teknisi').html(tempTeknisi)
+                $('.deskripsi').html(res.data.deskripsi)
+
+                setTimeout(() => {
+                    showModalAktivitas();
+                }, 500);
+            })
+        }
+
+        function showModalAktivitas() {
+            const myModal = new bootstrap.Modal('#modalDetail', {
+                show: true
+            })
+            myModal.show()
+        }
+
+        $('#datatable-aktivitas').on('click', '.detail-btn', function() {
+            getDetailAktivitas($(this).data('id'))
+        })
 
         $("#datatable-aktivitas").on("click", ".delete-btn", function() {
             const url = $(this).data("url");
