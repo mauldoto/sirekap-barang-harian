@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\BarangImport;
 use App\Models\Barang;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class BarangController extends Controller
 {
@@ -106,5 +108,10 @@ class BarangController extends Controller
         }
 
         return back()->with(['success' => 'Barang berhasil dihapus']);
+    }
+
+    public function import()
+    {
+        Excel::import(new BarangImport, 'barang.xlsx');
     }
 }

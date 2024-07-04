@@ -136,7 +136,14 @@
             </div>
            
             <div class="modal-body">
+                <div>
+                    <label class="form-label">Masukan file import</label>
+                    <input type="file" class="form-control" placeholder="Cari file import" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                </div>
+            </div>
 
+            <div class="modal-footer d-flex justify-content-end">
+                <a href="" class="text-success">Download Format Import</a>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
