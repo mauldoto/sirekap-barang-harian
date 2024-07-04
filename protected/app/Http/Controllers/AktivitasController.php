@@ -33,6 +33,28 @@ class AktivitasController extends Controller
         return view('contents.aktivitas.index', compact('aktivitas', 'startDate', 'endDate'));
     }
 
+    public function getDetail(request $request, $id)
+    {
+        $aktivitas = Aktivitas::where('id', $id)->with('teknisi.karyawan')->first();
+        // if ($type != 'json') {
+        //     if (!$karyawan) {
+        //         return back()->withErrors(['karyawan tidak ditemukan']);
+        //     }
+
+        //     return; //maybe view
+        // }
+
+        if (!$aktivitas) {
+            return;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $aktivitas
+        ]);
+    }
+
+
     public function getSubLokasi(Request $request, $ids)
     {
         $sublokasi = SubLokasi::where('id_lokasi', $ids)->get();
