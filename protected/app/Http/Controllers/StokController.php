@@ -6,6 +6,7 @@ use App\Models\Aktivitas;
 use App\Models\Barang;
 use App\Models\LogStok;
 use App\Models\Stok;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -21,10 +22,31 @@ class StokController extends Controller
         return view('contents.stok.index', compact('stok'));
     }
 
-    public function log()
+    public function log(Request $request)
     {
-        $stok = LogStok::with(['barang', 'stok' => ['aktivitas']])->get();
-        return view('contents.stok.log', compact('stok'));
+        $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
+        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+        $type = $request->filter_type;
+
+        if ($startDate > $endDate) {
+            $temp = $startDate;
+            $startDate = $endDate;
+            $endDate = $temp;
+        }
+
+        $stokM = Stok::where('tanggal', '>=', $startDate)
+            ->where('tanggal', '<=', $endDate);
+
+        if ($type) {
+            $stokM = $stokM->where('type', $type);
+        }
+
+        $stokM = $stokM->pluck('id');
+
+        $stok = LogStok::whereIn('id_stok', $stokM)->with(['barang', 'stok' => ['aktivitas']])->get();
+
+
+        return view('contents.stok.log', compact('stok', 'startDate', 'endDate', 'type'));
     }
 
     public function viewStokMasuk()
