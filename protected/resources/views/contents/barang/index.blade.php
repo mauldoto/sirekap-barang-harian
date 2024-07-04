@@ -41,8 +41,12 @@
     <div class="col-xl-8">
         <div class="card">
             <div class="card-body">
-                <div class="d-sm-flex flex-wrap">
+                <div class="d-sm-flex flex-wrap justify-content-between">
                     <h4 class="card-title mb-4">Daftar Barang</h4>
+
+                    <div class="button-group">
+                        <a class="btn btn-sm btn-success import-modal-btn"><i class='bx bx-archive-in'></i> Import</a>
+                    </div>
                 </div>
 
                 <table id="datatable-barang" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
@@ -123,6 +127,22 @@
     </div><!-- /.modal-dialog -->
 </div>
 
+<div id="modalImport" class="modal fade" tabindex="-1" aria-labelledby="modalImportLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalImportLabel">Import Barang</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+           
+            <div class="modal-body">
+
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
 @endsection
 
 @section('css')
@@ -188,6 +208,13 @@
                 }
             });
         });
+
+        $('.import-modal-btn').on('click', function(){
+            const myModal = new bootstrap.Modal('#modalImport', {
+                show: true
+            })
+            myModal.show()
+        })
     })
 
 </script>
