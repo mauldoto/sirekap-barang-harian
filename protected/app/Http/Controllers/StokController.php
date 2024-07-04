@@ -57,6 +57,20 @@ class StokController extends Controller
 
     public function storeStokMasuk(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'noref'         => 'required|string',
+            'tanggal'       => 'required|date',
+            'barang'        => 'required|array',
+            'barang.*.item' => 'required',
+            'barang.*.qty'  => 'required',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+
         DB::beginTransaction();
 
         $newStokIn = new Stok();
@@ -95,6 +109,20 @@ class StokController extends Controller
 
     public function storeStokKeluar(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'noref'         => 'required|string',
+            'tanggal'       => 'required|date',
+            'barang'        => 'required|array',
+            'barang.*.item' => 'required',
+            'barang.*.qty'  => 'required',
+        ]);
+ 
+        if ($validator->fails()) {
+            return back()
+                        ->withErrors($validator)
+                        ->withInput();
+        }
+        
         DB::beginTransaction();
 
         $newStokOut = new Stok();
