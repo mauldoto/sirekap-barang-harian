@@ -120,4 +120,9 @@ class BarangController extends Controller
 
         return back()->with(['success' => 'Import data barang berhasil.']);
     }
+
+    public function downloadFormat(Request $request)
+    {
+        return response()->download(asset('assets/files/import_barang_format.xlsx'));
+    }
 }

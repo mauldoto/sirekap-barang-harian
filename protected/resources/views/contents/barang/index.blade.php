@@ -149,7 +149,7 @@
             </div>
 
             <div class="modal-footer d-flex justify-content-end">
-                <a href="" class="text-success">Download Format Import</a>
+                <a href="{{asset('assets/files/import_barang_format.xlsx')}}" class="text-success">Download Format Import</a>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

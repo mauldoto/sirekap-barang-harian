@@ -29,6 +29,7 @@ Route::prefix('barang')->group(function () {
     Route::put('/{id}/update', [BarangController::class, 'update'])->name('barang.update');
     Route::post('/{id}/delete', [BarangController::class, 'delete'])->name('barang.delete');
 
+    Route::get('/download-format', [BarangController::class, 'downloadFormat'])->name('barang.format');
     Route::post('/import', [BarangController::class, 'import'])->name('barang.import');
 });
 
