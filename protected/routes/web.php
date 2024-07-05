@@ -28,6 +28,8 @@ Route::prefix('barang')->group(function () {
     Route::post('/store', [BarangController::class, 'store'])->name('barang.store');
     Route::put('/{id}/update', [BarangController::class, 'update'])->name('barang.update');
     Route::post('/{id}/delete', [BarangController::class, 'delete'])->name('barang.delete');
+
+    Route::post('/import', [BarangController::class, 'import'])->name('barang.import');
 });
 
 Route::prefix('lokasi')->group(function () {
