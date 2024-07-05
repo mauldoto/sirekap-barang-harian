@@ -46,11 +46,11 @@ class BarangController extends Controller
             'satuan' => 'required|string',
             'deskripsi' => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $newBarang = new Barang();
@@ -73,11 +73,11 @@ class BarangController extends Controller
             'satuan' => 'required|string',
             'deskripsi' => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $barang = Barang::where('id', $id)->first();
@@ -110,8 +110,14 @@ class BarangController extends Controller
         return back()->with(['success' => 'Barang berhasil dihapus']);
     }
 
-    public function import()
+    public function import(Request $request)
     {
-        Excel::import(new BarangImport, 'barang.xlsx');
+        try {
+            Excel::import(new BarangImport, $request->file('import_barang'));
+        } catch (\Throwable $th) {
+            return back()->withErrors(['Import data barang gagal.']);
+        }
+
+        return back()->with(['success' => 'Import data barang berhasil.']);
     }
 }
