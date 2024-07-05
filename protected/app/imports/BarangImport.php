@@ -13,22 +13,20 @@ class BarangImport implements ToCollection
     {
         DB::beginTransaction();
 
-        foreach ($rows as $index => $row) 
-        {
-            if ($index <= 6) {
-                continue;
-            }
+        foreach ($rows as $index => $row) {
+            $check = Barang::where('kode', $row[0])
+                ->orWhere('nama', $row[1])
+                ->first();
 
-            $check = Barang::where('kode', $row[2])->first();
             $newBarang = new Barang();
             if ($check) {
                 $newBarang = $check;
             }
 
-            $newBarang->kode = $row[2] ? $row[2] : generateReference('B');
-            $newBarang->nama = $row[3];
-            $newBarang->deskripsi = $row[5];
-            $newBarang->satuan = $row[4];
+            $newBarang->kode = $row[0] ? $row[0] : generateReference('B');
+            $newBarang->nama = $row[1];
+            $newBarang->deskripsi = $row[3];
+            $newBarang->satuan = $row[2];
 
             $newBarang->save();
         }
