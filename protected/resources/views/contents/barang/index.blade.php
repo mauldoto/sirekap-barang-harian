@@ -134,12 +134,18 @@
                 <h5 class="modal-title" id="modalImportLabel">Import Barang</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-           
+
             <div class="modal-body">
-                <div>
-                    <label class="form-label">Masukan file import</label>
-                    <input type="file" class="form-control" placeholder="Cari file import" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
-                </div>
+                <form action="{{route('barang.import')}}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label class="form-label">Masukan file import</label>
+                        <input type="file" name="import_barang" class="form-control" placeholder="Cari file import" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                    </div>
+                    <div>
+                        <button class="btn btn-sm btn-primary">Submit</button>
+                    </div>
+                </form>
             </div>
 
             <div class="modal-footer d-flex justify-content-end">
@@ -216,7 +222,7 @@
             });
         });
 
-        $('.import-modal-btn').on('click', function(){
+        $('.import-modal-btn').on('click', function() {
             const myModal = new bootstrap.Modal('#modalImport', {
                 show: true
             })
