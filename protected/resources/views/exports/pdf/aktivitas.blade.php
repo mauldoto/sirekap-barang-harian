@@ -18,14 +18,16 @@
         }
 
         div.header {
-            text-align: end;
+            text-align: right;
         }
+
 	</style>
 
-    <div class="header">
-        <img style="width: 100px;" src="{{asset('assets/images/clients/6.png')}}" alt="">
+    <div class="header" style="margin-top: -20px; margin-bottom: 5px;">
+        <img style="width: 90px;" src="{{asset('assets/images/logo-jpn.png')}}" alt="">
     </div class="header">
-	<center>
+
+	<center style="margin-bottom: 30px;">
 		<h5>Report Aktifitas/Job</h4>
 	</center>
  
