@@ -17,6 +17,7 @@
                     <h4 class="card-title mb-4">Log Aktivitas/Job</h4>
                     <div class="button-group">
                         <a href="{{route('aktivitas.input')}}" class="btn btn-sm btn-success"><i class='bx bx-archive-in'></i> Input Aktivitas</a>
+                        <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export PDF</a>
                     </div>
                 </div>
 
@@ -110,6 +111,36 @@
     </div><!-- /.modal-dialog -->
 </div>
 
+<div id="modalExportPdf" class="modal fade" tabindex="-1" aria-labelledby="modalExportPdfLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalExportPdfLabel">Export Aktivitas - PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="{{route('aktivitas.export.pdf')}}" method="GET">
+                    <div class="row">
+                        <div class="mb-2 col-lg-6">
+                            <label class="form-label">Dari</label>
+                            <input class="form-control" type="date" name="dari" placeholder="Masukkan tanggal" value="{{$startDate}}" required>
+                        </div>
+                        <div class="mb-2 col-lg-6">
+                            <label class="form-label">Sampai</label>
+                            <input class="form-control" type="date" name="ke" placeholder="Masukkan tanggal" value="{{$endDate}}" required>
+                        </div>
+                        <div class="mb-2 col-lg-2 d-flex align-items-end">
+                            <button class="btn btn-primary">Export</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
 @endsection
 
 @section('css')
@@ -181,6 +212,13 @@
                 }
             });
         });
+
+        $('.exportpdf-modal-btn').on('click', function() {
+            const myModal = new bootstrap.Modal('#modalExportPdf', {
+                show: true
+            })
+            myModal.show()
+        })
     })
 
 </script>
