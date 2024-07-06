@@ -55,6 +55,7 @@ Route::prefix('karyawan')->group(function () {
     Route::post('/store', [KaryawanController::class, 'store'])->name('karyawan.store');
     Route::put('/{id}/update', [KaryawanController::class, 'update'])->name('karyawan.update');
     Route::post('/{id}/delete', [KaryawanController::class, 'delete'])->name('karyawan.delete');
+
 });
 
 Route::prefix('stok')->group(function () {
@@ -72,4 +73,6 @@ Route::prefix('aktivitas')->group(function () {
     Route::get('/input', [AktivitasController::class, 'input'])->name('aktivitas.input');
     Route::get('/lokasi/{id}', [AktivitasController::class, 'getSubLokasi'])->name('aktivitas.sublokasi');
     Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store');
+
+    Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');
 });
