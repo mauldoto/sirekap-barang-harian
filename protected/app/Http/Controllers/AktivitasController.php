@@ -7,6 +7,7 @@ use App\Models\AktivitasKaryawan;
 use App\Models\Karyawan;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -143,5 +144,28 @@ class AktivitasController extends Controller
 
         DB::commit();
         return back()->with(['success' => 'Input aktivitas berhasil.']);
+    }
+
+    public function exportPdf(Request $request)
+    {
+        $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
+        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+
+        if ($startDate > $endDate) {
+            $temp = $startDate;
+            $startDate = $endDate;
+            $endDate = $temp;
+        }
+
+        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'teknisi' => ['karyawan']])
+            ->where('tanggal_berangkat', '>=', $startDate)
+            ->where('tanggal_berangkat', '<=', $endDate)
+            ->get();
+
+        // return view('exports.pdf.aktivitas', compact('aktivitas'));
+
+        $pdf = Pdf::loadview('exports.pdf.aktivitas', ['aktivitas'=>$aktivitas]);
+        return $pdf->download('report-aktivitas.pdf');
+
     }
 }
