@@ -20,7 +20,7 @@ Login
                                 <div class="col-7">
                                     <div class="text-primary p-4">
                                         <h5 class="text-primary">Welcome Back !</h5>
-                                        <p>Sign in to continue to Skote.</p>
+                                        <p>Sign in to continue to JPN SIREKAP.</p>
                                     </div>
                                 </div>
                                 <div class="col-5 align-self-end">
@@ -33,7 +33,7 @@ Login
                                 <a href="index" class="auth-logo-light">
                                     <div class="avatar-md profile-user-wid mb-4">
                                         <span class="avatar-title rounded-circle bg-light">
-                                            <img src="{{ URL::asset('assets/images/logo/White-Logo-8.png') }}" alt="" class="rounded-circle" height="34">
+                                            <img src="{{ URL::asset('assets/images/logo-jpn.png') }}" alt="" class="rounded-circle" height="34">
                                         </span>
                                     </div>
                                 </a>
@@ -41,7 +41,7 @@ Login
                                 <a href="index" class="auth-logo-dark">
                                     <div class="avatar-md profile-user-wid mb-4">
                                         <span class="avatar-title rounded-circle bg-light">
-                                            <img src="{{ URL::asset('assets/images/logo/Color-Icon-Logo-8.png') }}" alt="" class="rounded-circle" height="34">
+                                            <img src="{{ URL::asset('assets/images/logo-jpn.png') }}" alt="" class="rounded-circle" height="34">
                                         </span>
                                     </div>
                                 </a>
@@ -64,7 +64,7 @@ Login
                                 </div>
                                 @endif
 
-                                <form class="form-horizontal" action="{{route('login-post')}}" method="POST">
+                                <form class="form-horizontal" action="{{route('authenticate')}}" method="POST">
                                     @csrf
                                     <div class="mb-3">
                                         <label for="username" class="form-label">Username</label>
@@ -91,10 +91,10 @@ Login
                                             In</button>
                                     </div>
 
-                                    <div class="mt-4 text-center">
+                                    {{-- <div class="mt-4 text-center">
                                         <p>Belum memiliki akun ? <a href="{{route('register')}}" class="fw-medium text-primary">
                                                 Daftar sekarang </a> </p>
-                                    </div>
+                                    </div> --}}
 
                                     {{-- <div class="mt-4 text-center">
                                         <a href="auth-recoverpw" class="text-muted"><i class="mdi mdi-lock me-1"></i> Forgot your password?</a>
@@ -111,7 +111,7 @@ Login
                             <p>© <script>
                                     document.write(new Date().getFullYear())
 
-                                </script> Skote. Crafted with <i class="mdi mdi-heart text-danger"></i> by Themesbrand
+                                </script> JPN. Crafted with <i class="mdi mdi-heart text-danger"></i> by JPN Team Ft. Themesbrand
                             </p>
                         </div>
                     </div>

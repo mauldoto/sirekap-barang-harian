@@ -4,6 +4,7 @@
 <script src="{{ URL::asset('assets/libs/metismenu/metisMenu.min.js')}}"></script>
 <script src="{{ URL::asset('assets/libs/simplebar/simplebar.min.js')}}"></script>
 <script src="{{ URL::asset('assets/libs/node-waves/waves.min.js')}}"></script>
+<script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 <script>
     $('#change-password').on('submit', function(event) {
         event.preventDefault();
@@ -40,6 +41,23 @@
             }
         });
     });
+
+    $('.logout-link').on('click', function(ev) {
+        ev.preventDefault();
+        Swal.fire({
+                title: "Apakah anda yakin?"
+                , icon: "warning"
+                , showCancelButton: true
+                , confirmButtonColor: "#3085d6"
+                , cancelButtonColor: "#d33"
+                , confirmButtonText: "Ya!"
+                , cancelButtonText: "Batalkan"
+            , }).then((result) => {
+                if (result.isConfirmed) {
+                    $("#logoutForm")[0].submit()
+                }
+            });
+    })
 
 </script>
 

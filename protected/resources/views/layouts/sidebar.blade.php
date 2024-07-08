@@ -55,6 +55,21 @@
                     </a>
                 </li>
 
+                <li class="menu-title" key="t-masters">
+                    Akun
+                </li>
+
+                <li>
+                    <a class="waves-effect logout-link">
+                        <i class='bx bx-calendar-event'></i>
+                        <span key="t-kursus">Logout</span>
+                    </a>
+
+                    <form id="logoutForm" action="{{route('logout')}}" method="POST">
+                        @csrf
+                    </form>
+                </li>
+
             </ul>
         </div>
         <!-- Sidebar -->
