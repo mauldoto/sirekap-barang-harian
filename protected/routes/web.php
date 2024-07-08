@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AktivitasController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LokasiController;
@@ -19,10 +20,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect(route('login'));
 });
 
-Route::prefix('barang')->group(function () {
+Route::prefix('auth')->group(function() {
+    Route::get('/login', [AuthController::class, 'login'])->name('login')->middleware('web', 'guest');
+    Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
+    Route::post('/logout', [AuthController::class, 'logout'])->middleware(['web', 'auth'])->name('logout');
+});
+
+Route::prefix('barang')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [BarangController::class, 'index'])->name('barang.index');
     Route::get('/{id}/detail', [BarangController::class, 'detail'])->name('barang.detail');
     Route::post('/store', [BarangController::class, 'store'])->name('barang.store');
@@ -33,7 +40,7 @@ Route::prefix('barang')->group(function () {
     Route::post('/import', [BarangController::class, 'import'])->name('barang.import');
 });
 
-Route::prefix('lokasi')->group(function () {
+Route::prefix('lokasi')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [LokasiController::class, 'index'])->name('lokasi.index');
     Route::post('/store', [LokasiController::class, 'store'])->name('lokasi.store');
     Route::put('/{id}/update', [LokasiController::class, 'update'])->name('lokasi.update');
@@ -49,7 +56,7 @@ Route::prefix('lokasi')->group(function () {
     });
 });
 
-Route::prefix('karyawan')->group(function () {
+Route::prefix('karyawan')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [KaryawanController::class, 'index'])->name('karyawan.index');
     Route::get('/{id}/detail', [KaryawanController::class, 'detail'])->name('karyawan.detail');
     Route::post('/store', [KaryawanController::class, 'store'])->name('karyawan.store');
@@ -58,7 +65,7 @@ Route::prefix('karyawan')->group(function () {
 
 });
 
-Route::prefix('stok')->group(function () {
+Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [StokController::class, 'index'])->name('stok.index');
     Route::get('/log', [StokController::class, 'log'])->name('stok.log');
     Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view');
