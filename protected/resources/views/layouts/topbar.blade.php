@@ -5,19 +5,19 @@
             <div class="navbar-brand-box">
                 <a href="index" class="logo logo-dark">
                     <span class="logo-sm">
-                        {{-- <img src="{{ URL::asset('assets/images/logo/Icon-Logo-8.png') }}" alt="" height="22"> --}}
+                        <img src="{{ URL::asset('assets/images/logo-jpn.png') }}" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        {{-- <img src="{{ URL::asset('assets/images/logo/Color-Logo-8.png') }}" alt="" height="17"> --}}
+                        <img src="{{ URL::asset('assets/images/logo-jpn.png') }}" alt="" height="17">
                     </span>
                 </a>
 
                 <a href="index" class="logo logo-light">
                     <span class="logo-sm">
-                        {{-- <img src="{{ URL::asset('assets/images/logo/White-Icon-Logo-8.png') }}" alt="" height="22"> --}}
+                        <img src="{{ URL::asset('assets/images/logo-jpn.png') }}" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        {{-- <img src="{{ URL::asset('assets/images/logo/White-Logo-8.png') }}" alt="" height="22"> --}}
+                        <img src="{{ URL::asset('assets/images/logo-jpn.png') }}" alt="" height="50">
                     </span>
                 </a>
             </div>

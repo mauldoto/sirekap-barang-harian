@@ -8,7 +8,7 @@
     <meta content="JPN Sirekap" name="description" />
     <meta content="bayemsore" name="author" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ URL::asset('assets/images/logo/Color-Icon-Logo-8.png')}}">
+    <link rel="shortcut icon" href="{{ URL::asset('assets/images/logo-jpn.png')}}">
     @include('layouts.head-css')
 </head>
 
