@@ -15,4 +15,9 @@ class SubLokasi extends Model
     {
         return $this->belongsTo(Lokasi::class, 'id_lokasi', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'input_by', 'id');
+    }
 }

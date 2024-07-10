@@ -15,4 +15,9 @@ class Stok extends Model
     {
         return $this->belongsTo(Aktivitas::class, 'id_aktivitas', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'input_by', 'id');
+    }
 }

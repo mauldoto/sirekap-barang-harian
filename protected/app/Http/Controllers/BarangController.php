@@ -58,6 +58,7 @@ class BarangController extends Controller
         $newBarang->nama = $request->nama;
         $newBarang->deskripsi = $request->deskripsi;
         $newBarang->satuan = $request->satuan;
+        $newBarang->input_by = $request->user()->id;
 
         if (!$newBarang->save()) {
             return back()->withErrors(['Barang gagal tersimpan.'])->withInput();

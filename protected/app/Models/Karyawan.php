@@ -10,4 +10,9 @@ class Karyawan extends Model
     use HasFactory;
 
     protected $table = 'karyawan';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'input_by', 'id');
+    }
 }

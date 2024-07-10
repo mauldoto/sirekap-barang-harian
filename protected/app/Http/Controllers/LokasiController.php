@@ -56,6 +56,8 @@ class LokasiController extends Controller
         $newLokasi->nama = $request->nama_lokasi;
         $newLokasi->deskripsi = $request->deskripsi_lokasi;
         $newLokasi->kode = $request->kode ? $request->kode : generateReference('L');
+        $newLokasi->input_by = $request->user()->id;
+
 
         if (!$newLokasi->save()) {
             return back()->withErrors(['Lokasi gagal tersimpan.']);
@@ -84,6 +86,8 @@ class LokasiController extends Controller
 
         $lokasi->nama = $request->nama_lokasi;
         $lokasi->deskripsi = $request->deskripsi_lokasi;
+        $lokasi->input_by = $request->user()->id;
+        
 
         if (!$lokasi->save()) {
             return back()->withErrors(['Lokasi gagal terupdate.']);
@@ -148,6 +152,8 @@ class LokasiController extends Controller
         $newSubLokasi->id_lokasi = $request->lokasi;
         $newSubLokasi->deskripsi = $request->deskripsi_sublokasi;
         $newSubLokasi->kode = $request->kode ? $request->kode : generateReference('SL');
+        $newSubLokasi->input_by = $request->user()->id;
+
 
         if (!$newSubLokasi->save()) {
             return back()->withErrors(['Sublokasi gagal tersimpan.']);
@@ -177,6 +183,7 @@ class LokasiController extends Controller
 
         $sublokasi->nama = $request->nama_sublokasi;
         $sublokasi->deskripsi = $request->deskripsi_sublokasi;
+        $sublokasi->input_by = $request->user()->id;
 
         if (!$sublokasi->save()) {
             return back()->withErrors(['Sublokasi gagal terupdate.']);

@@ -10,4 +10,9 @@ class Barang extends Model
     use HasFactory;
 
     protected $table = 'barang';
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'input_by', 'id');
+    }
 }

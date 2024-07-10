@@ -23,4 +23,9 @@ class Aktivitas extends Model
     {
         return $this->hasMany(AktivitasKaryawan::class, 'id_aktivitas', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'input_by', 'id');
+    }
 }

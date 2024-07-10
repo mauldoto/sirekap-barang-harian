@@ -26,7 +26,7 @@ class AktivitasController extends Controller
             $endDate = $temp;
         }
 
-        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi'])
+        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'user'])
             ->where('tanggal_berangkat', '>=', $startDate)
             ->where('tanggal_berangkat', '<=', $endDate)
             ->get();
@@ -119,6 +119,7 @@ class AktivitasController extends Controller
         $newActivity->tanggal_berangkat = $request->tanggal_berangkat;
         $newActivity->tanggal_pulang = $request->tanggal_pulang;
         $newActivity->deskripsi = $request->deskripsi;
+        $newActivity->input_by = $request->user()->id;
 
         if (!$newActivity->save()) {
             DB::rollBack();

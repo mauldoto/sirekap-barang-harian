@@ -54,6 +54,8 @@ class KaryawanController extends Controller
         $newKaryawan->kode = $request->kode ? $request->kode : generateReference('K');
         $newKaryawan->nama = $request->nama;
         $newKaryawan->deskripsi = $request->deskripsi;
+        $newKaryawan->input_by = $request->user()->id;
+
 
         if (!$newKaryawan->save()) {
             return back()->withErrors(['Karyawan gagal tersimpan.'])->withInput();
