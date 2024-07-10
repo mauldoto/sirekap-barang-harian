@@ -19,6 +19,7 @@
                         <a href="{{route('stok.masuk.view')}}" class="btn btn-sm btn-success"><i class='bx bx-archive-in'></i> Stok Masuk</a>
                         <a href="{{route('stok.keluar.view')}}" class="btn btn-sm btn-warning"><i class='bx bx-archive-out'></i> Stok Keluar</a>
                         <a href="{{route('stok.log')}}" class="btn btn-sm btn-primary"><i class='bx bx-search-alt-2'></i> Cek Log</a>
+                        <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export PDF</a>
                     </div>
                 </div>
 
@@ -85,11 +86,43 @@
     </div><!-- /.modal-dialog -->
 </div>
 
+<div id="modalExportPdf" class="modal fade" tabindex="-1" aria-labelledby="modalExportPdfLabel" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalExportPdfLabel">Export Aktivitas - PDF</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+
+            <div class="modal-body">
+                <form action="{{route('stok.export.pdf')}}" method="GET">
+                    <div class="row">
+                        <div class="mb-2 col-lg-12">
+                            <label class="form-label">Pilih Barang</label>
+                            <select class="form-control" name="barang" id="pilihBarang" multiple>
+                                @foreach ($barang as $item)
+                                    <option value="{{$item->id}}">{{$item->nama . '('. $item->kode .')'}}</option>
+                                @endforeach
+                            </select>
+                            <small class="text-danger">*Kosongkan kolom jika ingin mengambil semua</small>
+                        </div>
+                        <div class="mb-2 col-lg-2 d-flex align-items-end">
+                            <button class="btn btn-primary">Export</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
 @endsection
 
 @section('css')
 <link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('script')
@@ -97,12 +130,14 @@
 <script src="{{ URL::asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+<script src="{{ URL::asset('assets/libs/select2/js/select2.min.js') }}"></script>
 @endsection
 
 @push('page-js')
 <script>
     $(document).ready(function() {
         $("#datatable-stok").dataTable();
+        $("#pilihBarang").select2();
 
         function getDetail(ids) {
             $.get('stok/' + ids + '/detail').done(function(response) {
@@ -149,6 +184,13 @@
                 }
             });
         });
+
+        $('.exportpdf-modal-btn').on('click', function() {
+            const myModal = new bootstrap.Modal('#modalExportPdf', {
+                show: true
+            })
+            myModal.show()
+        })
     })
 
 </script>
