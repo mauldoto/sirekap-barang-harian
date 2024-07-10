@@ -22,8 +22,16 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         $admin = new User();
+        $admin->name = 'JPN Superadmin';
+        $admin->username = 'superadmin';
+        $admin->email = 'jpn@putranetworks.net';
+        $admin->password = bcrypt('superadmin#jpn');
+
+        $admin->save();
+
+        $admin = new User();
         $admin->name = 'JPN Admin';
-        $admin->username = 'jpnadmin';
+        $admin->username = 'adminjpn';
         $admin->email = 'noc.jpn@gmail.com';
         $admin->password = bcrypt('jpn#pride');
 
