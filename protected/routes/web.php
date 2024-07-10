@@ -72,6 +72,8 @@ Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store');
     Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view');
     Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store');
+
+    Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf');
 });
 
 Route::prefix('aktivitas')->group(function () {
