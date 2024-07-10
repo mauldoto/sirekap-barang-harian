@@ -48,6 +48,7 @@
                             <th>Tanggal</th>
                             <th>Lokasi</th>
                             <th>Sub Lokasi</th>
+                            <th>Diinput Oleh</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -59,6 +60,7 @@
                             <td>{{ $i->tanggal_berangkat }} s/d {{ $i->tanggal_pulang }}</td>
                             <td>{{ $i->lokasi->nama }}</td>
                             <td>{{ $i->sublokasi->nama }}</td>
+                            <td>{{ $i->user->username }}</td>
                             <td class="text-center">
                                 <button class="btn btn-secondary detail-btn" data-id="{{$i->id}}">
                                     <i class='bx bx-search-alt-2'></i>
