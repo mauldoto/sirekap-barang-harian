@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nama');
             $table->text('deskripsi')->nullable();
             $table->string('satuan');
+            $table->unsignedBigInteger('input_by');
             $table->timestamps();
         });
     }

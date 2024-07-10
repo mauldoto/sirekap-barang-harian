@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('no_referensi')->unique();
             $table->date('tanggal');
             $table->enum('type', ['masuk', 'keluar']);
+            $table->unsignedBigInteger('input_by');
             $table->timestamps();
         });
     }

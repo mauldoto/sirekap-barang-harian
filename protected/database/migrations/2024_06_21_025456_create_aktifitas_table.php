@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('deskripsi')->nullable();
             $table->date('tanggal_berangkat');
             $table->date('tanggal_pulang');
+            $table->unsignedBigInteger('input_by');
             $table->timestamps();
         });
     }

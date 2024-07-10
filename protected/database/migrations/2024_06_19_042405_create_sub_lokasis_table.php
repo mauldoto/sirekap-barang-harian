@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('kode')->unique();
             $table->string('nama');
             $table->text('deskripsi')->nullable();
+            $table->unsignedBigInteger('input_by');
             $table->timestamps();
         });
     }
