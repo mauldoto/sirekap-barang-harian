@@ -6,6 +6,7 @@ use App\Models\Aktivitas;
 use App\Models\Barang;
 use App\Models\LogStok;
 use App\Models\Stok;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,7 +20,9 @@ class StokController extends Controller
         $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'))
             ->with('barang')
             ->groupBy('id_barang')->get();
-        return view('contents.stok.index', compact('stok'));
+
+        $barang = Barang::get();
+        return view('contents.stok.index', compact('stok', 'barang'));
     }
 
     public function log(Request $request)
@@ -43,8 +46,7 @@ class StokController extends Controller
 
         $stokM = $stokM->pluck('id');
 
-        $stok = LogStok::whereIn('id_stok', $stokM)->with(['barang', 'stok' => ['aktivitas']])->get();
-
+        $stok = LogStok::whereIn('id_stok', $stokM)->with(['barang', 'stok' => ['user', 'aktivitas']])->get();
 
         return view('contents.stok.log', compact('stok', 'startDate', 'endDate', 'type'));
     }
@@ -77,6 +79,8 @@ class StokController extends Controller
         $newStokIn->no_referensi = $request->noref;
         $newStokIn->tanggal = $request->tanggal;
         $newStokIn->type = 'masuk';
+        $newStokIn->input_by = $request->user()->id;
+        
 
         if (!$newStokIn->save()) {
             DB::rollBack();
@@ -150,5 +154,19 @@ class StokController extends Controller
 
         DB::commit();
         return back()->with(['success' => 'Input stok keluar berhasil.']);        
+    }
+
+    public function exportPdf(Request $request)
+    {
+
+        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'));
+        if ($request->barang) {
+            $stok = $stok->whereIn('id_barang', $request->barang);
+        }
+        $stok = $stok->with('barang')
+            ->groupBy('id_barang')->get();
+
+        $pdf = Pdf::loadview('exports.pdf.stok', ['stok'=>$stok, 'tanggal' => Carbon::now()->format('d-m-Y')]);
+        return $pdf->download('report-stok.pdf');
     }
 }
