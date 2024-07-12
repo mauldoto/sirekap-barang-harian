@@ -95,7 +95,7 @@
             </div>
 
             <div class="modal-body">
-                <form action="{{route('stok.export.pdf')}}" method="GET">
+                <form action="{{route('stok.export.pdf')}}" method="GET" target="_blank">
                     <div class="row">
                         <div class="mb-2 col-lg-12">
                             <label class="form-label">Pilih Barang</label>
