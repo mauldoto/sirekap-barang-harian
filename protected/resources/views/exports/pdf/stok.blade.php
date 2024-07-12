@@ -38,7 +38,7 @@
 	</style>
 
     <div class="header" style="margin-top: -20px; margin-bottom: 5px;">
-        <img style="width: 90px;" src="{{asset('assets/images/logo-jpn.png')}}" alt="">
+        <img style="width: 90px;" src="assets/images/logo-jpn.png" alt="">
     </div class="header">
 
 	<div style="margin-bottom: 30px; text-align: center;">

@@ -7,11 +7,12 @@ use App\Models\AktivitasKaryawan;
 use App\Models\Karyawan;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
+
 
 class AktivitasController extends Controller
 {
@@ -165,8 +166,8 @@ class AktivitasController extends Controller
 
         // return view('exports.pdf.aktivitas', compact('aktivitas'));
 
-        $pdf = Pdf::loadview('exports.pdf.aktivitas', ['aktivitas'=>$aktivitas]);
-        return $pdf->download('report-aktivitas.pdf');
+        $pdf = LaravelMpdf::loadview('exports.pdf.aktivitas', ['aktivitas'=>$aktivitas]);
+        return $pdf->stream('report-aktivitas.pdf');
 
     }
 }

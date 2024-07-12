@@ -8,14 +8,28 @@
 </head>
 <body>
 	<style type="text/css">
-		table tr td,
-		table tr th{
-			font-size: 9pt;
+		#job {
+			font-family: Arial, Helvetica, sans-serif;
+			border-collapse: collapse;
+			width: 100%;
 		}
 
-        table, thead, th, tr, td {
-            border: 1px solid black;
-        }
+		#job td, #job th {
+			border: 1px solid #ddd;
+			padding: 8px;
+		}
+
+		#job tr:nth-child(even){background-color: #ffa17f;}
+
+		#job tr:hover {background-color: #ddd;}
+
+		#job th {
+			padding-top: 12px;
+			padding-bottom: 12px;
+			text-align: left;
+			background-color: #3833c6;
+			color: white;
+		}
 
         div.header {
             text-align: right;
@@ -24,14 +38,14 @@
 	</style>
 
     <div class="header" style="margin-top: -20px; margin-bottom: 5px;">
-        <img style="width: 90px;" src="{{asset('assets/images/logo-jpn.png')}}" alt="">
+        <img style="width: 90px;" src="assets/images/logo-jpn.png" alt="">
     </div class="header">
 
-	<center style="margin-bottom: 30px;">
+	<div style="margin-bottom: 30px; text-align: center;">
 		<h5>Report Aktifitas/Job</h4>
-	</center>
+	</div>
  
-	<table class='table table-bordered'>
+	<table class='table table-bordered' id="job">
 		<thead>
 			<tr>
 				<th style="text-align: center">Tanggal Berangkat</th>

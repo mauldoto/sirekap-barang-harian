@@ -122,7 +122,7 @@
             </div>
 
             <div class="modal-body">
-                <form action="{{route('aktivitas.export.pdf')}}" method="GET">
+                <form action="{{route('aktivitas.export.pdf')}}" method="GET" target="_blank">
                     <div class="row">
                         <div class="mb-2 col-lg-6">
                             <label class="form-label">Dari</label>
