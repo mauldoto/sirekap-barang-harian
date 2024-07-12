@@ -6,12 +6,11 @@ use App\Models\Aktivitas;
 use App\Models\Barang;
 use App\Models\LogStok;
 use App\Models\Stok;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
+use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\Builder;
 
 class StokController extends Controller
 {
@@ -166,7 +165,7 @@ class StokController extends Controller
         $stok = $stok->with('barang')
             ->groupBy('id_barang')->get();
 
-        $pdf = Pdf::loadview('exports.pdf.stok', ['stok'=>$stok, 'tanggal' => Carbon::now()->format('d-m-Y')]);
-        return $pdf->download('report-stok.pdf');
+        $pdf = LaravelMpdf::loadview('exports.pdf.stok', ['stok'=>$stok, 'tanggal' => Carbon::now()->format('d-m-Y')]);
+        return $pdf->stream('report-stok.pdf');
     }
 }
