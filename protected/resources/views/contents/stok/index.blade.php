@@ -99,7 +99,7 @@
                     <div class="row">
                         <div class="mb-2 col-lg-12">
                             <label class="form-label">Pilih Barang</label>
-                            <select class="form-control" name="barang" id="pilihBarang" multiple>
+                            <select class="form-control" name="barang[]" id="pilihBarang" multiple>
                                 @foreach ($barang as $item)
                                     <option value="{{$item->id}}">{{$item->nama . '('. $item->kode .')'}}</option>
                                 @endforeach
