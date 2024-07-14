@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('id_stok');
             $table->unsignedBigInteger('id_barang');
+            $table->boolean('is_new')->default(true);
             $table->double('qty');
             $table->timestamps();
         });
