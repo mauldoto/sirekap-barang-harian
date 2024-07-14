@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Barang;
+use App\Models\Karyawan;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,23 +16,22 @@ class KaryawanImport implements ToCollection
 
         foreach ($rows as $index => $row) {
             if ($index < 1) continue;
-            
-            $check = Barang::where('kode', $row[0])
+
+            $check = Karyawan::where('kode', $row[0])
                 ->orWhere('nama', $row[1])
                 ->first();
 
-            $newBarang = new Barang();
+            $newKaryawan = new Karyawan();
             if ($check) {
-                $newBarang = $check;
+                $newKaryawan = $check;
             }
 
-            $newBarang->kode = $row[0] ? $row[0] : generateReference('B');
-            $newBarang->nama = $row[1];
-            $newBarang->deskripsi = $row[3];
-            $newBarang->satuan = $row[2];
-            $newBarang->input_by = Auth::user()->id;
+            $newKaryawan->kode = $row[0] ? $row[0] : generateReference('K');
+            $newKaryawan->nama = $row[1];
+            $newKaryawan->deskripsi = $row[3];
+            $newKaryawan->input_by = Auth::user()->id;
 
-            $newBarang->save();
+            $newKaryawan->save();
         }
 
         DB::commit();
