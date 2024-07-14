@@ -16,9 +16,9 @@ class StokController extends Controller
 {
     public function index()
     {
-        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'))
+        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
             ->with('barang')
-            ->groupBy('id_barang')->get();
+            ->groupBy('id_barang', 'is_new')->get();
 
         $barang = Barang::get();
         return view('contents.stok.index', compact('stok', 'barang'));
@@ -64,12 +64,13 @@ class StokController extends Controller
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
+            'barang.*.kondisi'  => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         DB::beginTransaction();
@@ -79,7 +80,7 @@ class StokController extends Controller
         $newStokIn->tanggal = $request->tanggal;
         $newStokIn->type = 'masuk';
         $newStokIn->input_by = $request->user()->id;
-        
+
 
         if (!$newStokIn->save()) {
             DB::rollBack();
@@ -91,6 +92,7 @@ class StokController extends Controller
             $newLogStok->id_stok = $newStokIn->id;
             $newLogStok->id_barang = $barang['item'];
             $newLogStok->qty = $barang['qty'];
+            $newLogStok->is_new = isset($barang['kondisi']) ? true : false;
 
             if (!$newLogStok->save()) {
                 DB::rollBack();
@@ -99,7 +101,7 @@ class StokController extends Controller
         }
 
         DB::commit();
-        return back()->with(['success' => 'Input stok masuk berhasil.']);        
+        return back()->with(['success' => 'Input stok masuk berhasil.']);
     }
 
     // this section is for out stock
@@ -118,19 +120,20 @@ class StokController extends Controller
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
+            'barang.*.kondisi'  => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
-        
+
         DB::beginTransaction();
 
         $newStokOut = new Stok();
         $newStokOut->no_referensi = $request->noref;
-        $newStokOut->id_aktivitas = $request->aktivitas ?? null ;
+        $newStokOut->id_aktivitas = $request->aktivitas ?? null;
         $newStokOut->tanggal = $request->tanggal;
         $newStokOut->type = 'keluar';
 
@@ -144,6 +147,7 @@ class StokController extends Controller
             $newLogStok->id_stok = $newStokOut->id;
             $newLogStok->id_barang = $barang['item'];
             $newLogStok->qty = -$barang['qty'];
+            $newLogStok->is_new = isset($barang['kondisi']) ? true : false;
 
             if (!$newLogStok->save()) {
                 DB::rollBack();
@@ -152,7 +156,7 @@ class StokController extends Controller
         }
 
         DB::commit();
-        return back()->with(['success' => 'Input stok keluar berhasil.']);        
+        return back()->with(['success' => 'Input stok keluar berhasil.']);
     }
 
     public function exportPdf(Request $request)
@@ -165,7 +169,7 @@ class StokController extends Controller
         $stok = $stok->with('barang')
             ->groupBy('id_barang')->get();
 
-        $pdf = LaravelMpdf::loadview('exports.pdf.stok', ['stok'=>$stok, 'tanggal' => Carbon::now()->format('d-m-Y')]);
+        $pdf = LaravelMpdf::loadview('exports.pdf.stok', ['stok' => $stok, 'tanggal' => Carbon::now()->format('d-m-Y')]);
         return $pdf->stream('report-stok.pdf');
     }
 }

@@ -2,7 +2,7 @@
 
 namespace App\Imports;
 
-use App\Models\Barang;
+use App\Models\Lokasi;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -16,23 +16,22 @@ class LokasiImport implements ToCollection
 
         foreach ($rows as $index => $row) {
             if ($index < 1) continue;
-            
-            $check = Barang::where('kode', $row[0])
+
+            $check = Lokasi::where('kode', $row[0])
                 ->orWhere('nama', $row[1])
                 ->first();
 
-            $newBarang = new Barang();
+            $newLokasi = new Lokasi();
             if ($check) {
-                $newBarang = $check;
+                $newLokasi = $check;
             }
 
-            $newBarang->kode = $row[0] ? $row[0] : generateReference('B');
-            $newBarang->nama = $row[1];
-            $newBarang->deskripsi = $row[3];
-            $newBarang->satuan = $row[2];
-            $newBarang->input_by = Auth::user()->id;
+            $newLokasi->kode = $row[0] ? $row[0] : generateReference('L');
+            $newLokasi->nama = $row[1];
+            $newLokasi->deskripsi = $row[2];
+            $newLokasi->input_by = Auth::user()->id;
 
-            $newBarang->save();
+            $newLokasi->save();
         }
 
         DB::commit();

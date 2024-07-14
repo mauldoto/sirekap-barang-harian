@@ -36,17 +36,17 @@
                     <div class="mb-2 col-lg-5">
                         <label class="form-label">Aktivitas/Job</label>
                         {{-- <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required> --}}
-                        <select class="form-control select2" name="aktivitas" id="ak">
-                            <option value=""> -- pilih aktivitas/job -- </option>
+                        <select class="form-control job-select2" name="aktivitas" id="ak">
+                            <option></option>
                             @foreach ($aktivitas as $act)
-                                <option value="{{$act->id}}">{{ $act->no_referensi }} - {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
+                            <option value="{{$act->id}}">{{ $act->no_referensi }} - {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="mb-2">
                         <label class="form-label">Barang</label>
-                        
+
                         <!-- Repeater Html Start -->
                         <div id="repeater">
                             <!-- Repeater Heading -->
@@ -64,16 +64,21 @@
                                         <div class="col-lg-5">
                                             {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
                                             <select class="form-control select2" id="inputItem" data-name="item">
-                                                <option value=""> -- pilih barang --</option>
+                                                <option value=""></option>
                                                 @foreach ($barang as $item)
-                                                    <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
+                                                <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-lg-5">
+                                        <div class="col-lg-2 pt-2">
+                                            <input class="form-check-input" type="checkbox" data-name="kondisi" id="inputCondition" value="bekas">
+                                            <label class="form-check-label" for="inputCondition">
+                                                Bekas
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-3">
                                             <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty">
                                         </div>
-
                                         <div class="col-lg-2 repeater-remove-btn">
                                             <button class="btn btn-danger remove-btn">
                                                 Remove
@@ -89,12 +94,12 @@
                                 </div> --}}
                                 <div class="clearfix"></div>
                             </div>
-                        <!-- Repeater End -->
-                    </div>
+                            <!-- Repeater End -->
+                        </div>
 
-                    <div class="btn-submit mt-5 d-flex justify-content-end">
-                        <button class="btn btn-md btn-primary">Submit</button>
-                    </div>
+                        <div class="btn-submit mt-5 d-flex justify-content-end">
+                            <button class="btn btn-md btn-primary">Submit</button>
+                        </div>
                 </form>
             </div>
         </div>
@@ -111,6 +116,7 @@
     .items {
         margin-bottom: 4px !important;
     }
+
 </style>
 @endsection
 
@@ -127,17 +133,25 @@
 <script>
     $(document).ready(function() {
         $("#repeater").createRepeater({
-            showFirstItemToDefault: true,
-        });
+            showFirstItemToDefault: true
+        , });
 
-        $(".repeater-add-btn").click(function(){
+        $(".repeater-add-btn").click(function() {
             let select2Arr = $('.select2')
             select2Arr.each(function(index, el) {
-                $(el).select2();
+                $(el).select2({
+                    placeholder: "-- Pilih Barang --"
+                });
             })
         })
-        
-        $('.select2').select2();
+
+        $('.select2').select2({
+            placeholder: "-- Pilih Barang --"
+        });
+
+        $('.job-select2').select2({
+            placeholder: "-- Pilih Aktivitas/Job --"
+        });
     })
 
 </script>

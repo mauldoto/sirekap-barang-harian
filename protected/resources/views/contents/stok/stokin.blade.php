@@ -35,7 +35,7 @@
 
                     <div class="mb-2">
                         <label class="form-label">Barang</label>
-                        
+
                         <!-- Repeater Html Start -->
                         <div id="repeater">
                             <!-- Repeater Heading -->
@@ -53,13 +53,19 @@
                                         <div class="col-lg-5">
                                             {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
                                             <select class="form-control select2" id="inputItem" data-name="item">
-                                                <option value=""> -- pilih barang --</option>
+                                                <option value=""></option>
                                                 @foreach ($barang as $item)
-                                                    <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
+                                                <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
                                                 @endforeach
                                             </select>
                                         </div>
-                                        <div class="col-lg-5">
+                                        <div class="col-lg-2 pt-2">
+                                            <input class="form-check-input" type="checkbox" data-name="kondisi" id="inputCondition" value="bekas">
+                                            <label class="form-check-label" for="inputCondition">
+                                                Bekas
+                                            </label>
+                                        </div>
+                                        <div class="col-lg-3">
                                             <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty">
                                         </div>
 
@@ -78,12 +84,12 @@
                                 </div> --}}
                                 <div class="clearfix"></div>
                             </div>
-                        <!-- Repeater End -->
-                    </div>
+                            <!-- Repeater End -->
+                        </div>
 
-                    <div class="btn-submit mt-5 d-flex justify-content-end">
-                        <button class="btn btn-md btn-primary">Submit</button>
-                    </div>
+                        <div class="btn-submit mt-5 d-flex justify-content-end">
+                            <button class="btn btn-md btn-primary">Submit</button>
+                        </div>
                 </form>
             </div>
         </div>
@@ -100,6 +106,7 @@
     .items {
         margin-bottom: 4px !important;
     }
+
 </style>
 @endsection
 
@@ -116,17 +123,21 @@
 <script>
     $(document).ready(function() {
         $("#repeater").createRepeater({
-            showFirstItemToDefault: true,
-        });
+            showFirstItemToDefault: true
+        , });
 
-        $(".repeater-add-btn").click(function(){
+        $(".repeater-add-btn").click(function() {
             let select2Arr = $('.select2')
             select2Arr.each(function(index, el) {
-                $(el).select2();
+                $(el).select2({
+                    placeholder: "-- Pilih Barang --"
+                });
             })
         })
 
-        $('.select2').select2();
+        $('.select2').select2({
+            placeholder: "-- Pilih Barang --"
+        });
 
         $("#datatable-stok").on("click", ".delete-btn", function() {
             const url = $(this).data("url");

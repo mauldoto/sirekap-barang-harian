@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\LokasiImport;
+use App\Imports\SubLokasiImport;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LokasiController extends Controller
 {
@@ -45,11 +48,11 @@ class LokasiController extends Controller
             'kode' => 'nullable|string',
             'deskripsi_lokasi' => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $newLokasi = new Lokasi();
@@ -72,11 +75,11 @@ class LokasiController extends Controller
             'nama_lokasi' => 'required|string',
             'deskripsi_lokasi' => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $lokasi = Lokasi::where('id', $id)->first();
@@ -87,7 +90,7 @@ class LokasiController extends Controller
         $lokasi->nama = $request->nama_lokasi;
         $lokasi->deskripsi = $request->deskripsi_lokasi;
         $lokasi->input_by = $request->user()->id;
-        
+
 
         if (!$lokasi->save()) {
             return back()->withErrors(['Lokasi gagal terupdate.']);
@@ -140,11 +143,11 @@ class LokasiController extends Controller
             'deskripsi_sublokasi' => 'nullable',
             'lokasi' => 'required',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $newSubLokasi = new SubLokasi();
@@ -169,11 +172,11 @@ class LokasiController extends Controller
             'deskripsi_sublokasi' => 'nullable',
             'lokasi' => 'required',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $sublokasi = SubLokasi::where('id', $id)->first();
@@ -204,5 +207,27 @@ class LokasiController extends Controller
         }
 
         return back()->with(['success' => 'Sublokasi berhasil dihapus.']);
+    }
+
+    public function importLokasi(Request $request)
+    {
+        try {
+            Excel::import(new LokasiImport, $request->file('import_lokasi'));
+        } catch (\Throwable $th) {
+            return back()->withErrors(['Import data lokasi gagal.', $th->getMessage()]);
+        }
+
+        return back()->with(['success' => 'Import data lokasi berhasil.']);
+    }
+
+    public function importSubLokasi(Request $request)
+    {
+        try {
+            Excel::import(new SubLokasiImport, $request->file('import_sublokasi'));
+        } catch (\Throwable $th) {
+            return back()->withErrors(['Import data sublokasi gagal.', $th->getMessage()]);
+        }
+
+        return back()->with(['success' => 'Import data sublokasi berhasil.']);
     }
 }

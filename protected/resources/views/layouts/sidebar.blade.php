@@ -11,9 +11,9 @@
 
                 <li>
                     <a href="{{url('/')}}" class="waves-effect">
-                        <i class="bx bx-home-circle"></i>
-                        <span key="t-dashboards">Dashboard</span>
-                    </a>
+                <i class="bx bx-home-circle"></i>
+                <span key="t-dashboards">Dashboard</span>
+                </a>
                 </li> --}}
 
                 <li class="menu-title" key="t-masters">Master Data</li>
@@ -34,7 +34,7 @@
 
                 <li>
                     <a href="{{route('lokasi.index')}}" class="waves-effect">
-                        <i class='bx bx-group'></i>
+                        <i class='bx bx-map'></i>
                         <span key="t-siswa">Lokasi</span>
                     </a>
                 </li>
@@ -61,7 +61,7 @@
 
                 <li>
                     <a class="waves-effect logout-link">
-                        <i class='bx bx-calendar-event'></i>
+                        <i class='bx bx-log-out'></i>
                         <span key="t-kursus">Logout</span>
                     </a>
 

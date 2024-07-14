@@ -28,16 +28,17 @@
                         <tr>
                             <th>Kode Barang</th>
                             <th>Nama Barang</th>
+                            <th>Kondisi</th>
                             <th>Stok</th>
                         </tr>
                     </thead>
-
 
                     <tbody>
                         @foreach($stok as $key => $i)
                         <tr>
                             <td>{{ $i->barang->kode }}</td>
                             <td>{{ $i->barang->nama }}</td>
+                            <td><span class="badge rounded-pill {{ $i->is_new ? 'bg-primary' : 'bg-warning' }}">{{ $i->is_new ? 'Baru' : 'Bekas' }}</span></td>
                             <td>{{ $i->sumqty }} ({{$i->barang->satuan}})</td>
                         </tr>
                         @endforeach
@@ -101,7 +102,7 @@
                             <label class="form-label">Pilih Barang</label>
                             <select class="form-control" name="barang[]" id="pilihBarang" multiple>
                                 @foreach ($barang as $item)
-                                    <option value="{{$item->id}}">{{$item->nama . '('. $item->kode .')'}}</option>
+                                <option value="{{$item->id}}">{{$item->nama . '('. $item->kode .')'}}</option>
                                 @endforeach
                             </select>
                             <small class="text-danger">*Kosongkan kolom jika ingin mengambil semua</small>

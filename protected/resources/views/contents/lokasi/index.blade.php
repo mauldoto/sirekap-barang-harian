@@ -38,8 +38,12 @@
         <div class="col-xl-7">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-sm-flex flex-wrap">
+                    <div class="d-sm-flex flex-wrap justify-content-between">
                         <h4 class="card-title mb-4">Daftar Lokasi</h4>
+
+                        <div class="button-group">
+                            <a class="btn btn-sm btn-success import-modal-lokasi-btn"><i class='bx bx-archive-in'></i> Import</a>
+                        </div>
                     </div>
 
                     <table id="datatable-lokasi" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
@@ -115,6 +119,34 @@
         </div><!-- /.modal-dialog -->
     </div>
 
+    <div id="modalImportLokasi" class="modal fade" tabindex="-1" aria-labelledby="modalImportLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalImportLokasiLabel">Import Lokasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form action="{{route('lokasi.import')}}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Masukan file import</label>
+                            <input type="file" name="import_lokasi" class="form-control" placeholder="Cari file import" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-end">
+                    <a href="{{asset('assets/files/import_lokasi_format.xlsx')}}" class="text-success">Download Format Import</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
+
 </section>
 
 <hr>
@@ -157,8 +189,12 @@
         <div class="col-xl-7">
             <div class="card">
                 <div class="card-body">
-                    <div class="d-sm-flex flex-wrap">
+                    <div class="d-sm-flex flex-wrap justify-content-between">
                         <h4 class="card-title mb-4">Daftar Sub Lokasi</h4>
+
+                        <div class="button-group">
+                            <a class="btn btn-sm btn-success import-modal-sub-btn"><i class='bx bx-archive-in'></i> Import</a>
+                        </div>
                     </div>
 
                     <table id="datatable-sublokasi" class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
@@ -240,6 +276,34 @@
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
     </div>
+
+    <div id="modalImportSubLokasi" class="modal fade" tabindex="-1" aria-labelledby="modalImportLabel" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalImportSubLokasiLabel">Import Sublokasi</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+                    <form action="{{route('sublokasi.import')}}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-3">
+                            <label class="form-label">Masukan file import</label>
+                            <input type="file" name="import_sublokasi" class="form-control" placeholder="Cari file import" accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
+                        </div>
+                        <div>
+                            <button class="btn btn-sm btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="modal-footer d-flex justify-content-end">
+                    <a href="{{asset('assets/files/import_sublokasi_format.xlsx')}}" class="text-success">Download Format Import</a>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div>
 </section>
 
 @endsection
@@ -247,7 +311,7 @@
 @section('css')
 <link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}"  rel="stylesheet" type="text/css" />
+<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('script')
@@ -310,6 +374,20 @@
                 }
             });
         });
+
+        $('.import-modal-lokasi-btn').on('click', function() {
+            const myModal = new bootstrap.Modal('#modalImportLokasi', {
+                show: true
+            })
+            myModal.show()
+        })
+
+        $('.import-modal-sub-btn').on('click', function() {
+            const myModal = new bootstrap.Modal('#modalImportSubLokasi', {
+                show: true
+            })
+            myModal.show()
+        })
     })
 
 </script>

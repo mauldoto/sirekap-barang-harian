@@ -28,7 +28,7 @@ class KaryawanImport implements ToCollection
 
             $newKaryawan->kode = $row[0] ? $row[0] : generateReference('K');
             $newKaryawan->nama = $row[1];
-            $newKaryawan->deskripsi = $row[3];
+            $newKaryawan->deskripsi = $row[2];
             $newKaryawan->input_by = Auth::user()->id;
 
             $newKaryawan->save();

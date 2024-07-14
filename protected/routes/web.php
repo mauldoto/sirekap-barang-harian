@@ -23,7 +23,7 @@ Route::get('/', function () {
     return redirect(route('login'));
 });
 
-Route::prefix('auth')->group(function() {
+Route::prefix('auth')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login')->middleware('web', 'guest');
     Route::post('/login', [AuthController::class, 'authenticate'])->name('authenticate');
     Route::post('/logout', [AuthController::class, 'logout'])->middleware(['web', 'auth'])->name('logout');
@@ -46,6 +46,7 @@ Route::prefix('lokasi')->middleware(['web', 'auth'])->group(function () {
     Route::put('/{id}/update', [LokasiController::class, 'update'])->name('lokasi.update');
     Route::get('/{id}/detail', [LokasiController::class, 'detail'])->name('lokasi.detail');
     Route::post('/{id}/delete', [LokasiController::class, 'delete'])->name('lokasi.delete');
+    Route::post('/import', [LokasiController::class, 'importLokasi'])->name('lokasi.import');
 
     Route::prefix('/sublokasi')->group(function () {
         Route::get('/', [LokasiController::class, 'index'])->name('sublokasi.index');
@@ -53,6 +54,7 @@ Route::prefix('lokasi')->middleware(['web', 'auth'])->group(function () {
         Route::put('/{id}/update', [LokasiController::class, 'subupdate'])->name('sublokasi.update');
         Route::get('/{id}/detail', [LokasiController::class, 'subdetail'])->name('sublokasi.detail');
         Route::post('/{id}/delete', [LokasiController::class, 'subdelete'])->name('sublokasi.delete');
+        Route::post('/import', [LokasiController::class, 'importSubLokasi'])->name('sublokasi.import');
     });
 });
 
@@ -62,7 +64,7 @@ Route::prefix('karyawan')->middleware(['web', 'auth'])->group(function () {
     Route::post('/store', [KaryawanController::class, 'store'])->name('karyawan.store');
     Route::put('/{id}/update', [KaryawanController::class, 'update'])->name('karyawan.update');
     Route::post('/{id}/delete', [KaryawanController::class, 'delete'])->name('karyawan.delete');
-
+    Route::post('/import', [KaryawanController::class, 'import'])->name('karyawan.import');
 });
 
 Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {

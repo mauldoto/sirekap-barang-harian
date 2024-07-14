@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\KaryawanImport;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 
 class KaryawanController extends Controller
 {
@@ -43,11 +45,11 @@ class KaryawanController extends Controller
             'kode' => 'nullable|string',
             'deskripsi' => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $newKaryawan = new Karyawan();
@@ -70,11 +72,11 @@ class KaryawanController extends Controller
             'nama' => 'required|string',
             'deskripsi' => 'nullable',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $karyawan = Karyawan::where('id', $id)->first();
@@ -105,5 +107,16 @@ class KaryawanController extends Controller
         }
 
         return back()->with(['success' => 'data karyawan berhasil dihapus.']);
+    }
+
+    public function import(Request $request)
+    {
+        try {
+            Excel::import(new KaryawanImport, $request->file('import_karyawan'));
+        } catch (\Throwable $th) {
+            return back()->withErrors(['Import data karyawan gagal.', $th->getMessage()]);
+        }
+
+        return back()->with(['success' => 'Import data karaywan berhasil.']);
     }
 }
