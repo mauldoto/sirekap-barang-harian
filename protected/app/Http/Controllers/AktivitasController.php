@@ -97,11 +97,11 @@ class AktivitasController extends Controller
             'tanggal_berangkat' => 'required|date',
             'tanggal_pulang' => 'required|date',
         ]);
- 
+
         if ($validator->fails()) {
             return back()
-                        ->withErrors($validator)
-                        ->withInput();
+                ->withErrors($validator)
+                ->withInput();
         }
 
         $startDate = Carbon::createFromFormat('Y-m-d', $request->tanggal_berangkat);
@@ -166,8 +166,7 @@ class AktivitasController extends Controller
 
         // return view('exports.pdf.aktivitas', compact('aktivitas'));
 
-        $pdf = LaravelMpdf::loadview('exports.pdf.aktivitas', ['aktivitas'=>$aktivitas]);
+        $pdf = LaravelMpdf::loadview('exports.pdf.aktivitas', ['aktivitas' => $aktivitas]);
         return $pdf->stream('report-aktivitas.pdf');
-
     }
 }

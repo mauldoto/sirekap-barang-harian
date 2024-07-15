@@ -76,7 +76,7 @@
                                             </select>
                                         </div>
                                         <div class="col-lg-2 pt-2">
-                                            <input class="form-check-input" type="checkbox" data-name="kondisi" id="inputCondition" value="bekas">
+                                            <input class="form-check-input" type="checkbox" data-name="bekas" id="inputCondition" value="bekas">
                                             <label class="form-check-label" for="inputCondition">
                                                 Bekas
                                             </label>

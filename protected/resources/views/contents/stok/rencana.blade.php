@@ -25,95 +25,95 @@
                     {{-- <div class="mb-2 col-lg-5">
                         <label class="form-label">No Referensi</label>
                         <input class="form-control" type="text" name="norefv" value="{{generateReference('SM')}}" disabled required>
-                        <input class="form-control" type="hidden" name="noref" value="{{generateReference('SM')}}" required>
-                    </div> --}}
+                    <input class="form-control" type="hidden" name="noref" value="{{generateReference('SM')}}" required>
+            </div> --}}
 
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Tanggal</label>
-                        <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required>
-                    </div>
+            <div class="mb-2 col-lg-5">
+                <label class="form-label">Tanggal</label>
+                <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required>
+            </div>
 
-                    {{-- <div class="mb-3 col-lg-5">
+            {{-- <div class="mb-3 col-lg-5">
                         <label class="form-label">Keterangan</label>
                         <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
                     </div> --}}
 
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Lokasi</label>
-                        <select class="form-control" name="lokasi" id="lokasi">
-                            <option value=""></option>
-                            @foreach ($lokasi as $lok)
-                                <option value="{{$lok->id}}">{{$lok->nama}}</option>
-                            @endforeach
-                        </select>
+            <div class="mb-2 col-lg-5">
+                <label class="form-label">Lokasi</label>
+                <select class="form-control" name="lokasi" id="lokasi">
+                    <option value=""></option>
+                    @foreach ($lokasi as $lok)
+                    <option value="{{$lok->id}}">{{$lok->nama}}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="mb-2 col-lg-5">
+                <label class="form-label">Sub Lokasi</label>
+                <select class="form-control" name="sublokasi" id="sublokasi">
+                    <option value=""></option>
+                    <option value="sdsd">sdsd</option>
+                </select>
+            </div>
+
+
+            <div class="mb-2">
+                <label class="form-label">Barang</label>
+
+                <!-- Repeater Html Start -->
+                <div id="repeater">
+                    <!-- Repeater Heading -->
+                    <div class="repeater-heading mb-2">
+                        <button type="button" class="btn btn-primary pull-right repeater-add-btn">
+                            Add
+                        </button>
                     </div>
-
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Sub Lokasi</label>
-                        <select class="form-control" name="sublokasi" id="sublokasi">
-                            <option value=""></option>
-                            <option value="sdsd">sdsd</option>
-                        </select>
-                    </div>
-
-
-                    <div class="mb-2">
-                        <label class="form-label">Barang</label>
-
-                        <!-- Repeater Html Start -->
-                        <div id="repeater">
-                            <!-- Repeater Heading -->
-                            <div class="repeater-heading mb-2">
-                                <button type="button" class="btn btn-primary pull-right repeater-add-btn">
-                                    Add
-                                </button>
-                            </div>
-                            <div class="clearfix"></div>
-                            <!-- Repeater Items -->
-                            <div class="items" data-group="barang">
-                                <!-- Repeater Content -->
-                                <div class="item-content">
-                                    <div class="row">
-                                        <div class="col-lg-5">
-                                            {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
-                                            <select class="form-control barang-select2" id="inputItem" data-name="item">
-                                                <option value=""></option>
-                                                @foreach ($barang as $item)
-                                                <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
-                                                @endforeach
-                                            </select>
-                                        </div>
-                                        <div class="col-lg-2 pt-2">
-                                            <input class="form-check-input" type="checkbox" data-name="kondisi" id="inputCondition" value="bekas">
-                                            <label class="form-check-label" for="inputCondition">
-                                                Bekas
-                                            </label>
-                                        </div>
-                                        <div class="col-lg-3">
-                                            <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty">
-                                        </div>
-
-                                        <div class="col-lg-2 repeater-remove-btn">
-                                            <button class="btn btn-danger remove-btn">
-                                                Remove
-                                            </button>
-                                        </div>
-                                    </div>
+                    <div class="clearfix"></div>
+                    <!-- Repeater Items -->
+                    <div class="items" data-group="barang">
+                        <!-- Repeater Content -->
+                        <div class="item-content">
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
+                                    <select class="form-control barang-select2" id="inputItem" data-name="item">
+                                        <option value=""></option>
+                                        @foreach ($barang as $item)
+                                        <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
+                                        @endforeach
+                                    </select>
                                 </div>
-                                {{-- <!-- Repeater Remove Btn -->
+                                <div class="col-lg-2 pt-2">
+                                    <input class="form-check-input" type="checkbox" data-name="bekas" value="coding" id="inputCondition">
+                                    <label class="form-check-label" for="inputCondition">
+                                        Bekas
+                                    </label>
+                                </div>
+                                <div class="col-lg-3">
+                                    <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty" value="3">
+                                </div>
+
+                                <div class="col-lg-2 repeater-remove-btn">
+                                    <button class="btn btn-danger remove-btn">
+                                        Remove
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        {{-- <!-- Repeater Remove Btn -->
                                 <div class="pull-right repeater-remove-btn">
                                     <button class="btn btn-danger remove-btn">
                                         Remove
                                     </button>
                                 </div> --}}
-                                <div class="clearfix"></div>
-                            </div>
-                            <!-- Repeater End -->
-                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+                    <!-- Repeater End -->
+                </div>
 
-                        <div class="btn-submit mt-5 d-flex justify-content-end">
-                            <button class="btn btn-md btn-primary">Cetak</button>
-                        </div>
+                <div class="btn-submit mt-5 d-flex justify-content-end">
+                    <button class="btn btn-md btn-primary">Cetak</button>
+                </div>
                 </form>
             </div>
         </div>
@@ -171,14 +171,14 @@
             'placeholder': ' -- pilih sublokasi --'
         });
 
-        selectLokasi.on('select2:select', function(){
+        selectLokasi.on('select2:select', function() {
             selectSubLokasi.html('<option></option');
             getSubLokasi($(this).val())
         })
 
         function getSubLokasi(ids) {
             console.log(location.origin)
-            $.get(location.origin +'/aktivitas/lokasi/' + ids).done(function(response) {
+            $.get(location.origin + '/aktivitas/lokasi/' + ids).done(function(response) {
                 let res = response
                 if (!res.status) return
 

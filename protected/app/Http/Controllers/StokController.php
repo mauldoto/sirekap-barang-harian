@@ -66,7 +66,7 @@ class StokController extends Controller
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
-            'barang.*.kondisi'  => 'nullable',
+            'barang.*.bekas'  => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -95,7 +95,7 @@ class StokController extends Controller
             $newLogStok->id_stok = $newStokIn->id;
             $newLogStok->id_barang = $barang['item'];
             $newLogStok->qty = $barang['qty'];
-            $newLogStok->is_new = isset($barang['kondisi']) ? true : false;
+            $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
 
             if (!$newLogStok->save()) {
                 DB::rollBack();
@@ -123,7 +123,7 @@ class StokController extends Controller
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
-            'barang.*.kondisi'  => 'nullable',
+            'barang.*.bekas'  => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -153,7 +153,7 @@ class StokController extends Controller
             $newLogStok->id_stok = $newStokOut->id;
             $newLogStok->id_barang = $barang['item'];
             $newLogStok->qty = -$barang['qty'];
-            $newLogStok->is_new = isset($barang['kondisi']) ? true : false;
+            $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
 
             if (!$newLogStok->save()) {
                 DB::rollBack();
@@ -189,42 +189,44 @@ class StokController extends Controller
 
     public function cetakRencanaSK(Request $request)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'noref'         => 'required|string',
-        //     'tanggal'       => 'required|date',
-        //     'barang'        => 'required|array',
-        //     'barang.*.item' => 'required',
-        //     'barang.*.qty'  => 'required',
-        //     'barang.*.kondisi'  => 'nullable',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'tanggal'       => 'required|date',
+            'lokasi'        => 'required',
+            'sublokasi'     => 'required',
+            'barang'        => 'required|array',
+            'barang.*.item' => 'required',
+            'barang.*.qty'  => 'required',
+            'barang.*.bekas'  => 'nullable',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $lokasi = Lokasi::where('id', $request->lokasi)->first();
-        
+
         $sublokasi = SubLokasi::where('id', $request->sublokasi)->first();
 
         $barangIds = array_unique(array_column($request->barang, 'item'));
         $dbBarang = Barang::whereIn('id', $barangIds)->get();
-
+        // dd($dbBarang);
         $barangFinal = [];
         foreach ($request->barang as $key => $barang) {
             foreach ($dbBarang as $key => $dbb) {
                 if ($barang['item'] == $dbb->id) {
-                    $dbb->kondisi = isset($barang['kondisi']) ? 'Baru' : 'Bekas';
-                    $dbb->qty = $barang['qty'];
+                    $cloneDbb = clone $dbb;
+                    $cloneDbb->kondisi = array_key_exists('bekas', $barang) ? 'Bekas' : 'Baru';
+                    $cloneDbb->qty = $barang['qty'];
 
-                    array_push($barangFinal, $dbb);
+                    array_push($barangFinal, $cloneDbb);
                 }
             }
         }
-
+        // dd($barangFinal);
         $pdf = LaravelMpdf::loadview('exports.pdf.cetak-perencanaan', [
-            'barang'    => $barangFinal, 
+            'barang'    => $barangFinal,
             'tanggal'   => Carbon::createFromFormat('Y-m-d', $request->tanggal)->format('d-m-Y'),
             'lokasi'    => $lokasi,
             'sublokasi' => $sublokasi
