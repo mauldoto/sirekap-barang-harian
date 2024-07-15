@@ -76,6 +76,9 @@ Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store');
 
     Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf');
+    Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi');
+    Route::get('/rencana-sk', [StokController::class, 'rencanaSK'])->name('stok.rencana');
+    Route::post('/rencana-sk', [StokController::class, 'cetakRencanaSK'])->name('stok.rencana.cetak');
 });
 
 Route::prefix('aktivitas')->group(function () {

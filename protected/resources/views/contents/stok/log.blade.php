@@ -58,6 +58,7 @@
                             <th>Aktivitas</th>
                             <th>Diinput Oleh</th>
                             <th>Barang</th>
+                            <th>Kondisi</th>
                             <th>Jumlah</th>
                         </tr>
                     </thead>
@@ -79,6 +80,7 @@
                             </td>
                             <td>{{ $i->stok->user->username }}</td>
                             <td>{{ $i->barang->nama }}</td>
+                            <td><span class="badge rounded-pill {{ $i->is_new ? 'bg-primary' : 'bg-warning' }}">{{ $i->is_new ? 'Baru' : 'Bekas' }}</span></td>
                             <td><span class="{{$i->qty < 0 ? 'text-danger' : 'text-success'}}">{{ $i->qty < 0 ? -1 * $i->qty : $i->qty }}</span> ({{$i->barang->satuan}})</td>
                         </tr>
                         @endforeach

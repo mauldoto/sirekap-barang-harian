@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Report Aktivitas - JPN</title>
+	<title>Report Stok - JPN</title>
     {{-- @include('layouts.head-css') --}}
     <link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 

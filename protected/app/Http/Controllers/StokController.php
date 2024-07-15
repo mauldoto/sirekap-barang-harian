@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Aktivitas;
 use App\Models\Barang;
 use App\Models\LogStok;
+use App\Models\Lokasi;
 use App\Models\Stok;
+use App\Models\SubLokasi;
 use Carbon\Carbon;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 use Illuminate\Http\Request;
@@ -174,6 +176,60 @@ class StokController extends Controller
             ->groupBy('id_barang', 'is_new')->get();
 
         $pdf = LaravelMpdf::loadview('exports.pdf.stok', ['stok' => $stok, 'tanggal' => Carbon::now()->format('d-m-Y')]);
+        return $pdf->stream('report-stok.pdf');
+    }
+
+    public function rencanaSK()
+    {
+        $barang = Barang::all();
+        $lokasi = Lokasi::all();
+
+        return view('contents.stok.rencana', compact('barang', 'lokasi'));
+    }
+
+    public function cetakRencanaSK(Request $request)
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'noref'         => 'required|string',
+        //     'tanggal'       => 'required|date',
+        //     'barang'        => 'required|array',
+        //     'barang.*.item' => 'required',
+        //     'barang.*.qty'  => 'required',
+        //     'barang.*.kondisi'  => 'nullable',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
+
+        $lokasi = Lokasi::where('id', $request->lokasi)->first();
+        
+        $sublokasi = SubLokasi::where('id', $request->sublokasi)->first();
+
+        $barangIds = array_unique(array_column($request->barang, 'item'));
+        $dbBarang = Barang::whereIn('id', $barangIds)->get();
+
+        $barangFinal = [];
+        foreach ($request->barang as $key => $barang) {
+            foreach ($dbBarang as $key => $dbb) {
+                if ($barang['item'] == $dbb->id) {
+                    $dbb->kondisi = isset($barang['kondisi']) ? 'Baru' : 'Bekas';
+                    $dbb->qty = $barang['qty'];
+
+                    array_push($barangFinal, $dbb);
+                }
+            }
+        }
+
+        $pdf = LaravelMpdf::loadview('exports.pdf.cetak-perencanaan', [
+            'barang'    => $barangFinal, 
+            'tanggal'   => Carbon::createFromFormat('Y-m-d', $request->tanggal)->format('d-m-Y'),
+            'lokasi'    => $lokasi,
+            'sublokasi' => $sublokasi
+        ]);
+
         return $pdf->stream('report-stok.pdf');
     }
 }
