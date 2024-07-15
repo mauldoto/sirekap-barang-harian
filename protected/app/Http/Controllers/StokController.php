@@ -166,12 +166,12 @@ class StokController extends Controller
     public function exportPdf(Request $request)
     {
 
-        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'));
+        $stok = LogStok::select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'));
         if ($request->barang) {
             $stok = $stok->whereIn('id_barang', $request->barang);
         }
         $stok = $stok->with('barang')
-            ->groupBy('id_barang')->get();
+            ->groupBy('id_barang', 'is_new')->get();
 
         $pdf = LaravelMpdf::loadview('exports.pdf.stok', ['stok' => $stok, 'tanggal' => Carbon::now()->format('d-m-Y')]);
         return $pdf->stream('report-stok.pdf');

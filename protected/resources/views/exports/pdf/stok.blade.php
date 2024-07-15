@@ -51,6 +51,7 @@
 			<tr>
 				<th style="text-align: center">Kode</th>
 				<th style="text-align: center">Nama</th>
+				<th style="text-align: center">Kondisi</th>
 				<th style="text-align: center">Stok</th>
 			</tr>
 		</thead>
@@ -59,6 +60,7 @@
                 <tr>
                     <td style="text-align: center">{{$item->barang->kode}}</td>
                     <td style="text-align: center">{{$item->barang->nama}}</td>
+                    <td style="text-align: center">{{$item->is_new ? 'Baru':'Bekas'}}</td>
                     <td style="text-align: center">{{$item->sumqty}}</td>
                 </tr>
 			@endforeach
