@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Aktivitas;
 use App\Models\Barang;
+use App\Models\Karyawan;
 use App\Models\LogStok;
 use App\Models\Lokasi;
 use App\Models\Stok;
@@ -183,8 +184,9 @@ class StokController extends Controller
     {
         $barang = Barang::all();
         $lokasi = Lokasi::all();
+        $karyawan = Karyawan::all();
 
-        return view('contents.stok.rencana', compact('barang', 'lokasi'));
+        return view('contents.stok.rencana', compact('barang', 'lokasi', 'karyawan'));
     }
 
     public function cetakRencanaSK(Request $request)
@@ -193,6 +195,7 @@ class StokController extends Controller
             'tanggal'       => 'required|date',
             'lokasi'        => 'required',
             'sublokasi'     => 'required',
+            'teknisi'       => 'required',
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
@@ -208,6 +211,8 @@ class StokController extends Controller
         $lokasi = Lokasi::where('id', $request->lokasi)->first();
 
         $sublokasi = SubLokasi::where('id', $request->sublokasi)->first();
+
+        $karyawan = Karyawan::whereIn('id', $request->teknisi)->get();
 
         $barangIds = array_unique(array_column($request->barang, 'item'));
         $dbBarang = Barang::whereIn('id', $barangIds)->get();
@@ -229,7 +234,8 @@ class StokController extends Controller
             'barang'    => $barangFinal,
             'tanggal'   => Carbon::createFromFormat('Y-m-d', $request->tanggal)->format('d-m-Y'),
             'lokasi'    => $lokasi,
-            'sublokasi' => $sublokasi
+            'sublokasi' => $sublokasi,
+            'karyawan'  => $karyawan,
         ]);
 
         return $pdf->stream('report-stok.pdf');

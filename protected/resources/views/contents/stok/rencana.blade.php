@@ -56,6 +56,15 @@
                 </select>
             </div>
 
+            <div class="mb-2 col-lg-5">
+                <label class="form-label">Teknisi</label>
+                <select class="form-control" name="teknisi[]" id="teknisi" multiple>
+                    @foreach($karyawan as $key => $p)
+                    <option value="{{$p->id}}">{{$p->nama}}</option>
+                    @endforeach
+                </select>
+            </div>
+
 
             <div class="mb-2">
                 <label class="form-label">Barang</label>
@@ -161,6 +170,10 @@
 
         $('.barang-select2').select2({
             placeholder: "-- Pilih Barang --"
+        });
+
+        $('#teknisi').select2({
+            placeholder: "-- Pilih Teknisi --"
         });
 
         let selectLokasi = $('#lokasi').select2({
