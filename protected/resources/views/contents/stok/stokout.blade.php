@@ -44,6 +44,11 @@
                         </select>
                     </div>
 
+                    <div class="mb-3 col-lg-5">
+                        <label class="form-label">Keterangan</label>
+                        <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
+                    </div>
+
                     <div class="mb-2">
                         <label class="form-label">Barang</label>
 

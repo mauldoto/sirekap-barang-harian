@@ -80,6 +80,7 @@ class StokController extends Controller
         $newStokIn->tanggal = $request->tanggal;
         $newStokIn->type = 'masuk';
         $newStokIn->input_by = $request->user()->id;
+        $newStokIn->deskripsi = $request->keterangan;
 
 
         if (!$newStokIn->save()) {
@@ -136,6 +137,9 @@ class StokController extends Controller
         $newStokOut->id_aktivitas = $request->aktivitas ?? null;
         $newStokOut->tanggal = $request->tanggal;
         $newStokOut->type = 'keluar';
+        $newStokOut->deskripsi = $request->keterangan;
+        $newStokOut->input_by = $request->user()->id;
+
 
         if (!$newStokOut->save()) {
             DB::rollBack();
