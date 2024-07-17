@@ -111,7 +111,28 @@ class StokController extends Controller
     // this section is for out stock
     public function viewStokKeluar()
     {
-        $barang = Barang::all();
+        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+            ->with('barang')
+            ->having('sumqty', '>', 0)
+            ->groupBy('id_barang', 'is_new')->get();
+
+        $ids = array_map(function($item) {
+            return $item['id_barang'];
+        }, $stok->toArray());
+
+        $barang = Barang::whereIn('id', $ids)->get();
+
+        foreach ($barang as $key => $item) {
+            foreach ($stok as $key => $stokValue) {
+                if ($stokValue->id_barang == $item->id) {
+                    if ($stokValue->is_new) {
+                        $item->new = $stokValue->sumqty;
+                    } else {
+                        $item->second = $stokValue->sumqty;
+                    }
+                }
+            }
+        }
         $aktivitas = Aktivitas::all();
         return view('contents.stok.stokout', compact('barang', 'aktivitas'));
     }
@@ -182,7 +203,31 @@ class StokController extends Controller
 
     public function rencanaSK()
     {
-        $barang = Barang::all();
+        
+
+        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+            ->with('barang')
+            ->having('sumqty', '>', 0)
+            ->groupBy('id_barang', 'is_new')->get();
+
+        $ids = array_map(function($item) {
+            return $item['id_barang'];
+        }, $stok->toArray());
+
+        $barang = Barang::whereIn('id', $ids)->get();
+
+        foreach ($barang as $key => $item) {
+            foreach ($stok as $key => $stokValue) {
+                if ($stokValue->id_barang == $item->id) {
+                    if ($stokValue->is_new) {
+                        $item->new = $stokValue->sumqty;
+                    } else {
+                        $item->second = $stokValue->sumqty;
+                    }
+                }
+            }
+        }
+
         $lokasi = Lokasi::all();
         $karyawan = Karyawan::all();
 
