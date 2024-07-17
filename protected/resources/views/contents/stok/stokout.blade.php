@@ -71,7 +71,9 @@
                                             <select class="form-control select2" id="inputItem" data-name="item">
                                                 <option value=""></option>
                                                 @foreach ($barang as $item)
-                                                <option value="{{$item->id}}">{{$item->nama}} ({{$item->kode}}) - {{$item->satuan}}</option>
+                                                <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
+                                                    {{$item->nama}} ({{$item->kode}}) - {{$item->satuan}} 
+                                                </option>
                                                 @endforeach
                                             </select>
                                         </div>
@@ -145,14 +147,21 @@
             let select2Arr = $('.select2')
             select2Arr.each(function(index, el) {
                 $(el).select2({
-                    placeholder: "-- Pilih Barang --"
+                    placeholder: "-- Pilih Barang --",
+                    templateResult: formatOption
                 });
             })
         })
 
         $('.select2').select2({
-            placeholder: "-- Pilih Barang --"
+            placeholder: "-- Pilih Barang --",
+            templateResult: formatOption
         });
+
+        function formatOption (option) {
+            var $option = $('<div>' + option.text + '</div><small> '+option.title+' </small>');
+            return $option;
+        };
 
         $('.job-select2').select2({
             placeholder: "-- Pilih Aktivitas/Job --"
