@@ -20,21 +20,5 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-
-        $admin = new User();
-        $admin->name = 'JPN Superadmin';
-        $admin->username = 'superadmin';
-        $admin->email = 'jpn@putranetworks.net';
-        $admin->password = bcrypt('superadmin#jpn');
-
-        $admin->save();
-
-        $admin = new User();
-        $admin->name = 'JPN Admin';
-        $admin->username = 'adminjpn';
-        $admin->email = 'noc.jpn@gmail.com';
-        $admin->password = bcrypt('jpn#pride');
-
-        $admin->save();
     }
 }
