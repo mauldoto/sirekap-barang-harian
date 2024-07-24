@@ -59,7 +59,7 @@
                         @foreach($aktivitas as $key => $i)
                         <tr>
                             <td>{{ $i->tanggal_berangkat }} s/d {{ $i->tanggal_pulang }}</td>
-                            <td>{{ $i->kode }}</td>
+                            <td>{{ $i->no_referensi }}</td>
                             <td>{{ $i->lokasi->nama }}</td>
                             <td>{{ $i->sublokasi->nama }}</td>
                             <td>{{ $i->user->username }}</td>
