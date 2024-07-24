@@ -46,6 +46,7 @@
                     <thead>
                         <tr>
                             <th>Tanggal</th>
+                            <th>Kode</th>
                             <th>Lokasi</th>
                             <th>Sub Lokasi</th>
                             <th>Diinput Oleh</th>
@@ -58,6 +59,7 @@
                         @foreach($aktivitas as $key => $i)
                         <tr>
                             <td>{{ $i->tanggal_berangkat }} s/d {{ $i->tanggal_pulang }}</td>
+                            <td>{{ $i->kode }}</td>
                             <td>{{ $i->lokasi->nama }}</td>
                             <td>{{ $i->sublokasi->nama }}</td>
                             <td>{{ $i->user->username }}</td>
