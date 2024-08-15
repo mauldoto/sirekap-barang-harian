@@ -7,6 +7,7 @@ use App\Models\AktivitasKaryawan;
 use App\Models\Karyawan;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
+use App\Models\Stok;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -38,6 +39,9 @@ class AktivitasController extends Controller
     public function getDetail(request $request, $id)
     {
         $aktivitas = Aktivitas::where('id', $id)->with('teknisi.karyawan')->first();
+        $barang = Stok::where('type', 'keluar')->where('id_aktivitas', $aktivitas->id)->with('stok.barang')->first();
+
+        $aktivitas->barang = $barang ? $barang->stok : [];
         // if ($type != 'json') {
         //     if (!$karyawan) {
         //         return back()->withErrors(['karyawan tidak ditemukan']);
