@@ -84,7 +84,7 @@
                 <h5 class="modal-title" id="detailLabel">Detail </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            
+
             <div class="modal-body">
                 <table class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline" aria-describedby="datatable_info" style="width: 100%;">
                     <tbody>
@@ -107,6 +107,11 @@
                             <td>Deskripsi</td>
                             <td>:</td>
                             <td class="deskripsi"></td>
+                        </tr>
+                        <tr>
+                            <td>Perangkat</td>
+                            <td>:</td>
+                            <td class="perangkat"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -169,7 +174,6 @@
                 let res = response
                 if (!res.status) return
 
-                console.log(res);
                 $('.ka').html(res.data.no_referensi)
                 $('.tanggal').html(res.data.tanggal_berangkat + ' - ' +res.data.tanggal_pulang)
 
@@ -177,7 +181,14 @@
                 for (const teknisi of res.data.teknisi) {
                     tempTeknisi += '- ' + teknisi.karyawan.nama + '<br/>'
                 }
+
+                let tempBarang = ''
+                for (const item of res.data.barang) {
+                    tempBarang += '- ' + item.barang.nama + ' ('+ (item.qty < 1 ? item.qty * -1 : item.qty) + " " + item.barang.satuan + ')' + '<br />'
+                }
+
                 $('.teknisi').html(tempTeknisi)
+                $('.perangkat').html(tempBarang)
                 $('.deskripsi').html(res.data.deskripsi)
 
                 setTimeout(() => {
