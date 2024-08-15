@@ -20,4 +20,9 @@ class Stok extends Model
     {
         return $this->belongsTo(User::class, 'input_by', 'id');
     }
+
+    public function stok()
+    {
+        return $this->hasMany(LogStok::class, 'id_stok', 'id');
+    }
 }
