@@ -89,4 +89,5 @@ Route::prefix('aktivitas')->group(function () {
     Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store');
 
     Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');
+    Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket');
 });
