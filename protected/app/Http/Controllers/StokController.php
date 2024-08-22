@@ -133,7 +133,7 @@ class StokController extends Controller
                 }
             }
         }
-        $aktivitas = Aktivitas::all();
+        $aktivitas = Aktivitas::orderBy('tanggal_berangkat', 'DESC')->get();
         return view('contents.stok.stokout', compact('barang', 'aktivitas'));
     }
 

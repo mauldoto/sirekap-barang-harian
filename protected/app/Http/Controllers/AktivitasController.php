@@ -33,7 +33,9 @@ class AktivitasController extends Controller
             ->where('tanggal_berangkat', '<=', $endDate)
             ->get();
 
-        return view('contents.aktivitas.index', compact('aktivitas', 'startDate', 'endDate'));
+        $reportAktivitas = Aktivitas::orderBy('tanggal_berangkat', 'DESC')->get();
+
+        return view('contents.aktivitas.index', compact('aktivitas', 'startDate', 'endDate', 'reportAktivitas'));
     }
 
     public function getDetail(request $request, $id)
@@ -168,9 +170,23 @@ class AktivitasController extends Controller
             ->where('tanggal_berangkat', '<=', $endDate)
             ->get();
 
-        // return view('exports.pdf.aktivitas', compact('aktivitas'));
+        // return view('exports.pdf.tiket-aktivitas', compact('aktivitas'));
 
-        $pdf = LaravelMpdf::loadview('exports.pdf.aktivitas', ['aktivitas' => $aktivitas]);
+        $pdf = LaravelMpdf::loadview('exports.pdf.tiket-aktivitas', ['aktivitas' => $aktivitas]);
         return $pdf->stream('report-aktivitas.pdf');
+    }
+
+    public function printTiket(Request $request, $tiket)
+    {
+
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with(['teknisi.karyawan', 'lokasi', 'sublokasi'])->first();
+        $barang = Stok::where('type', 'keluar')->where('id_aktivitas', $aktivitas->id)->with('stok.barang')->first();
+
+        $aktivitas->barang = $barang ? $barang->stok : [];
+        // dd($aktivitas);
+        // return view('exports.pdf.tiket-aktivitas', compact('aktivitas'));
+
+        $pdf = LaravelMpdf::loadview('exports.pdf.tiket-aktivitas', ['aktivitas' => $aktivitas]);
+        return $pdf->stream($aktivitas->no_referensi.'.pdf');
     }
 }
