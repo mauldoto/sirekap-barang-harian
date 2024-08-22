@@ -68,7 +68,7 @@
                                     <div class="row">
                                         <div class="col-lg-5">
                                             {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
-                                            <select class="form-control select2" id="inputItem" data-name="item">
+                                            <select class="form-control select2 barang-select2" id="inputItem" data-name="item">
                                                 <option value=""></option>
                                                 @foreach ($barang as $item)
                                                 <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
@@ -144,7 +144,7 @@
         , });
 
         $(".repeater-add-btn").click(function() {
-            let select2Arr = $('.select2')
+            let select2Arr = $('.barang-select2')
             select2Arr.each(function(index, el) {
                 $(el).select2({
                     placeholder: "-- Pilih Barang --",
@@ -153,7 +153,7 @@
             })
         })
 
-        $('.select2').select2({
+        $('.barang-select2').select2({
             placeholder: "-- Pilih Barang --",
             templateResult: formatOption
         });
