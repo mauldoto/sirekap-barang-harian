@@ -109,7 +109,7 @@
                             <td class="deskripsi"></td>
                         </tr>
                         <tr>
-                            <td>Perangkat</td>
+                            <td>Barang Terpakai</td>
                             <td>:</td>
                             <td class="perangkat"></td>
                         </tr>
