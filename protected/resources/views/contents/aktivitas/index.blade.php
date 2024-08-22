@@ -17,7 +17,7 @@
                     <h4 class="card-title mb-4">Log Aktivitas/Job</h4>
                     <div class="button-group">
                         <a href="{{route('aktivitas.input')}}" class="btn btn-sm btn-success"><i class='bx bx-archive-in'></i> Input Aktivitas</a>
-                        <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export Aktivitas</a>
+                        {{-- <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export Aktivitas</a> --}}
                     </div>
                 </div>
 
