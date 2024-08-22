@@ -17,7 +17,7 @@
                     <h4 class="card-title mb-4">Log Aktivitas/Job</h4>
                     <div class="button-group">
                         <a href="{{route('aktivitas.input')}}" class="btn btn-sm btn-success"><i class='bx bx-archive-in'></i> Input Aktivitas</a>
-                        <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export PDF</a>
+                        <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export Aktivitas</a>
                     </div>
                 </div>
 
@@ -25,17 +25,17 @@
 
                 <form action="" method="GET">
                     <div class="row">
-                            <div class="mb-2 col-lg-2">
-                                <label class="form-label">Dari</label>
-                                <input class="form-control" type="date" name="dari" placeholder="Masukkan tanggal" value="{{$startDate}}" required>
-                            </div>
-                            <div class="mb-2 col-lg-2">
-                                <label class="form-label">Sampai</label>
-                                <input class="form-control" type="date" name="ke" placeholder="Masukkan tanggal" value="{{$endDate}}" required>
-                            </div>
-                            <div class="mb-2 col-lg-2 d-flex align-items-end">
-                                <button class="btn btn-primary">Filter</button>
-                            </div>
+                        <div class="mb-2 col-lg-2">
+                            <label class="form-label">Dari</label>
+                            <input class="form-control" type="date" name="dari" placeholder="Masukkan tanggal" value="{{$startDate}}" required>
+                        </div>
+                        <div class="mb-2 col-lg-2">
+                            <label class="form-label">Sampai</label>
+                            <input class="form-control" type="date" name="ke" placeholder="Masukkan tanggal" value="{{$endDate}}" required>
+                        </div>
+                        <div class="mb-2 col-lg-2 d-flex align-items-end">
+                            <button class="btn btn-primary">Filter</button>
+                        </div>
                     </div>
                 </form>
 
@@ -64,9 +64,14 @@
                             <td>{{ $i->sublokasi->nama }}</td>
                             <td>{{ $i->user->username }}</td>
                             <td class="text-center">
-                                <button class="btn btn-secondary detail-btn" data-id="{{$i->id}}">
+                                <button class="btn btn-secondary detail-btn" data-id="{{$i->id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail">
                                     <i class='bx bx-search-alt-2'></i>
                                 </button>
+                                <a href="{{route('aktivitas.print.tiket', $i->no_referensi)}}">
+                                    <button class="btn btn-warning" data-id="{{$i->id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Print Tiket">
+                                        <i class='bx bxs-discount'></i>
+                                    </button>
+                                </a>
                             </td>
                         </tr>
                         @endforeach
@@ -124,7 +129,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="modalExportPdfLabel">Export Aktivitas - PDF</h5>
+                <h5 class="modal-title" id="modalExportPdfLabel">Export Aktivitas</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
 
@@ -155,6 +160,7 @@
 @section('css')
 <link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
+{{-- <link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}"  rel="stylesheet" type="text/css" /> --}}
 @endsection
 
 @section('script')
@@ -162,12 +168,19 @@
 <script src="{{ URL::asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
+{{-- <script src="{{ URL::asset('assets/libs/select2/js/select2.min.js') }}"></script> --}}
 @endsection
 
 @push('page-js')
 <script>
     $(document).ready(function() {
-        $("#datatable-aktivitas").dataTable();
+        $("#datatable-aktivitas").dataTable({
+            "aaSorting":[[ 0, "desc" ]]
+        });
+
+        // $('.job-select2').select2({
+        //     placeholder: "-- Pilih Aktivitas/Job --"
+        // });
 
         function getDetailAktivitas(ids) {
             $.get('aktivitas/' + ids + '/detail').done(function(response) {
