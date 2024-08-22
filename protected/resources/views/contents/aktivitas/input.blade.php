@@ -24,8 +24,11 @@
                     @csrf
                     <div class="mb-4 col-lg-5">
                         <label class="form-label">No Referensi</label>
-                        <input class="form-control" type="text" name="norefv" value="{{generateReference('JOB')}}" disabled required>
-                        <input class="form-control" type="hidden" name="noref" value="{{generateReference('JOB')}}" required>
+                        @php
+                            $noref = generateReference('JOB');
+                        @endphp
+                        <input class="form-control" type="text" name="norefv" value="{{$noref}}" disabled required>
+                        <input class="form-control" type="hidden" name="noref" value="{{$noref}}" required>
                     </div>
 
                     <div class="mb-2 col-lg-10">
