@@ -76,14 +76,18 @@
                             </td>
                             <td>{{ $i->user->username }}</td>
                             <td class="text-center">
-                                <button class="btn btn-secondary detail-btn" data-id="{{$i->id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail">
-                                    <i class='bx bx-search-alt-2'></i>
-                                </button>
-                                <a href="{{route('aktivitas.print.tiket', $i->no_referensi)}}" target="_blank">
-                                    <button class="btn btn-warning" data-id="{{$i->id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Print Tiket">
-                                        <i class='bx bxs-discount'></i>
-                                    </button>
-                                </a>
+                                <div class="btn-group">
+                                    <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">Aksi <i class="mdi mdi-chevron-down"></i></button>
+                                    <div class="dropdown-menu" style="">
+                                        <a class="dropdown-item detail-btn d-flex align-items-center" href="#" data-url="" data-id="{{$i->id}}"><i class='bx bx-search-alt-2 me-1'></i> Detail</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item delete-btn d-flex align-items-center" href="#" data-url=""><i class='bx bx-task me-1'></i> Update Status</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item delete-btn d-flex align-items-center" href="#" data-url=""><i class='bx bxs-edit me-1' ></i> Edit</a>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                         @endforeach
