@@ -102,6 +102,7 @@ class AktivitasController extends Controller
             'deskripsi' => 'nullable',
             'tanggal_berangkat' => 'required|date',
             'tanggal_pulang' => 'required|date',
+            'status' => 'nullable|in:waiting,progress,done,cancel',
         ]);
 
         if ($validator->fails()) {
@@ -127,6 +128,7 @@ class AktivitasController extends Controller
         $newActivity->tanggal_pulang = $request->tanggal_pulang;
         $newActivity->deskripsi = $request->deskripsi;
         $newActivity->input_by = $request->user()->id;
+        $newActivity->status = 'waiting';
 
         if (!$newActivity->save()) {
             DB::rollBack();
@@ -183,7 +185,6 @@ class AktivitasController extends Controller
         $barang = Stok::where('type', 'keluar')->where('id_aktivitas', $aktivitas->id)->with('stok.barang')->first();
 
         $aktivitas->barang = $barang ? $barang->stok : [];
-        // dd($aktivitas);
         // return view('exports.pdf.tiket-aktivitas', compact('aktivitas'));
 
         $pdf = LaravelMpdf::loadview('exports.pdf.tiket-aktivitas', ['aktivitas' => $aktivitas]);

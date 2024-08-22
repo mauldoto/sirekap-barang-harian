@@ -57,6 +57,34 @@
             text-align: center;
             padding: 5px 8px;
         }
+
+        .p-1 {
+            padding: 20px;
+        }
+
+        .text-white {
+            color: white;
+        }
+
+        .bg-secondary {
+            background-color: #6c757d;
+        }
+
+        .bg-danger {
+            background-color: #dc3545;
+        }
+
+        .bg-success {
+            background-color: #198754;
+        }
+
+        .bg-warning {
+            background-color: #ffc107;
+        }
+
+        .rounded {
+            border-radius: 50px;
+        }
     </style>
 </head>
 <body>
@@ -65,7 +93,9 @@
         <div class="logo">
             <img style="width: 120px;" src="http://sirekap.test:81/assets/images/logo-jpn.png" alt="">
         </div>
-        <h1 class="title" style="font-size:15px; text-align: right; margin-top:-40px;">Tiket Aktivitas</h1>
+        <h1 class="title" style="font-size:20px; text-align: right; margin-top:-40px;">
+            Tiket Aktivitas
+        </h1>
     </div>
     
     {{-- <div class="header" style="margin-top: 50px; margin-bottom: 5px;">
@@ -76,6 +106,15 @@
     <div class="no-tiket" style="margin-top:50px; margin-bottom: 30px; text-align: center;">
         <h5 style="color: grey; margin-bottom: -5px;">No Tiket</h4>
         <h1 style="font-size: 35px;">{{$aktivitas->no_referensi}}</h1>
+        @if ($aktivitas->status === 'waiting')
+            <span class="p-1 text-white rounded bg-secondary">WAITING</span>
+        @elseif ($aktivitas->status === 'progress')
+            <span class="p-1 text-white rounded bg-warning">PROGRESS</span>
+        @elseif ($aktivitas->status === 'done')
+            <span class="p-1 text-white rounded bg-success">DONE</span>
+        @else
+            <span class="p-1 text-white rounded bg-danger">CANCEL</span>
+        @endif
     </div>
 
     <div class="detail" style="margin-top:40px; padding: 0 70px; text-align:left;">

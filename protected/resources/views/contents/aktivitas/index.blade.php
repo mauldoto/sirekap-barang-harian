@@ -49,6 +49,7 @@
                             <th>Kode</th>
                             <th>Lokasi</th>
                             <th>Sub Lokasi</th>
+                            <th>Status</th>
                             <th>Diinput Oleh</th>
                             <th>Aksi</th>
                         </tr>
@@ -62,12 +63,23 @@
                             <td>{{ $i->no_referensi }}</td>
                             <td>{{ $i->lokasi->nama }}</td>
                             <td>{{ $i->sublokasi->nama }}</td>
+                            <td>
+                                @if ($i->status === 'waiting')
+                                    <span class="p-1 text-white rounded bg-secondary">Waiting</span>
+                                @elseif ($i->status === 'progress')
+                                    <span class="p-1 text-white rounded bg-warning">Progress</span>
+                                @elseif ($i->status === 'done')
+                                    <span class="p-1 text-white rounded bg-success">Done</span>
+                                @else
+                                    <span class="p-1 text-white rounded bg-danger">Cancel</span>
+                                @endif
+                            </td>
                             <td>{{ $i->user->username }}</td>
                             <td class="text-center">
                                 <button class="btn btn-secondary detail-btn" data-id="{{$i->id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Detail">
                                     <i class='bx bx-search-alt-2'></i>
                                 </button>
-                                <a href="{{route('aktivitas.print.tiket', $i->no_referensi)}}">
+                                <a href="{{route('aktivitas.print.tiket', $i->no_referensi)}}" target="_blank">
                                     <button class="btn btn-warning" data-id="{{$i->id}}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Print Tiket">
                                         <i class='bx bxs-discount'></i>
                                     </button>
