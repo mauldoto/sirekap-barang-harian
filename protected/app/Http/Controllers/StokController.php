@@ -23,8 +23,7 @@ class StokController extends Controller
             ->with('barang')
             ->groupBy('id_barang', 'is_new')->get();
 
-        $barang = Barang::get();
-        return view('contents.stok.index', compact('stok', 'barang'));
+        return view('contents.stok.index', compact('stok'));
     }
 
     public function log(Request $request)
