@@ -84,9 +84,12 @@ Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
 Route::prefix('aktivitas')->group(function () {
     Route::get('/', [AktivitasController::class, 'index'])->name('aktivitas.index');
     Route::get('/{id}/detail', [AktivitasController::class, 'getDetail'])->name('aktivitas.getdetail');
+    Route::get('/{tiket}/edit', [AktivitasController::class, 'edit'])->name('aktivitas.edit');
     Route::get('/input', [AktivitasController::class, 'input'])->name('aktivitas.input');
     Route::get('/lokasi/{id}', [AktivitasController::class, 'getSubLokasi'])->name('aktivitas.sublokasi');
     Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store');
+    Route::post('/update', [AktivitasController::class, 'update'])->name('aktivitas.update');
+    Route::put('/{tiket}/update-status', [AktivitasController::class, 'updateStatus'])->name('aktivitas.update.status');
 
     Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');
     Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket');
