@@ -164,6 +164,10 @@ class AktivitasController extends Controller
         if (!$aktivitas) {
             return back()->withErrors(['Aktivitas dengan no tiket ' .$tiket. ' tidak ditemukan.']);
         }
+
+        if (in_array($aktivitas->status, ['done', 'cancel'])) {
+            return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
+        }
         
         return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas'));
     }
@@ -259,6 +263,9 @@ class AktivitasController extends Controller
         }
 
         $activity->status = $request->status;
+        if ($request->status == 'cancel') {
+            $activity->deskripsi = $activity->deskripsi . ' #[CANCEL]: ' . $request->deskripsi;
+        }
 
         if (!$activity->save()) {
             return back()->withErrors(['Update status aktivitas gagal.'])->withInput();
