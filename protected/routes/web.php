@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LokasiController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StokController;
 use Illuminate\Support\Facades\Route;
 
@@ -93,4 +94,9 @@ Route::prefix('aktivitas')->group(function () {
 
     Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');
     Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket');
+});
+
+Route::prefix('report')->middleware(['web', 'auth'])->group(function () {
+    Route::get('/stok', [ReportController::class, 'reportStok'])->name('report.stok');
+    Route::get('/aktivitas', [ReportController::class, 'reportAktivitas'])->name('report.aktivitas');
 });
