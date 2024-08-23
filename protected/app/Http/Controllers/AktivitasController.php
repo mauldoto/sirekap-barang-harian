@@ -162,14 +162,19 @@ class AktivitasController extends Controller
         $lokasi = Lokasi::all();
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with(['teknisi.karyawan', 'lokasi', 'sublokasi'])->first();
         if (!$aktivitas) {
-            return back()->withErrors(['Aktivitas dengan no tiket ' .$tiket. ' tidak ditemukan.']);
+            return back()->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
         }
 
         if (in_array($aktivitas->status, ['done', 'cancel'])) {
             return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
         }
-        
-        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas'));
+
+        $teknisiArr = [];
+        foreach ($aktivitas->teknisi as $key => $value) {
+            array_push($teknisiArr, $value->id_karyawan);
+        }
+
+        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr'));
     }
 
     public function update(Request $request, $tiket)
@@ -202,7 +207,7 @@ class AktivitasController extends Controller
 
         $activity = Aktivitas::where('no_referensi', $tiket)->first();
         if (!$activity) {
-            return redirect(route('aktivitas.index'))->withErrors(['Aktivitas dengan no tiket ' .$tiket. ' tidak ditemukan.']);
+            return redirect(route('aktivitas.index'))->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
         }
 
         $activity->id_lokasi = $request->lokasi;
@@ -255,7 +260,7 @@ class AktivitasController extends Controller
 
         $activity = Aktivitas::where('no_referensi', $tiket)->first();
         if (!$activity) {
-            return redirect(route('aktivitas.index'))->withErrors(['Aktivitas dengan no tiket ' .$tiket. ' tidak ditemukan.']);
+            return redirect(route('aktivitas.index'))->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
         }
 
         if (in_array($activity->status, ['done', 'cancel'])) {
@@ -271,7 +276,7 @@ class AktivitasController extends Controller
             return back()->withErrors(['Update status aktivitas gagal.'])->withInput();
         }
 
-        return back()->with(['success' => 'Update Status aktivitas ' . $tiket . ' menjadi ' . strtoupper($request->status) .' berhasil']);
+        return back()->with(['success' => 'Update Status aktivitas ' . $tiket . ' menjadi ' . strtoupper($request->status) . ' berhasil']);
     }
 
     public function exportPdf(Request $request)
@@ -306,6 +311,6 @@ class AktivitasController extends Controller
         // return view('exports.pdf.tiket-aktivitas', compact('aktivitas'));
 
         $pdf = LaravelMpdf::loadview('exports.pdf.tiket-aktivitas', ['aktivitas' => $aktivitas]);
-        return $pdf->stream($aktivitas->no_referensi.'.pdf');
+        return $pdf->stream($aktivitas->no_referensi . '.pdf');
     }
 }

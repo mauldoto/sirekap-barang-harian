@@ -89,7 +89,7 @@ Route::prefix('aktivitas')->group(function () {
     Route::get('/input', [AktivitasController::class, 'input'])->name('aktivitas.input');
     Route::get('/lokasi/{id}', [AktivitasController::class, 'getSubLokasi'])->name('aktivitas.sublokasi');
     Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store');
-    Route::post('/update', [AktivitasController::class, 'update'])->name('aktivitas.update');
+    Route::post('/{tiket}/update', [AktivitasController::class, 'update'])->name('aktivitas.update');
     Route::put('/{tiket}/update-status', [AktivitasController::class, 'updateStatus'])->name('aktivitas.update.status');
 
     Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');

@@ -6,7 +6,7 @@
 
 @component('components.breadcrumb')
 @slot('li_1') Log @endslot
-@slot('title') Edit Aktivitas  @endslot
+@slot('title') Edit Aktivitas @endslot
 @endcomponent
 
 <div class="row">
@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <form action="{{route('aktivitas.store')}}" method="post">
+                <form action="{{route('aktivitas.update', $aktivitas->no_referensi)}}" method="post">
                     @csrf
                     <div class="mb-4 col-lg-5">
                         <label class="form-label">No Referensi</label>
@@ -48,7 +48,7 @@
                                 <select class="form-control" name="lokasi" id="lokasi">
                                     <option value=""></option>
                                     @foreach ($lokasi as $lok)
-                                        <option value="{{$lok->id}}" {{$lok->id == $aktivitas->lokasi->id ? 'selected': ''}}>{{$lok->nama}}</option>
+                                    <option value="{{$lok->id}}" {{$lok->id == $aktivitas->lokasi->id ? 'selected': ''}}>{{$lok->nama}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -65,14 +65,14 @@
                         <label class="form-label">Teknisi</label>
                         <select class="form-control select2-teknisi" name="teknisi[]" id="tek" multiple>
                             @foreach ($karyawan as $teknisi)
-                                <option value="{{$teknisi->id}}">{{$teknisi->nama}}</option>
+                            <option value="{{$teknisi->id}}" {{in_array($teknisi->id, $teknisiArr) ? 'selected' : ''}}>{{$teknisi->nama}}</option>
                             @endforeach
                         </select>
                     </div>
 
                     <div class="mb-2 col-lg-8">
                         <label class="form-label">Deskripsi</label>
-                        <textarea class="form-control" name="deskripsi" id="desc" cols="30" rows="10"></textarea>
+                        <textarea class="form-control" name="deskripsi" id="desc" cols="30" rows="10">{{$aktivitas->deskripsi}}</textarea>
                     </div>
 
                     <div class="btn-submit mt-5 d-flex justify-content-end">
@@ -88,12 +88,13 @@
 
 @section('css')
 <link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-<link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}"  rel="stylesheet" type="text/css" />
-<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}"  rel="stylesheet" type="text/css" />
+<link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" rel="stylesheet" type="text/css" />
+<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 <style>
     .items {
         margin-bottom: 4px !important;
     }
+
 </style>
 @endsection
 
@@ -121,7 +122,7 @@
             'placeholder': ' -- pilih sublokasi --'
         });
 
-        selectLokasi.on('select2:select', function(){
+        selectLokasi.on('select2:select', function() {
             selectSubLokasi.html('<option></option');
             getSubLokasi($(this).val())
         })
