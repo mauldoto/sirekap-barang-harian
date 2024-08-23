@@ -59,7 +59,6 @@
                                 <label class="form-label">Sub Lokasi</label>
                                 <select class="form-control" name="sublokasi" id="sublokasi">
                                     <option value=""></option>
-                                    <option value="sdsd">sdsd</option>
                                 </select>
                             </div>
                         </div>
@@ -68,7 +67,6 @@
                     <div class="mb-2 col-lg-8">
                         <label class="form-label">Teknisi</label>
                         <select class="form-control select2-teknisi" name="teknisi[]" id="tek" multiple>
-                            <option value=""></option>
                             @foreach ($karyawan as $teknisi)
                                 <option value="{{$teknisi->id}}">{{$teknisi->nama}}</option>
                             @endforeach
@@ -114,7 +112,9 @@
 <script>
     $(document).ready(function() {
 
-        $('.select2-teknisi').select2();
+        $('.select2-teknisi').select2({
+            'placeholder': ' -- pilih teknisi --'
+        });
 
         let selectLokasi = $('#lokasi').select2({
             'placeholder': ' -- pilih lokasi --'
