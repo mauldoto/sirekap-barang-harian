@@ -115,7 +115,7 @@ class StokController extends Controller
             ->having('sumqty', '>', 0)
             ->groupBy('id_barang', 'is_new')->get();
 
-        $ids = array_map(function($item) {
+        $ids = array_map(function ($item) {
             return $item['id_barang'];
         }, $stok->toArray());
 
@@ -132,7 +132,7 @@ class StokController extends Controller
                 }
             }
         }
-        $aktivitas = Aktivitas::orderBy('tanggal_berangkat', 'DESC')->get();
+        $aktivitas = Aktivitas::whereIn('status', ['waiting', 'progress'])->orderBy('tanggal_berangkat', 'DESC')->get();
         return view('contents.stok.stokout', compact('barang', 'aktivitas'));
     }
 
@@ -202,14 +202,14 @@ class StokController extends Controller
 
     public function rencanaSK()
     {
-        
+
 
         $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
             ->with('barang')
             ->having('sumqty', '>', 0)
             ->groupBy('id_barang', 'is_new')->get();
 
-        $ids = array_map(function($item) {
+        $ids = array_map(function ($item) {
             return $item['id_barang'];
         }, $stok->toArray());
 
