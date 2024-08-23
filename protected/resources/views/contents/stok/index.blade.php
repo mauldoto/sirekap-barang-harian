@@ -87,38 +87,6 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
-
-<div id="modalExportPdf" class="modal fade" tabindex="-1" aria-labelledby="modalExportPdfLabel" style="display: none;" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="modalExportPdfLabel">Export Aktivitas - PDF</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-
-            <div class="modal-body">
-                <form action="{{route('stok.export.pdf')}}" method="GET" target="_blank">
-                    <div class="row">
-                        <div class="mb-2 col-lg-12">
-                            <label class="form-label">Pilih Barang</label>
-                            <select class="form-control" name="barang[]" id="pilihBarang" multiple>
-                                @foreach ($barang as $item)
-                                <option value="{{$item->id}}">{{$item->nama . '('. $item->kode .')'}}</option>
-                                @endforeach
-                            </select>
-                            <small class="text-danger">*Kosongkan kolom jika ingin mengambil semua</small>
-                        </div>
-                        <div class="mb-2 col-lg-2 d-flex align-items-end">
-                            <button class="btn btn-primary">Export</button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div>
-
 @endsection
 
 @section('css')
@@ -139,7 +107,6 @@
 <script>
     $(document).ready(function() {
         $("#datatable-stok").dataTable();
-        $("#pilihBarang").select2();
 
         function getDetail(ids) {
             $.get('stok/' + ids + '/detail').done(function(response) {
