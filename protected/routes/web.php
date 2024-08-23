@@ -97,6 +97,6 @@ Route::prefix('aktivitas')->group(function () {
 });
 
 Route::prefix('report')->middleware(['web', 'auth'])->group(function () {
-    Route::get('/stok', [ReportController::class, 'reportStok'])->name('report.stok');
-    Route::get('/aktivitas', [ReportController::class, 'reportAktivitas'])->name('report.aktivitas');
+    Route::get('/', [ReportController::class, 'report'])->name('report');
+    Route::get('/process', [ReportController::class, 'processReport'])->name('report.process');
 });
