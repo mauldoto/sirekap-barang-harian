@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\AktivitasExport;
+use App\Exports\PenggunaanBarangExport;
 use App\Exports\StokExport;
 use App\Models\Aktivitas;
 use App\Models\AktivitasKaryawan;
@@ -79,12 +80,12 @@ class ReportController extends Controller
         $report = $request->report;
 
         switch ($report) {
-            case 'stok':
+            case 'stok-barang':
                 $barang = Barang::get();
 
                 return view('contents.report.report', compact('startDate', 'endDate', 'barang', 'report'));
                 break;
-            case 'penggunaan-stok':
+            case 'penggunaan-barang':
                 $barang = Barang::orderBy('nama')->get();
                 $lokasi = Lokasi::orderBy('nama')->get();
 
@@ -119,16 +120,22 @@ class ReportController extends Controller
             $startDate = $endDate;
             $endDate = $temp;
         }
+        return $this->reportPenggunanBarang($request, $startDate, $endDate);
 
-        return $this->reportPenggunanStok($request, $startDate, $endDate);
         $report = $request->report;
         return $this->reportAktivitas($request, $startDate, $endDate);
         switch ($report) {
-            case 'stok':
+            case 'stok-barang':
                 return $this->reportStok($request);
                 break;
-            case 'penggunaan-stok':
-                return $this->reportPenggunanStok($request, $startDate, $endDate);
+            case 'penggunaan-barang':
+                return $this->reportPenggunanBarang($request, $startDate, $endDate);
+                break;
+            case 'aktivitas':
+                return $this->reportAktivitas($request, $startDate, $endDate);
+                break;
+            case 'detail-aktivitas-karyawan':
+                return $this->reportPenggunanBarang($request, $startDate, $endDate);
                 break;
 
             default:
@@ -170,27 +177,27 @@ class ReportController extends Controller
         }
     }
 
-    protected function reportPenggunanStok($request, $startDate, $endDate)
+    protected function reportPenggunanBarang($request, $startDate, $endDate)
     {
-        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'teknisi' => ['karyawan']])
-            ->where('tanggal_berangkat', '>=', $startDate)
-            ->where('tanggal_berangkat', '<=', $endDate)
-            ->get();
+        $lokasi = $request->lokasi;
+        $sublokasi = $request->sublokasi ? $request->sublokasi : [];
+        $barang = $request->barang ? $request->barang : [];
 
-        $data = DB::select(
-            "SELECT 
-                act.id,
-                act.no_referensi,
+        $tsublokasi = implode(',', array_fill(0, count($sublokasi), '?'));
+        $tbarang = implode(',', array_fill(0, count($barang), '?'));
+
+        $filter = [$lokasi];
+
+        $query = "SELECT 
                 act.id_lokasi,
                 act.id_sub_lokasi,
-                act.status,
                 ls.id_barang as ls_idbarang,
                 ls.is_new,
                 lokasi.nama as nama_lokasi,
                 sub.nama as nama_sublokasi,
-                -- barang.nama as nama_barang
+                barang.nama as nama_barang,
                 SUM(ls.qty) as total
-            from aktivitas as act
+            FROM aktivitas as act
             INNER JOIN stok AS st
             ON st.id_aktivitas = act.id
             INNER JOIN log_stok AS ls
@@ -199,27 +206,43 @@ class ReportController extends Controller
             ON act.id_lokasi = lokasi.id
             INNER JOIN sub_lokasi as sub
             ON act.id_sub_lokasi = sub.id
-            -- INNER JOIN barang
-            -- ON ls.id_barang = barang.id
-            WHERE act.tanggal_berangkat >= ?
-            AND act.tanggal_berangkat < ?
+            INNER JOIN barang
+            ON ls.id_barang = barang.id
+            WHERE act.id_lokasi = ?";
+
+        if (count($sublokasi) > 0) {
+            $query .= " AND act.id_sub_lokasi IN ($tsublokasi)";
+            array_push($filter, ...$sublokasi);
+        }
+
+        array_push($filter, ...[$startDate, $endDate]);
+
+        $query .= " AND act.tanggal_berangkat >= ?
+                AND act.tanggal_berangkat <= ?";
+
+        if (count($barang) > 0) {
+            $query .= " AND ls.id_barang IN ($tbarang)";
+            array_push($filter, ...$barang);
+        }
+
+        $query .= " AND act.status = 'done'
             GROUP BY 
-                act.id,
                 act.id_lokasi,
                 act.id_sub_lokasi,
                 ls.id_barang,
                 ls.is_new,
                 lokasi.nama,
-                sub.nama
-            
-            ",
-            [$startDate, $endDate]
+                sub.nama,
+                barang.nama
+            ";
+
+        $data = DB::select(
+            $query,
+            $filter
         );
 
-        dd($data);
-
         try {
-            return Excel::download(new AktivitasExport($aktivitas), 'aktivitas.xlsx');
+            return Excel::download(new PenggunaanBarangExport($data, [$startDate, $endDate]), 'penggunaan-barang.xlsx');
         } catch (\Throwable $th) {
             throw $th;
         }

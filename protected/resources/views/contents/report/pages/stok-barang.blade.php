@@ -8,6 +8,8 @@
             <hr>
 
             <form action="{{route('report.process')}}" method="GET" target="_blank">
+                <input type="hidden" value="{{$report}}">
+                <input type="hidden" name="export">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="row">
@@ -19,24 +21,7 @@
                                 <label class="form-label">Sampai</label>
                                 <input class="form-control" type="date" name="ke" placeholder="Masukkan tanggal" value="{{$endDate}}" required>
                             </div>
-                            
-                        </div>
-                        <div class="row">
-                            <div class="mb-2 col-lg-5">
-                                <label class="form-label">Lokasi</label>
-                                <select class="form-control" name="lokasi" id="lokasi">
-                                    <option value=""></option>
-                                    @foreach ($lokasi as $lok)
-                                        <option value="{{$lok->id}}">{{$lok->nama}}</option>
-                                    @endforeach
-                                </select>
-                            </div>
-                            <div class="mb-2 col-lg-5">
-                                <label class="form-label">Sub Lokasi</label>
-                                <select class="form-control" name="sublokasi" id="sublokasi">
-                                    <option value=""></option>
-                                </select>
-                            </div>
+
                         </div>
                         <div class="row">
                             <div class="mb-2 col-lg-10">
@@ -58,14 +43,14 @@
                         </div>
                         <div class="row">
                             <div class="mb-2 col-lg-4 d-flex align-items-end">
-                                <button class="btn btn-success col-12 d-flex align-items-center justify-content-center">
+                                <button type="button" class="btn btn-success col-12 d-flex align-items-center justify-content-center btn-export" data-export="excel">
                                     <i class='bx bxs-spreadsheet me-1'></i> Export Excel
                                 </button>
                             </div>
                         </div>
                         <div class="row">
                             <div class="mb-2 col-lg-4 d-flex align-items-end">
-                                <button class="btn btn-danger col-12 d-flex align-items-center justify-content-center">
+                                <button type="button" class="btn btn-danger col-12 d-flex align-items-center justify-content-center btn-export" data-export="pdf">
                                     <i class='bx bxs-file-pdf me-1'></i> Export PDF
                                 </button>
                             </div>

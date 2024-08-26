@@ -22,8 +22,8 @@
                         <div class="mb-2 col-lg-4">
                             <select class="form-control select2-report" name="report" id="">
                                 <option value=""></option>
-                                <option value="stok">Stok</option>
-                                <option value="penggunaan-stok">Penggunaan Stok</option>
+                                <option value="stok-barang">Stok</option>
+                                <option value="penggunaan-barang">Penggunaan Stok</option>
                                 <option value="aktivitas">Aktivitas</option>
                                 <option value="detail-aktivitas-karyawan">Detail Aktivitas Karyawan</option>
                             </select>
@@ -36,7 +36,7 @@
             </div>
         </div>
     </div>
-    
+
     @if ($report)
     @include('contents.report.pages.' . $report)
     @endif
@@ -48,7 +48,7 @@
 @section('css')
 <link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}"  rel="stylesheet" type="text/css" />
+<link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" />
 @endsection
 
 @section('script')
@@ -66,8 +66,7 @@
             'placeholder': '-- Pilih Report --'
         });
 
-        $(".select2-barang").select2({
-        });
+        $(".select2-barang").select2({});
 
         let selectLokasi = $('#lokasi').select2({
             'placeholder': ' -- pilih lokasi --'
@@ -77,7 +76,7 @@
             'placeholder': ' -- pilih sublokasi --'
         });
 
-        selectLokasi.on('select2:select', function(){
+        selectLokasi.on('select2:select', function() {
             selectSubLokasi.html('<option></option');
             getSubLokasi($(this).val())
         })
@@ -85,7 +84,7 @@
 
         function getSubLokasi(ids) {
             console.log(location)
-            $.get(location.origin+'/aktivitas/lokasi/' + ids).done(function(response) {
+            $.get(location.origin + '/aktivitas/lokasi/' + ids).done(function(response) {
                 let res = response
                 if (!res.status) return
 
