@@ -175,7 +175,7 @@
         <h4 style="margin-bottom: -15px; color:grey;">Deskripsi</h4>
         <hr style="color:grey;" />
 
-        <p>{{$aktivitas->deskripsi}}</p>
+        <p style="color: black;">{{$aktivitas->deskripsi}}</p>
     </div>
 
     <div class="stok" style="margin-top:30px; padding: 0 70px; text-align:left;">
