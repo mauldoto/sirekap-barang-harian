@@ -120,6 +120,7 @@ class ReportController extends Controller
             $endDate = $temp;
         }
 
+        return $this->reportPenggunanStok($request, $startDate, $endDate);
         $report = $request->report;
         return $this->reportAktivitas($request, $startDate, $endDate);
         switch ($report) {
@@ -127,7 +128,7 @@ class ReportController extends Controller
                 return $this->reportStok($request);
                 break;
             case 'penggunaan-stok':
-                return $this->reportAktivitas($request, $startDate, $endDate);
+                return $this->reportPenggunanStok($request, $startDate, $endDate);
                 break;
 
             default:
@@ -161,6 +162,61 @@ class ReportController extends Controller
             ->where('tanggal_berangkat', '>=', $startDate)
             ->where('tanggal_berangkat', '<=', $endDate)
             ->get();
+
+        try {
+            return Excel::download(new AktivitasExport($aktivitas), 'aktivitas.xlsx');
+        } catch (\Throwable $th) {
+            throw $th;
+        }
+    }
+
+    protected function reportPenggunanStok($request, $startDate, $endDate)
+    {
+        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'teknisi' => ['karyawan']])
+            ->where('tanggal_berangkat', '>=', $startDate)
+            ->where('tanggal_berangkat', '<=', $endDate)
+            ->get();
+
+        $data = DB::select(
+            "SELECT 
+                act.id,
+                act.no_referensi,
+                act.id_lokasi,
+                act.id_sub_lokasi,
+                act.status,
+                ls.id_barang as ls_idbarang,
+                ls.is_new,
+                lokasi.nama as nama_lokasi,
+                sub.nama as nama_sublokasi,
+                -- barang.nama as nama_barang
+                SUM(ls.qty) as total
+            from aktivitas as act
+            INNER JOIN stok AS st
+            ON st.id_aktivitas = act.id
+            INNER JOIN log_stok AS ls
+            ON st.id = ls.id_stok
+            INNER JOIN lokasi
+            ON act.id_lokasi = lokasi.id
+            INNER JOIN sub_lokasi as sub
+            ON act.id_sub_lokasi = sub.id
+            -- INNER JOIN barang
+            -- ON ls.id_barang = barang.id
+            WHERE act.tanggal_berangkat >= ?
+            AND act.tanggal_berangkat < ?
+            GROUP BY 
+                act.id,
+                act.id_lokasi,
+                act.id_sub_lokasi,
+                ls.id_barang,
+                ls.is_new,
+                lokasi.nama,
+                sub.nama
+            
+            ",
+            [$startDate, $endDate]
+        );
+
+        dd($data);
 
         try {
             return Excel::download(new AktivitasExport($aktivitas), 'aktivitas.xlsx');

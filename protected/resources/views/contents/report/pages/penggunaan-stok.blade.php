@@ -7,7 +7,7 @@
 
             <hr>
 
-            <form action="" method="GET" target="_blank">
+            <form action="{{route('report.process')}}" method="GET" target="_blank">
                 <div class="row">
                     <div class="col-lg-6">
                         <div class="row">
