@@ -30,7 +30,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->middleware(['web', 'auth'])->name('logout');
 });
 
-Route::prefix('barang')->middleware(['web', 'auth'])->group(function () {
+Route::prefix('barang')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/', [BarangController::class, 'index'])->name('barang.index');
     Route::get('/{id}/detail', [BarangController::class, 'detail'])->name('barang.detail');
     Route::post('/store', [BarangController::class, 'store'])->name('barang.store');
@@ -41,7 +41,7 @@ Route::prefix('barang')->middleware(['web', 'auth'])->group(function () {
     Route::post('/import', [BarangController::class, 'import'])->name('barang.import');
 });
 
-Route::prefix('lokasi')->middleware(['web', 'auth'])->group(function () {
+Route::prefix('lokasi')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/', [LokasiController::class, 'index'])->name('lokasi.index');
     Route::post('/store', [LokasiController::class, 'store'])->name('lokasi.store');
     Route::put('/{id}/update', [LokasiController::class, 'update'])->name('lokasi.update');
@@ -59,7 +59,7 @@ Route::prefix('lokasi')->middleware(['web', 'auth'])->group(function () {
     });
 });
 
-Route::prefix('karyawan')->middleware(['web', 'auth'])->group(function () {
+Route::prefix('karyawan')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/', [KaryawanController::class, 'index'])->name('karyawan.index');
     Route::get('/{id}/detail', [KaryawanController::class, 'detail'])->name('karyawan.detail');
     Route::post('/store', [KaryawanController::class, 'store'])->name('karyawan.store');
@@ -68,7 +68,7 @@ Route::prefix('karyawan')->middleware(['web', 'auth'])->group(function () {
     Route::post('/import', [KaryawanController::class, 'import'])->name('karyawan.import');
 });
 
-Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
+Route::prefix('stok')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/', [StokController::class, 'index'])->name('stok.index');
     Route::get('/log', [StokController::class, 'log'])->name('stok.log');
     Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view');
@@ -82,7 +82,7 @@ Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::post('/rencana-sk', [StokController::class, 'cetakRencanaSK'])->name('stok.rencana.cetak');
 });
 
-Route::prefix('aktivitas')->group(function () {
+Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/', [AktivitasController::class, 'index'])->name('aktivitas.index');
     Route::get('/{id}/detail', [AktivitasController::class, 'getDetail'])->name('aktivitas.getdetail');
     Route::get('/{tiket}/edit', [AktivitasController::class, 'edit'])->name('aktivitas.edit');
@@ -98,5 +98,5 @@ Route::prefix('aktivitas')->group(function () {
 
 Route::prefix('report')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [ReportController::class, 'report'])->name('report');
-    Route::get('/process', [ReportController::class, 'processReport'])->name('report.process');
+    Route::POST('/process', [ReportController::class, 'processReport'])->name('report.process');
 });
