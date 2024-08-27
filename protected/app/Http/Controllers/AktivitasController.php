@@ -86,8 +86,8 @@ class AktivitasController extends Controller
 
     public function input()
     {
-        $karyawan = Karyawan::all();
-        $lokasi = Lokasi::all();
+        $karyawan = Karyawan::orderBy('nama')->get();
+        $lokasi = Lokasi::orderBy('nama')->get();
         return view('contents.aktivitas.input', compact('karyawan', 'lokasi'));
     }
 

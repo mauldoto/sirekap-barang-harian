@@ -91,6 +91,16 @@ class ReportController extends Controller
 
                 return view('contents.report.report', compact('startDate', 'endDate', 'barang', 'report', 'lokasi'));
                 break;
+            case 'aktivitas':
+                $lokasi = Lokasi::orderBy('nama')->get();
+
+                return view('contents.report.report', compact('startDate', 'endDate', 'report', 'lokasi'));
+                break;
+            case 'aktivitas-karyawan':
+                $karyawan = Karyawan::orderBy('nama')->get();
+
+                return view('contents.report.report', compact('startDate', 'endDate', 'karyawan', 'report'));
+                break;
 
             default:
                 # code...
@@ -120,10 +130,9 @@ class ReportController extends Controller
             $startDate = $endDate;
             $endDate = $temp;
         }
-        return $this->reportPenggunanBarang($request, $startDate, $endDate);
 
         $report = $request->report;
-        return $this->reportAktivitas($request, $startDate, $endDate);
+
         switch ($report) {
             case 'stok-barang':
                 return $this->reportStok($request);
@@ -134,7 +143,7 @@ class ReportController extends Controller
             case 'aktivitas':
                 return $this->reportAktivitas($request, $startDate, $endDate);
                 break;
-            case 'detail-aktivitas-karyawan':
+            case 'aktivitas-karyawan':
                 return $this->reportPenggunanBarang($request, $startDate, $endDate);
                 break;
 
@@ -153,28 +162,134 @@ class ReportController extends Controller
         $stok = $stok->with('barang')
             ->groupBy('id_barang', 'is_new')->get();
 
-        return Excel::download(new StokExport($stok), 'stok.xlsx');
-
-        try {
-
-            return Excel::download(new StokExport($stok), 'stok.xlsx');
-        } catch (\Throwable $th) {
-            throw $th;
+        if ($request->export == 'excel') {
+            try {
+                return Excel::download(new StokExport($stok), 'report-stok-barang.xlsx');
+            } catch (\Throwable $th) {
+                throw $th;
+            }
         }
     }
 
     protected function reportAktivitas($request, $startDate, $endDate)
     {
-        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'teknisi' => ['karyawan']])
-            ->where('tanggal_berangkat', '>=', $startDate)
-            ->where('tanggal_berangkat', '<=', $endDate)
-            ->get();
+        $lokasi = $request->lokasi;
+        $sublokasi = $request->sublokasi ? $request->sublokasi : [];
 
-        try {
-            return Excel::download(new AktivitasExport($aktivitas), 'aktivitas.xlsx');
-        } catch (\Throwable $th) {
-            throw $th;
+        $tsublokasi = implode(',', array_fill(0, count($sublokasi), '?'));
+
+        $filter = [];
+
+        $query = "SELECT 
+                act.id,
+                act.no_referensi,
+                act.tanggal_berangkat,
+                act.tanggal_pulang,
+                act.deskripsi,
+                stok.id as idstok,
+                lokasi.nama as nama_lokasi,
+                sub.nama as nama_sublokasi
+            FROM aktivitas as act
+            LEFT OUTER JOIN stok
+            ON stok.id_aktivitas = act.id
+            INNER JOIN lokasi
+            ON act.id_lokasi = lokasi.id
+            INNER JOIN sub_lokasi as sub
+            ON act.id_sub_lokasi = sub.id
+            WHERE act.status = 'done'";
+        
+        if ($lokasi) {
+            $query .= " AND act.id_lokasi = ?";
+            array_push($filter, ...$lokasi);
         }
+
+        if (count($sublokasi) > 0) {
+            $query .= " AND act.id_sub_lokasi IN ($tsublokasi)";
+            array_push($filter, ...$sublokasi);
+        }
+
+        array_push($filter, ...[$startDate, $endDate]);
+
+        $query .= " AND act.tanggal_berangkat >= ?
+                AND act.tanggal_berangkat <= ?";
+
+        $dataMain = DB::select(
+            $query,
+            $filter
+        );
+
+        $idsStok = array_filter(array_map(function($item){
+            return $item->idstok;
+        }, $dataMain));
+
+        $idsAktivitas = array_filter(array_map(function($item){
+            return $item->id;
+        }, $dataMain));
+
+        $tIdStok = implode(',', array_fill(0, count($idsStok), '?'));
+        $tIdAktivitas = implode(',', array_fill(0, count($idsAktivitas), '?'));
+
+        $queryKaryawan = "SELECT
+                        ak.id_aktivitas,
+                        k.nama
+                    FROM aktivitas_karyawan as ak
+                    INNER JOIN karyawan as k
+                    ON k.id = ak.id_karyawan
+                    WHERE ak.id_aktivitas IN ($tIdAktivitas)";
+
+        $dataKaryawan = DB::select(
+            $queryKaryawan,
+            [...$idsAktivitas]
+        );
+
+        $queryBarang = "SELECT
+                        stok.id,
+                        barang.nama,
+                        barang.satuan,
+                        ls.is_new,
+                        ls.qty
+                    FROM stok
+                    INNER JOIN log_stok as ls
+                    ON stok.id = ls.id_stok
+                    INNER JOIN barang
+                    ON barang.id = ls.id_barang
+                    WHERE ls.id_stok IN ($tIdStok)";
+
+        $dataBarang = DB::select(
+            $queryBarang,
+            [...$idsStok]
+        );
+
+
+        $dataFinal = array_map(function($aktivitas) use ($dataBarang, $dataKaryawan) {
+            $datakar = [];
+            foreach ($dataKaryawan as $key => $teknisi) {
+                if ($teknisi->id_aktivitas == $aktivitas->id) {
+                    array_push($datakar, $teknisi);
+                }
+            }
+
+            $databar = [];
+            foreach ($dataBarang as $key => $barang) {
+                if ($barang->id == $aktivitas->idstok) {
+                    array_push($databar, $barang);
+                }
+            }
+
+            $aktivitas->karyawan = $datakar;
+            $aktivitas->barang = $databar;
+
+            return $aktivitas;
+        }, $dataMain);
+
+        if ($request->export == 'excel') {
+            try {
+                return Excel::download(new AktivitasExport($dataFinal), 'report-aktivitas.xlsx');
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+        
     }
 
     protected function reportPenggunanBarang($request, $startDate, $endDate)
@@ -186,7 +301,7 @@ class ReportController extends Controller
         $tsublokasi = implode(',', array_fill(0, count($sublokasi), '?'));
         $tbarang = implode(',', array_fill(0, count($barang), '?'));
 
-        $filter = [$lokasi];
+        $filter = [];
 
         $query = "SELECT 
                 act.id_lokasi,
@@ -208,7 +323,12 @@ class ReportController extends Controller
             ON act.id_sub_lokasi = sub.id
             INNER JOIN barang
             ON ls.id_barang = barang.id
-            WHERE act.id_lokasi = ?";
+            WHERE act.status = 'done'";
+        
+        if ($lokasi) {
+            $query .= " AND act.id_lokasi = ?";
+            array_push($filter, ...$lokasi);
+        }
 
         if (count($sublokasi) > 0) {
             $query .= " AND act.id_sub_lokasi IN ($tsublokasi)";
@@ -225,8 +345,7 @@ class ReportController extends Controller
             array_push($filter, ...$barang);
         }
 
-        $query .= " AND act.status = 'done'
-            GROUP BY 
+        $query .= " GROUP BY 
                 act.id_lokasi,
                 act.id_sub_lokasi,
                 ls.id_barang,
@@ -241,10 +360,28 @@ class ReportController extends Controller
             $filter
         );
 
+        if ($request->export == 'excel') {
+            try {
+                return Excel::download(new PenggunaanBarangExport($data, [$startDate, $endDate]), 'report-penggunaan-barang.xlsx');
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+    }
+
+    protected function reportAktivitasKaryawan($request, $startDate, $endDate)
+    {
+        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'teknisi' => ['karyawan']])
+            ->where('tanggal_berangkat', '>=', $startDate)
+            ->where('tanggal_berangkat', '<=', $endDate)
+            ->get();
+
         try {
-            return Excel::download(new PenggunaanBarangExport($data, [$startDate, $endDate]), 'penggunaan-barang.xlsx');
+            return Excel::download(new AktivitasExport($aktivitas), 'aktivitas.xlsx');
         } catch (\Throwable $th) {
             throw $th;
         }
     }
+
+
 }
