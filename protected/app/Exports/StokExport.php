@@ -17,7 +17,7 @@ class StokExport implements FromView
 
     public function view(): View
     {
-        return view('exports.excel.stok', [
+        return view('exports.excel.stok-barang', [
             'stok' => $this->stok
         ]);
     }
