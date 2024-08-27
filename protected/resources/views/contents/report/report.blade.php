@@ -86,7 +86,7 @@
         })
 
         $('.btn-export').on('click', function(){
-            $('inpute[name="export"]').val($(this).data('export'));
+            $('input[name="export"]').val($(this).data('export'));
 
             $('#reportForm')[0].submit();
         })

@@ -13,7 +13,7 @@
             <th style="text-align: center;"></th>
         </tr>
         <tr>
-            <th colspan="4" style="text-align: center;">Di report pada: {{Carbon\Carbon::now()->format('d-m-YYYY')}}</th>
+            <th colspan="4" style="text-align: center;">Di report pada: {{Carbon\Carbon::now()->format('d/m/Y')}}</th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>

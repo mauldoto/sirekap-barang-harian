@@ -284,7 +284,7 @@ class ReportController extends Controller
 
         if ($request->export == 'excel') {
             try {
-                return Excel::download(new AktivitasExport($dataFinal), 'report-aktivitas.xlsx');
+                return Excel::download(new AktivitasExport($dataFinal, [$startDate, $endDate]), 'report-aktivitas.xlsx');
             } catch (\Throwable $th) {
                 throw $th;
             }
@@ -376,11 +376,7 @@ class ReportController extends Controller
             ->where('tanggal_berangkat', '<=', $endDate)
             ->get();
 
-        try {
-            return Excel::download(new AktivitasExport($aktivitas), 'aktivitas.xlsx');
-        } catch (\Throwable $th) {
-            throw $th;
-        }
+        
     }
 
 

@@ -2,6 +2,7 @@
 
 namespace App\Exports;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\View\View;
 use Illuminate\Database\Eloquent\Collection;
 use Maatwebsite\Excel\Concerns\FromView;
@@ -23,7 +24,8 @@ class PenggunaanBarangExport implements FromView
     {
         return view('exports.excel.penggunaan-barang', [
             'data' => $this->data,
-            'period' => $this->period
+            'start'     => Carbon::createFromFormat('Y-m-d', $this->period[0])->format('d/m/Y'),
+            'end'     => Carbon::createFromFormat('Y-m-d', $this->period[1])->format('d/m/Y'),
         ]);
     }
 

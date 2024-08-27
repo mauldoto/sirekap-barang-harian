@@ -23,7 +23,7 @@
             <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
-            <th colspan="8" style="text-align: center;">Periode: </th>
+            <th colspan="8" style="text-align: center;">Periode: {{$start}} - {{$end}}</th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
