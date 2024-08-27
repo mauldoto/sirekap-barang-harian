@@ -13,7 +13,7 @@
             <th style="text-align: center;"></th>
         </tr>
         <tr>
-            <th colspan="4" style="text-align: center;">Periode: </th>
+            <th colspan="4" style="text-align: center;">Di report pada: {{Carbon\Carbon::now()->format('d-m-YYYY')}}</th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
@@ -34,10 +34,10 @@
     <tbody>
         @foreach($stok as $i => $item)
         <tr>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->barang->kode}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->barang->nama}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->is_new ? 'Baru':'Bekas'}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->sumqty}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->barang->kode}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 200px;">{{$item->barang->nama}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->is_new ? 'Baru':'Bekas'}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->sumqty}}</td>
         </tr>
         @endforeach
     </tbody>

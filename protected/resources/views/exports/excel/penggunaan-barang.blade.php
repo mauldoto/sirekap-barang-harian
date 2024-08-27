@@ -34,10 +34,10 @@
     <tbody>
         @foreach($data as $i => $item)
         <tr>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->nama_lokasi}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->nama_sublokasi}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->nama_barang}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 100px;">{{$item->total * -1}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->nama_lokasi}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->nama_sublokasi}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->nama_barang}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->total * -1}}</td>
         </tr>
         @endforeach
     </tbody>

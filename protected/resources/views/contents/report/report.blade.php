@@ -22,10 +22,10 @@
                         <div class="mb-2 col-lg-4">
                             <select class="form-control select2-report" name="report" id="">
                                 <option value=""></option>
-                                <option value="stok-barang">Stok</option>
-                                <option value="penggunaan-barang">Penggunaan Stok</option>
-                                <option value="aktivitas">Aktivitas</option>
-                                <option value="detail-aktivitas-karyawan">Detail Aktivitas Karyawan</option>
+                                <option value="stok-barang" {{$report && $report == 'stok-barang' ? 'selected' : ''}}>Stok Barang</option>
+                                <option value="penggunaan-barang" {{$report && $report == 'penggunaan-barang' ? 'selected' : ''}}>Penggunaan Barang</option>
+                                <option value="aktivitas" {{$report && $report == 'aktivitas' ? 'selected' : ''}}>Aktivitas</option>
+                                {{-- <option value="aktivitas-karyawan">Detail Aktivitas Karyawan</option> --}}
                             </select>
                         </div>
                         <div class="mb-2 col-lg-2 d-flex align-items-end">
@@ -76,11 +76,20 @@
             'placeholder': ' -- pilih sublokasi --'
         });
 
+        $('.select2-teknisi').select2({
+            'placeholder': ' -- pilih karyawan --'
+        });
+
         selectLokasi.on('select2:select', function() {
             selectSubLokasi.html('<option></option');
             getSubLokasi($(this).val())
         })
 
+        $('.btn-export').on('click', function(){
+            $('inpute[name="export"]').val($(this).data('export'));
+
+            $('#reportForm')[0].submit();
+        })
 
         function getSubLokasi(ids) {
             console.log(location)

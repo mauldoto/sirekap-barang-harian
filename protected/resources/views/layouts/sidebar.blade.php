@@ -55,6 +55,15 @@
                     </a>
                 </li>
 
+                <li class="menu-title" key="t-masters">Report</li>
+
+                <li>
+                    <a href="{{route('report')}}" class="waves-effect">
+                        <i class='bx bxs-report'></i>
+                        <span key="t-guru">Report</span>
+                    </a>
+                </li>
+
                 <li class="menu-title" key="t-masters">
                     Akun
                 </li>

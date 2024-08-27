@@ -19,7 +19,12 @@
     <!-- Begin page -->
     <div id="layout-wrapper">
         @include('layouts.topbar')
+
+        @if (auth()->user()->username == 'jpn')
+        @include('layouts.sidebar-report')
+        @else
         @include('layouts.sidebar')
+        @endif
         <!-- ============================================================== -->
         <!-- Start right Content here -->
         <!-- ============================================================== -->
