@@ -16,11 +16,9 @@ class AdminMiddleware
     public function handle(Request $request, Closure $next): Response
     {
         if (auth()->user()->username != 'jpn') {
-            return redirect('stok');
+            return $next($request);
         } else {
             return redirect('report');
         }
-        
-        return $next($request);
     }
 }

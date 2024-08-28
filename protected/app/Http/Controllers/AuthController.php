@@ -24,11 +24,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
  
-            if (auth()->user()->username != 'jpn') {
-                return redirect()->intended('stok');
-            } else {
-                return redirect()->intended('report');
-            }
+            return redirect()->intended('stok');
         }
  
         return back()->withErrors([

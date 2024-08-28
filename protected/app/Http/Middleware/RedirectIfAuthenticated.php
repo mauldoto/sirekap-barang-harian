@@ -21,11 +21,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if (auth()->user()->username != 'jpn') {
-                    return redirect('stok');
-                } else {
-                    return redirect('report');
-                }
+                return redirect('stok');
             }
         }
 
