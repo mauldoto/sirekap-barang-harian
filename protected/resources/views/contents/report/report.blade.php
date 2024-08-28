@@ -25,7 +25,7 @@
                                 <option value="stok-barang" {{$report && $report == 'stok-barang' ? 'selected' : ''}}>Stok Barang</option>
                                 <option value="penggunaan-barang" {{$report && $report == 'penggunaan-barang' ? 'selected' : ''}}>Penggunaan Barang</option>
                                 <option value="aktivitas" {{$report && $report == 'aktivitas' ? 'selected' : ''}}>Aktivitas</option>
-                                {{-- <option value="aktivitas-karyawan">Detail Aktivitas Karyawan</option> --}}
+                                <option value="aktivitas-karyawan" {{$report && $report == 'aktivitas-karyawan' ? 'selected' : ''}}>Detail Aktivitas Karyawan</option>
                             </select>
                         </div>
                         <div class="mb-2 col-lg-2 d-flex align-items-end">
