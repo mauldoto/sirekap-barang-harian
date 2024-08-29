@@ -12,7 +12,7 @@ class BarangController extends Controller
 {
     public function index()
     {
-        $barang = Barang::all();
+        $barang = Barang::orderBy('nama')->get();
         return view('contents.barang.index', compact('barang'));
     }
 

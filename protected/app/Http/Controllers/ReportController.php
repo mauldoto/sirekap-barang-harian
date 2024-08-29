@@ -203,7 +203,8 @@ class ReportController extends Controller
         array_push($filter, ...[$startDate, $endDate]);
 
         $query .= " AND act.tanggal_berangkat >= ?
-                AND act.tanggal_berangkat <= ?";
+                AND act.tanggal_berangkat <= ?
+                ORDER BY act.tanggal_berangkat";
 
         $dataMain = DB::select(
             $query,
@@ -397,7 +398,8 @@ class ReportController extends Controller
         array_push($filter, ...[$startDate, $endDate]);
 
         $query .= " AND act.tanggal_berangkat >= ?
-                AND act.tanggal_berangkat <= ?";
+                AND act.tanggal_berangkat <= ?
+                ORDER BY act.tanggal_berangkat";
 
         $dataMain = DB::select(
             $query,
@@ -410,7 +412,7 @@ class ReportController extends Controller
             } catch (\Throwable $th) {
                 throw $th;
             }
-        }
+        } 
 
         
     }
