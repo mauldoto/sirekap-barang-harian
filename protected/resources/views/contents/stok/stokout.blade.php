@@ -39,14 +39,9 @@
                         <select class="form-control job-select2" name="aktivitas" id="ak">
                             <option></option>
                             @foreach ($aktivitas as $act)
-                            <option value="{{$act->id}}">{{ $act->no_referensi }} - {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
+                            <option value="{{$act->id}}">[{{ $act->no_referensi }}] {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
                             @endforeach
                         </select>
-                    </div>
-
-                    <div class="mb-3 col-lg-5">
-                        <label class="form-label">Keterangan</label>
-                        <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
                     </div>
 
                     <div class="mb-2">

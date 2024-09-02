@@ -52,7 +52,6 @@
                 <label class="form-label">Sub Lokasi</label>
                 <select class="form-control" name="sublokasi" id="sublokasi">
                     <option value=""></option>
-                    <option value="sdsd">sdsd</option>
                 </select>
             </div>
 
@@ -67,59 +66,132 @@
 
 
             <div class="mb-2">
-                <label class="form-label">Barang</label>
-
-                <!-- Repeater Html Start -->
-                <div id="repeater">
-                    <!-- Repeater Heading -->
-                    <div class="repeater-heading mb-2">
-                        <button type="button" class="btn btn-primary pull-right repeater-add-btn">
-                            Add
-                        </button>
-                    </div>
-                    <div class="clearfix"></div>
-                    <!-- Repeater Items -->
-                    <div class="items" data-group="barang">
-                        <!-- Repeater Content -->
-                        <div class="item-content">
-                            <div class="row">
-                                <div class="col-lg-5">
-                                    {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
-                                    <select class="form-control barang-select2" id="inputItem" data-name="item">
-                                        <option value=""></option>
-                                        @foreach ($barang as $item)
-                                        <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
-                                            {{$item->nama}} ({{$item->kode}}) - {{$item->satuan}} 
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-lg-2 pt-2">
-                                    <input class="form-check-input" type="checkbox" data-name="bekas" value="coding" id="inputCondition">
-                                    <label class="form-check-label" for="inputCondition">
-                                        Bekas
-                                    </label>
-                                </div>
-                                <div class="col-lg-3">
-                                    <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty" value="3">
-                                </div>
-
-                                <div class="col-lg-2 repeater-remove-btn">
-                                    <button class="btn btn-danger remove-btn">
-                                        Remove
-                                    </button>
-                                </div>
+                <label class="form-label">Detail</label>
+                <div class="repeater-heading mb-2 mt-3">
+                    <button type="button" class="btn btn-primary pull-right add-detail">
+                        Add Detail
+                    </button>
+                </div>
+               
+                <div class="review">
+                     <!-- Repeater Html Start -->
+                    <div class="border rounded p-3 repeater-1 mb-2 repeater-1">
+                        <!-- Repeater Heading -->
+                        <div class="row">
+                            <div class="mb-2 col-lg-5">
+                                <select class="form-control" name="sublokasi" id="sublokasi">
+                                    <option value=""></option>
+                                </select>
                             </div>
                         </div>
-                        {{-- <!-- Repeater Remove Btn -->
-                                <div class="pull-right repeater-remove-btn">
-                                    <button class="btn btn-danger remove-btn">
-                                        Remove
-                                    </button>
-                                </div> --}}
+                        <div class="repeater-heading mb-2">
+                            <button type="button" class="btn btn-primary pull-right repeater-add-btn">
+                                Add Barang
+                            </button>
+                        </div>
                         <div class="clearfix"></div>
+                        <!-- Repeater Items -->
+                        <div class="items" data-group="barang">
+                            <!-- Repeater Content -->
+                            <div class="item-content">
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
+                                        <select class="form-control barang-select2" id="inputItem" data-name="item">
+                                            <option value=""></option>
+                                            @foreach ($barang as $item)
+                                            <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
+                                                {{$item->nama}} ({{$item->kode}}) - {{$item->satuan}} 
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 pt-2">
+                                        <input class="form-check-input" type="checkbox" data-name="bekas" value="coding" id="inputCondition">
+                                        <label class="form-check-label" for="inputCondition">
+                                            Bekas
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty">
+                                    </div>
+
+                                    <div class="col-lg-2 repeater-remove-btn">
+                                        <button class="btn btn-danger remove-btn">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <!-- Repeater Remove Btn -->
+                                    <div class="pull-right repeater-remove-btn">
+                                        <button class="btn btn-danger remove-btn">
+                                            Remove
+                                        </button>
+                                    </div> --}}
+                            <div class="clearfix"></div>
+                        </div>
+                        <!-- Repeater End -->
                     </div>
-                    <!-- Repeater End -->
+
+                    <div class="border rounded p-3 repeater-1 mb-2 repeater-0">
+                        <!-- Repeater Heading -->
+                        <div class="row">
+                            <div class="mb-2 col-lg-5">
+                                <select class="form-control" name="sublokasi" id="sublokasi">
+                                    <option value=""></option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="repeater-heading mb-2">
+                            <button type="button" class="btn btn-primary pull-right repeater-add-btn">
+                                Add Barang
+                            </button>
+                        </div>
+                        <div class="clearfix"></div>
+                        <!-- Repeater Items -->
+                        <div class="items" data-group="barang">
+                            <!-- Repeater Content -->
+                            <div class="item-content">
+                                <div class="row">
+                                    <div class="col-lg-5">
+                                        {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
+                                        <select class="form-control barang-select2" id="inputItem" data-name="item">
+                                            <option value=""></option>
+                                            @foreach ($barang as $item)
+                                            <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
+                                                {{$item->nama}} ({{$item->kode}}) - {{$item->satuan}} 
+                                            </option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="col-lg-2 pt-2">
+                                        <input class="form-check-input" type="checkbox" data-name="bekas" value="coding" id="inputCondition">
+                                        <label class="form-check-label" for="inputCondition">
+                                            Bekas
+                                        </label>
+                                    </div>
+                                    <div class="col-lg-3">
+                                        <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty">
+                                    </div>
+
+                                    <div class="col-lg-2 repeater-remove-btn">
+                                        <button class="btn btn-danger remove-btn">
+                                            Remove
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <!-- Repeater Remove Btn -->
+                                    <div class="pull-right repeater-remove-btn">
+                                        <button class="btn btn-danger remove-btn">
+                                            Remove
+                                        </button>
+                                    </div> --}}
+                            <div class="clearfix"></div>
+                        </div>
+                        <!-- Repeater End -->
+                    </div>
                 </div>
 
                 <div class="btn-submit mt-5 d-flex justify-content-end">
@@ -129,6 +201,65 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="repeater-shadow" class="border rounded p-3 repeater-1 mb-2" style="display: none">
+    <!-- Repeater Heading -->
+    <div class="row">
+        <div class="mb-2 col-lg-5">
+            <select class="form-control" name="sublokasi" id="sublokasi">
+                <option value=""></option>
+            </select>
+        </div>
+    </div>
+    <div class="repeater-heading mb-2">
+        <button type="button" class="btn btn-primary pull-right repeater-add-btn">
+            Add Barang
+        </button>
+    </div>
+    <div class="clearfix"></div>
+    <!-- Repeater Items -->
+    <div class="items" data-group="barang">
+        <!-- Repeater Content -->
+        <div class="item-content">
+            <div class="row">
+                <div class="col-lg-5">
+                    {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
+                    <select class="form-control barang-select2" id="inputItem" data-name="item">
+                        <option value=""></option>
+                        @foreach ($barang as $item)
+                        <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
+                            {{$item->nama}} ({{$item->kode}}) - {{$item->satuan}} 
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-2 pt-2">
+                    <input class="form-check-input" type="checkbox" data-name="bekas" value="coding" id="inputCondition">
+                    <label class="form-check-label" for="inputCondition">
+                        Bekas
+                    </label>
+                </div>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty">
+                </div>
+
+                <div class="col-lg-2 repeater-remove-btn">
+                    <button class="btn btn-danger remove-btn">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{-- <!-- Repeater Remove Btn -->
+                <div class="pull-right repeater-remove-btn">
+                    <button class="btn btn-danger remove-btn">
+                        Remove
+                    </button>
+                </div> --}}
+        <div class="clearfix"></div>
+    </div>
+    <!-- Repeater End -->
 </div>
 
 @endsection
@@ -169,6 +300,12 @@
                     templateResult: formatOption
                 });
             })
+        })
+
+        $(".add-detail").click(function() {
+            let shadow = $('#repeater-shadow');
+            shadow.addClass('repeater-xx')
+            $(".review").append(shadow)
         })
 
         $('.barang-select2').select2({

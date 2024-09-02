@@ -141,6 +141,7 @@ class StokController extends Controller
         $validator = Validator::make($request->all(), [
             'noref'         => 'required|string',
             'tanggal'       => 'required|date',
+            'aktivitas'     => 'required',
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
