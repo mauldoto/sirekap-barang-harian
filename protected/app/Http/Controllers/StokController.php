@@ -236,15 +236,16 @@ class StokController extends Controller
 
     public function cetakRencanaSK(Request $request)
     {
+        dd($request['lokasi_73']);
         $validator = Validator::make($request->all(), [
             'tanggal'       => 'required|date',
             'lokasi'        => 'required',
-            'sublokasi'     => 'required',
+            'sublokasi'     => 'required|array',
             'teknisi'       => 'required',
-            'barang'        => 'required|array',
-            'barang.*.item' => 'required',
-            'barang.*.qty'  => 'required',
-            'barang.*.bekas'  => 'nullable',
+            // 'barang'        => 'required|array',
+            // 'barang.*.item' => 'required',
+            // 'barang.*.qty'  => 'required',
+            // 'barang.*.bekas'  => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -261,7 +262,7 @@ class StokController extends Controller
 
         $barangIds = array_unique(array_column($request->barang, 'item'));
         $dbBarang = Barang::whereIn('id', $barangIds)->get();
-        // dd($dbBarang);
+
         $barangFinal = [];
         foreach ($request->barang as $key => $barang) {
             foreach ($dbBarang as $key => $dbb) {
@@ -274,7 +275,7 @@ class StokController extends Controller
                 }
             }
         }
-        // dd($barangFinal);
+
         $pdf = LaravelMpdf::loadview('exports.pdf.cetak-perencanaan', [
             'barang'    => $barangFinal,
             'tanggal'   => Carbon::createFromFormat('Y-m-d', $request->tanggal)->format('d-m-Y'),
