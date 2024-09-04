@@ -141,6 +141,7 @@ class StokController extends Controller
         $validator = Validator::make($request->all(), [
             'noref'         => 'required|string',
             'tanggal'       => 'required|date',
+            'aktivitas'     => 'required',
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
@@ -238,12 +239,12 @@ class StokController extends Controller
         $validator = Validator::make($request->all(), [
             'tanggal'       => 'required|date',
             'lokasi'        => 'required',
-            'sublokasi'     => 'required',
+            'sublokasi'     => 'required|array',
             'teknisi'       => 'required',
-            'barang'        => 'required|array',
-            'barang.*.item' => 'required',
-            'barang.*.qty'  => 'required',
-            'barang.*.bekas'  => 'nullable',
+            // 'barang'        => 'required|array',
+            // 'barang.*.item' => 'required',
+            // 'barang.*.qty'  => 'required',
+            // 'barang.*.bekas'  => 'nullable',
         ]);
 
         if ($validator->fails()) {
@@ -254,32 +255,49 @@ class StokController extends Controller
 
         $lokasi = Lokasi::where('id', $request->lokasi)->first();
 
-        $sublokasi = SubLokasi::where('id', $request->sublokasi)->first();
+        $sublokasi = SubLokasi::where('id_lokasi', $lokasi->id)->get()->toArray();
 
         $karyawan = Karyawan::whereIn('id', $request->teknisi)->get();
 
-        $barangIds = array_unique(array_column($request->barang, 'item'));
-        $dbBarang = Barang::whereIn('id', $barangIds)->get();
-        // dd($dbBarang);
-        $barangFinal = [];
-        foreach ($request->barang as $key => $barang) {
-            foreach ($dbBarang as $key => $dbb) {
-                if ($barang['item'] == $dbb->id) {
-                    $cloneDbb = clone $dbb;
-                    $cloneDbb->kondisi = array_key_exists('bekas', $barang) ? 'Bekas' : 'Baru';
-                    $cloneDbb->qty = $barang['qty'];
+        $dbBarang = Barang::get()->toArray();
 
-                    array_push($barangFinal, $cloneDbb);
+        $data = [];
+        foreach ($request->selected_sublokasi as $key => $subSelected) {
+            $dataSub = array_values(array_filter($sublokasi, function ($item) use ($subSelected) {
+                if ($item['id'] == $subSelected) {
+                    return $item;
+                }
+            }))[0];
+
+            $data[$subSelected] = $dataSub;
+
+            $barangIds = array_unique(array_column($request['lokasi_' . $subSelected], 'item'));
+            $barangSelected = array_filter($dbBarang, function ($item) use ($barangIds) {
+                if (in_array($item['id'], $barangIds)) {
+                    return $item;
+                }
+            });
+    
+            $barangFinal = [];
+            foreach ($request['lokasi_' . $subSelected] as $key => $barang) {
+                foreach ($barangSelected as $key => $dbb) {
+                    if ($barang['item'] == $dbb['id']) {
+                        $dbb['kondisi'] = array_key_exists('bekas', $barang) ? 'Bekas' : 'Baru';
+                        $dbb['qty'] = $barang['qty'];
+    
+                        array_push($barangFinal, $dbb);
+                    }
                 }
             }
+
+            $data[$subSelected]['barang'] = $barangFinal;
         }
-        // dd($barangFinal);
+
         $pdf = LaravelMpdf::loadview('exports.pdf.cetak-perencanaan', [
-            'barang'    => $barangFinal,
             'tanggal'   => Carbon::createFromFormat('Y-m-d', $request->tanggal)->format('d-m-Y'),
             'lokasi'    => $lokasi,
-            'sublokasi' => $sublokasi,
             'karyawan'  => $karyawan,
+            'barang'    => $data
         ]);
 
         return $pdf->stream('report-stok.pdf');

@@ -50,9 +50,8 @@
 
             <div class="mb-2 col-lg-5">
                 <label class="form-label">Sub Lokasi</label>
-                <select class="form-control" name="sublokasi" id="sublokasi">
+                <select class="form-control" name="sublokasi[]" id="sublokasi" multiple>
                     <option value=""></option>
-                    <option value="sdsd">sdsd</option>
                 </select>
             </div>
 
@@ -67,59 +66,14 @@
 
 
             <div class="mb-2">
-                <label class="form-label">Barang</label>
-
-                <!-- Repeater Html Start -->
-                <div id="repeater">
-                    <!-- Repeater Heading -->
-                    <div class="repeater-heading mb-2">
-                        <button type="button" class="btn btn-primary pull-right repeater-add-btn">
-                            Add
-                        </button>
-                    </div>
-                    <div class="clearfix"></div>
-                    <!-- Repeater Items -->
-                    <div class="items" data-group="barang">
-                        <!-- Repeater Content -->
-                        <div class="item-content">
-                            <div class="row">
-                                <div class="col-lg-5">
-                                    {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
-                                    <select class="form-control barang-select2" id="inputItem" data-name="item">
-                                        <option value=""></option>
-                                        @foreach ($barang as $item)
-                                        <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
-                                            {{$item->nama}} ({{$item->kode}}) - {{$item->satuan}} 
-                                        </option>
-                                        @endforeach
-                                    </select>
-                                </div>
-                                <div class="col-lg-2 pt-2">
-                                    <input class="form-check-input" type="checkbox" data-name="bekas" value="coding" id="inputCondition">
-                                    <label class="form-check-label" for="inputCondition">
-                                        Bekas
-                                    </label>
-                                </div>
-                                <div class="col-lg-3">
-                                    <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty" value="3">
-                                </div>
-
-                                <div class="col-lg-2 repeater-remove-btn">
-                                    <button class="btn btn-danger remove-btn">
-                                        Remove
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                        {{-- <!-- Repeater Remove Btn -->
-                                <div class="pull-right repeater-remove-btn">
-                                    <button class="btn btn-danger remove-btn">
-                                        Remove
-                                    </button>
-                                </div> --}}
-                        <div class="clearfix"></div>
-                    </div>
-                    <!-- Repeater End -->
+                <div class="repeater-heading mb-3 mt-3">
+                    <button type="button" class="btn btn-primary pull-right generate-btn">
+                        Generate Form
+                    </button>
+                </div>
+               
+                <div class="review">
+                     <!-- Repeater Html Start -->
                 </div>
 
                 <div class="btn-submit mt-5 d-flex justify-content-end">
@@ -129,6 +83,64 @@
             </div>
         </div>
     </div>
+</div>
+
+<div id="repeater-shadow" class="border rounded p-3 repeater-1 mb-2" style="display: none">
+    <!-- Repeater Heading -->
+    <div class="row">
+        <div class="mb-2 col-lg-5">
+            <label class="form-label"></label>
+            <input id="selectedSublokasi" type="hidden" name="selected_sublokasi[]">
+        </div>
+    </div>
+    <div class="repeater-heading mb-2">
+        <button type="button" class="btn btn-primary pull-right repeater-add-btn">
+            Add Barang
+        </button>
+    </div>
+    <div class="clearfix"></div>
+    <!-- Repeater Items -->
+    <div class="items" data-group="">
+        <!-- Repeater Content -->
+        <div class="item-content">
+            <div class="row">
+                <div class="col-lg-5">
+                    {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
+                    <select class="form-control input-select2"   data-name="item" required>
+                        <option value=""></option>
+                        @foreach ($barang as $item)
+                        <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
+                            {{$item->nama}} ({{$item->kode}}) - {{$item->satuan}} 
+                        </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-lg-2 pt-2">
+                    <input class="form-check-input" type="checkbox" data-name="bekas" id="inputCondition">
+                    <label class="form-check-label" for="inputCondition">
+                        Bekas
+                    </label>
+                </div>
+                <div class="col-lg-3">
+                    <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty" required>
+                </div>
+
+                <div class="col-lg-2 repeater-remove-btn">
+                    <button class="btn btn-danger remove-btn">
+                        Remove
+                    </button>
+                </div>
+            </div>
+        </div>
+        {{-- <!-- Repeater Remove Btn -->
+                <div class="pull-right repeater-remove-btn">
+                    <button class="btn btn-danger remove-btn">
+                        Remove
+                    </button>
+                </div> --}}
+        <div class="clearfix"></div>
+    </div>
+    <!-- Repeater End -->
 </div>
 
 @endsection
@@ -157,24 +169,55 @@
 @push('page-js')
 <script>
     $(document).ready(function() {
-        $("#repeater").createRepeater({
-            showFirstItemToDefault: true
-        , });
 
-        $(".repeater-add-btn").click(function() {
-            let select2Arr = $('.barang-select2')
-            select2Arr.each(function(index, el) {
-                $(el).select2({
+        let sublokasi
+
+        $(".generate-btn").click(function() {
+            if ($('.barang-select2')) {
+                $('.barang-select2').select2('destroy');
+            }
+
+            $(".review").empty()
+            
+            let selectedSublokasi = $("#sublokasi").val()
+           
+            setTimeout(() => {
+                for (const sub of selectedSublokasi) {
+                    let shadow = $('#repeater-shadow').clone();
+                    let data = sublokasi.find((item) => item.id == sub)
+                    shadow.attr('id', 'repeater-' + sub).css('display', '')
+                    shadow.find('.form-label').html(data.nama)
+                    shadow.find('.items').attr('data-group', 'lokasi_'+sub)
+                    shadow.find('#selectedSublokasi').val(sub);
+                    shadow.find('.input-select2').addClass(['barang-select2', 'barang-select2-' + sub])
+                    // shadow.find('#inputCondition').attr('data-name', 'bekas.'+sub)
+                    // shadow.find('#inputQty').attr('data-name', 'qty.'+sub)
+
+                    $(".review").append(shadow)
+
+                    // $('.barang-select2-' + sub).select2({
+                    //     placeholder: "-- Pilih Barang --",
+                    //     templateResult: formatOption
+                    // });
+
+                    $("#repeater-"+sub).createRepeater({
+                        showFirstItemToDefault: true
+                    , });
+
+                    $(".repeater-add-btn").click(function() {
+                        $('.barang-select2').select2({
+                            placeholder: "-- Pilih Barang --",
+                            templateResult: formatOption
+                        });
+                    })
+                }
+
+                $('.barang-select2').select2({
                     placeholder: "-- Pilih Barang --",
                     templateResult: formatOption
                 });
-            })
+            }, 500);
         })
-
-        $('.barang-select2').select2({
-            placeholder: "-- Pilih Barang --",
-            templateResult: formatOption
-        });
 
         function formatOption (option) {
             var $option = $('<div>' + option.text + '</div><small> '+option.title+' </small>');
@@ -195,15 +238,17 @@
 
         selectLokasi.on('select2:select', function() {
             selectSubLokasi.html('<option></option');
+            $(".review").empty()
+
             getSubLokasi($(this).val())
         })
 
         function getSubLokasi(ids) {
-            console.log(location.origin)
             $.get(location.origin + '/aktivitas/lokasi/' + ids).done(function(response) {
                 let res = response
                 if (!res.status) return
 
+                sublokasi = res.data
                 for (const data of res.data) {
                     var newOption = new Option(data.nama, data.id, false, false);
                     // Append it to the select

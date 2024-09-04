@@ -22,15 +22,6 @@
 
                 <form action="{{route('aktivitas.store')}}" method="post">
                     @csrf
-                    <div class="mb-4 col-lg-5">
-                        <label class="form-label">No Referensi</label>
-                        @php
-                            $noref = generateReference('JOB');
-                        @endphp
-                        <input class="form-control" type="text" name="norefv" value="{{$noref}}" disabled required>
-                        <input class="form-control" type="hidden" name="noref" value="{{$noref}}" required>
-                    </div>
-
                     <div class="mb-2 col-lg-10">
                         <div class="row">
                             <div class="col-lg-5">
@@ -57,8 +48,7 @@
                             </div>
                             <div class="col-lg-5">
                                 <label class="form-label">Sub Lokasi</label>
-                                <select class="form-control" name="sublokasi" id="sublokasi">
-                                    <option value=""></option>
+                                <select class="form-control" name="sublokasi[]" id="sublokasi" multiple>
                                 </select>
                             </div>
                         </div>

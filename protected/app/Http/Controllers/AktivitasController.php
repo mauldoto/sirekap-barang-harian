@@ -20,7 +20,7 @@ class AktivitasController extends Controller
     public function index(Request $request)
     {
         $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
-        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->addDays(1)->format('Y-m-d');
 
         if ($startDate > $endDate) {
             $temp = $startDate;
@@ -94,9 +94,9 @@ class AktivitasController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'noref' => 'required|string',
             'lokasi' => 'required',
-            'sublokasi' => 'required',
+            'sublokasi' => 'required|array',
+            'sublokasi.*' => 'required',
             'teknisi' => 'required|array',
             'teknisi.*' => 'required',
             'deskripsi' => 'nullable',
@@ -120,35 +120,37 @@ class AktivitasController extends Controller
 
         DB::beginTransaction();
 
-        $newActivity = new Aktivitas();
-        $newActivity->no_referensi = $request->noref;
-        $newActivity->id_lokasi = $request->lokasi;
-        $newActivity->id_sub_lokasi = $request->sublokasi;
-        $newActivity->tanggal_berangkat = $request->tanggal_berangkat;
-        $newActivity->tanggal_pulang = $request->tanggal_pulang;
-        $newActivity->deskripsi = $request->deskripsi;
-        $newActivity->input_by = $request->user()->id;
-        $newActivity->status = 'waiting';
-
-        if (!$newActivity->save()) {
-            DB::rollBack();
-            return back()->withErrors(['Input data aktivitas gagal.'])->withInput();
-        }
-
-        foreach ($request->teknisi as $key => $teknisi) {
-            $checkTeknisi = Karyawan::where('id', $teknisi)->first();
-            if (!$checkTeknisi) {
+        foreach ($request->sublokasi as $key => $sublokasi) {
+            $newActivity = new Aktivitas();
+            $newActivity->no_referensi = generateReference('JOB');
+            $newActivity->id_lokasi = $request->lokasi;
+            $newActivity->id_sub_lokasi = $sublokasi;
+            $newActivity->tanggal_berangkat = $request->tanggal_berangkat;
+            $newActivity->tanggal_pulang = $request->tanggal_pulang;
+            $newActivity->deskripsi = $request->deskripsi;
+            $newActivity->input_by = $request->user()->id;
+            $newActivity->status = 'waiting';
+    
+            if (!$newActivity->save()) {
                 DB::rollBack();
-                return back()->withErrors(['Input data teknisi ke aktivitas gagal, data teknisi tidak ditemukan.'])->withInput();
+                return back()->withErrors(['Input data aktivitas gagal.'])->withInput();
             }
-
-            $inpTeknisi = new AktivitasKaryawan();
-            $inpTeknisi->id_aktivitas = $newActivity->id;
-            $inpTeknisi->id_karyawan = $checkTeknisi->id;
-
-            if (!$inpTeknisi->save()) {
-                DB::rollBack();
-                return back()->withErrors(['Input data teknisi ke aktivitas gagal.'])->withInput();
+    
+            foreach ($request->teknisi as $key => $teknisi) {
+                $checkTeknisi = Karyawan::where('id', $teknisi)->first();
+                if (!$checkTeknisi) {
+                    DB::rollBack();
+                    return back()->withErrors(['Input data teknisi ke aktivitas gagal, data teknisi tidak ditemukan.'])->withInput();
+                }
+    
+                $inpTeknisi = new AktivitasKaryawan();
+                $inpTeknisi->id_aktivitas = $newActivity->id;
+                $inpTeknisi->id_karyawan = $checkTeknisi->id;
+    
+                if (!$inpTeknisi->save()) {
+                    DB::rollBack();
+                    return back()->withErrors(['Input data teknisi ke aktivitas gagal.'])->withInput();
+                }
             }
         }
 
