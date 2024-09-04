@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Report Aktivitas - JPN</title>
+    <title>Rencana Pengeluaran Stok - JPN</title>
     {{-- @include('layouts.head-css') --}}
     <link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 
@@ -44,6 +44,10 @@
             text-align: right;
         }
 
+        .text-center {
+            text-align: center;
+        }
+
     </style>
 
     <div class="header" style="margin-top: -20px; margin-bottom: 5px;">
@@ -67,61 +71,71 @@
                 <td style="padding-left: 10px">:</td>
                 <td style="padding-left: 10px">{{ $lokasi->nama }}</td>
             </tr>
-            <tr>
-                <td>Sub Lokasi</td>
-                <td style="padding-left: 10px">:</td>
-                <td style="padding-left: 10px">{{ $sublokasi->nama }}</td>
-            </tr>
-            <tr>
-                <td>Teknisi</td>
-                <td style="padding-left: 10px">:</td>
-                <td style="padding-left: 10px">
-
-                </td>
-            </tr>
-            <tr>
-                <td></td>
-                <td></td>
-                <td style="padding-left: 10px">
-                    @foreach($karyawan as $key => $p)
-                    - {{$p->nama}} <br />
-                    @endforeach
-                </td>
-            </tr>
         </table>
         {{-- <p>Di print pada: {{$tanggal}}</p> --}}
     </div>
 
-    <table class='table table-bordered' id="stok">
-        <thead>
+    <div style="margin-bottom: 30px; width: 100%">
+        <table class='table table-bordered' id="stok">
+           <thead>
             <tr>
-                <th style="text-align: center">Kode</th>
-                <th style="text-align: center">Nama</th>
-                <th style="text-align: center">Kondisi</th>
-                <th style="text-align: center">Jumlah Dibawa</th>
-                <th style="text-align: center">Jumlah Terpakai</th>
+                <th class="text-center" style="text-align: center">No</th>
+                <th class="text-center" style="text-align: center">Teknisi</th>
             </tr>
-        </thead>
-        <tbody>
-            @foreach($barang as $i => $item)
-            <tr>
-                <td style="text-align: center">{{$item->kode}}</td>
-                <td style="text-align: center">{{$item->nama}}</td>
-                <td style="text-align: center">{{$item->kondisi}}</td>
-                <td style="text-align: center">{{$item->qty}}</td>
-                <td></td>
-            </tr>
-            @endforeach
-            @for ($i = 0; $i <= 2; $i++) <tr>
-                <td class="td-empty"></td>
-                <td class="td-empty"></td>
-                <td class="td-empty"></td>
-                <td class="td-empty"></td>
-                <td class="td-empty"></td>
+           </thead>
+            <tbody>
+                @foreach ($karyawan as $key => $teknisi)
+                <tr>
+                    <td class="text-center">{{$key + 1}}</td>
+                    <td class="text-center">{{$teknisi->nama}}</td>
                 </tr>
-                @endfor
-        </tbody>
-    </table>
+                @endforeach
+            </tbody>
+        </table>
+        {{-- <p>Di print pada: {{$tanggal}}</p> --}}
+    </div>
+
+    @foreach ($barang as $lokasi)
+    <div style="margin-bottom: 30px; width: 100%">
+        <table class='table table-bordered' id="stok">
+            <thead>
+                <tr>
+                    <td colspan="6" style="text-center" style="text-align: center">{{$lokasi['nama']}}</td>
+                </tr>
+                <tr>
+                    <th style="text-align: center">Kode</th>
+                    <th style="text-align: center">Nama</th>
+                    <th style="text-align: center">Kondisi</th>
+                    <th style="text-align: center">Jumlah Dibawa</th>
+                    <th style="text-align: center">Jumlah Terpakai</th>
+                    <th style="text-align: center">Satuan</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($lokasi['barang'] as $i => $item)
+                <tr>
+                    <td style="text-align: center">{{$item['kode']}}</td>
+                    <td style="text-align: center">{{$item['nama']}}</td>
+                    <td style="text-align: center">{{$item['kondisi']}}</td>
+                    <td style="text-align: center">{{$item['qty']}}</td>
+                    <td></td>
+                    <td style="text-align: center">{{$item['satuan']}}</td>
+                </tr>
+                @endforeach
+                @for ($i = 0; $i <= 2; $i++) <tr>
+                    <td class="td-empty"></td>
+                    <td class="td-empty"></td>
+                    <td class="td-empty"></td>
+                    <td class="td-empty"></td>
+                    <td class="td-empty"></td>
+                    <td class="td-empty"></td>
+                    </tr>
+                    @endfor
+            </tbody>
+        </table>
+    </div>
+    @endforeach
+    
 
 </body>
 </html>

@@ -90,6 +90,7 @@
     <div class="row">
         <div class="mb-2 col-lg-5">
             <label class="form-label"></label>
+            <input id="selectedSublokasi" type="hidden" name="selected_sublokasi[]">
         </div>
     </div>
     <div class="repeater-heading mb-2">
@@ -105,7 +106,7 @@
             <div class="row">
                 <div class="col-lg-5">
                     {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
-                    <select class="form-control barang-select2"  data-name="item">
+                    <select class="form-control input-select2"   data-name="item" required>
                         <option value=""></option>
                         @foreach ($barang as $item)
                         <option value="{{$item->id}}" title="Baru: {{$item->new?$item->new:0}} | Bekas: {{$item->second?$item->second:0}}">
@@ -121,7 +122,7 @@
                     </label>
                 </div>
                 <div class="col-lg-3">
-                    <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty">
+                    <input type="text" class="form-control" id="inputQty" placeholder="Qty" data-name="qty" required>
                 </div>
 
                 <div class="col-lg-2 repeater-remove-btn">
@@ -168,54 +169,54 @@
 @push('page-js')
 <script>
     $(document).ready(function() {
-        // $("#repeater").createRepeater({
-        //     showFirstItemToDefault: true
-        // , });
-
-        // $(".repeater-add-btn").click(function() {
-        //     let select2Arr = $('.barang-select2')
-        //     select2Arr.each(function(index, el) {
-        //         $(el).select2({
-        //             placeholder: "-- Pilih Barang --",
-        //             templateResult: formatOption
-        //         });
-        //     })
-        // })
 
         let sublokasi
 
         $(".generate-btn").click(function() {
-            $(".review").html('')
-            let selectedSublokasi = $("#sublokasi").val()
-           
-            for (const sub of selectedSublokasi) {
-                let shadow = $('#repeater-shadow').clone();
-                let data = sublokasi.find((item) => item.id == sub)
-                shadow.attr('id', 'repeater-' + sub).css('display', '')
-                shadow.find('.form-label').html(data.nama)
-                shadow.find('.items').attr('data-group', 'lokasi_'+sub)
-                // shadow.find('#inputItem').attr('data-name', 'item.'+sub)
-                // shadow.find('#inputCondition').attr('data-name', 'bekas.'+sub)
-                // shadow.find('#inputQty').attr('data-name', 'qty.'+sub)
-
-                $(".review").append(shadow)
-
-                $("#repeater-"+sub).createRepeater({
-                    showFirstItemToDefault: true
-                , });
-
-                $(".repeater-add-btn").click(function() {
-                    $('.barang-select2').select2({
-                        placeholder: "-- Pilih Barang --",
-                        templateResult: formatOption
-                    });
-                })
+            if ($('.barang-select2')) {
+                $('.barang-select2').select2('destroy');
             }
 
-            $('.barang-select2').select2({
-                placeholder: "-- Pilih Barang --",
-                templateResult: formatOption
-            });
+            $(".review").empty()
+            
+            let selectedSublokasi = $("#sublokasi").val()
+           
+            setTimeout(() => {
+                for (const sub of selectedSublokasi) {
+                    let shadow = $('#repeater-shadow').clone();
+                    let data = sublokasi.find((item) => item.id == sub)
+                    shadow.attr('id', 'repeater-' + sub).css('display', '')
+                    shadow.find('.form-label').html(data.nama)
+                    shadow.find('.items').attr('data-group', 'lokasi_'+sub)
+                    shadow.find('#selectedSublokasi').val(sub);
+                    shadow.find('.input-select2').addClass(['barang-select2', 'barang-select2-' + sub])
+                    // shadow.find('#inputCondition').attr('data-name', 'bekas.'+sub)
+                    // shadow.find('#inputQty').attr('data-name', 'qty.'+sub)
+
+                    $(".review").append(shadow)
+
+                    // $('.barang-select2-' + sub).select2({
+                    //     placeholder: "-- Pilih Barang --",
+                    //     templateResult: formatOption
+                    // });
+
+                    $("#repeater-"+sub).createRepeater({
+                        showFirstItemToDefault: true
+                    , });
+
+                    $(".repeater-add-btn").click(function() {
+                        $('.barang-select2').select2({
+                            placeholder: "-- Pilih Barang --",
+                            templateResult: formatOption
+                        });
+                    })
+                }
+
+                $('.barang-select2').select2({
+                    placeholder: "-- Pilih Barang --",
+                    templateResult: formatOption
+                });
+            }, 500);
         })
 
         function formatOption (option) {
@@ -237,6 +238,8 @@
 
         selectLokasi.on('select2:select', function() {
             selectSubLokasi.html('<option></option');
+            $(".review").empty()
+
             getSubLokasi($(this).val())
         })
 
