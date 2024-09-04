@@ -192,7 +192,7 @@ class ReportController extends Controller
         
         if ($lokasi) {
             $query .= " AND act.id_lokasi = ?";
-            array_push($filter, ...$lokasi);
+            array_push($filter, $lokasi);
         }
 
         if (count($sublokasi) > 0) {
@@ -220,7 +220,11 @@ class ReportController extends Controller
         }, $dataMain));
 
         $tIdStok = implode(',', array_fill(0, count($idsStok), '?'));
+        if ($tIdStok == "") $tIdStok = "0";
+
         $tIdAktivitas = implode(',', array_fill(0, count($idsAktivitas), '?'));
+        if ($tIdAktivitas == "") $tIdAktivitas = "0";
+
 
         $queryKaryawan = "SELECT
                         ak.id_aktivitas,
@@ -304,6 +308,7 @@ class ReportController extends Controller
                 lokasi.nama as nama_lokasi,
                 sub.nama as nama_sublokasi,
                 barang.nama as nama_barang,
+                barang.satuan as satuan,
                 SUM(ls.qty) as total
             FROM aktivitas as act
             INNER JOIN stok AS st
@@ -345,7 +350,8 @@ class ReportController extends Controller
                 ls.is_new,
                 lokasi.nama,
                 sub.nama,
-                barang.nama
+                barang.nama,
+                barang.satuan
             ";
 
         $data = DB::select(
