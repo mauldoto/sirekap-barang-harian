@@ -156,14 +156,17 @@ class StokController extends Controller
 
         DB::beginTransaction();
 
-        $newStokOut = new Stok();
-        $newStokOut->no_referensi = $request->noref;
-        $newStokOut->id_aktivitas = $request->aktivitas ?? null;
-        $newStokOut->tanggal = $request->tanggal;
-        $newStokOut->type = 'keluar';
-        $newStokOut->deskripsi = $request->keterangan;
-        $newStokOut->input_by = $request->user()->id;
-
+        $newStokOut = Stok::where('id_aktivitas', $request->aktivitas)->first();
+        
+        if (!$newStokOut) {
+            $newStokOut = new Stok();
+            $newStokOut->no_referensi = $request->noref;
+            $newStokOut->id_aktivitas = $request->aktivitas ?? null;
+            $newStokOut->tanggal = $request->tanggal;
+            $newStokOut->type = 'keluar';
+            $newStokOut->deskripsi = $request->keterangan;
+            $newStokOut->input_by = $request->user()->id;
+        }
 
         if (!$newStokOut->save()) {
             DB::rollBack();
