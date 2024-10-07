@@ -303,6 +303,6 @@ class StokController extends Controller
             'barang'    => $data
         ]);
 
-        return $pdf->stream('report-stok.pdf');
+        return $pdf->stream('pengeluaran-stok-'. $lokasi->nama . '-' . date('dmY') .'.pdf');
     }
 }
