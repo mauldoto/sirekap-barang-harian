@@ -156,6 +156,13 @@ class StokController extends Controller
 
         DB::beginTransaction();
 
+        $idsBarang = array_map(function($value){
+            return $value['item'];
+        }, $request->barang);
+
+        // dd($idsBarang);
+        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
+
         $newStokOut = Stok::where('id_aktivitas', $request->aktivitas)->first();
         
         if (!$newStokOut) {
@@ -174,6 +181,18 @@ class StokController extends Controller
         }
 
         foreach ($request->barang as $key => $barang) {
+
+            $checkStok = array_filter($stokLogs, function($value) use ($barang){
+                if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
+                    return true;
+                }
+            });
+
+            if (!$checkStok) {
+                DB::rollBack();
+                return back()->withErrors(['Error input log stok, ada barang dengan stok minus.'])->withInput();
+            }
+
             $newLogStok = new LogStok();
             $newLogStok->id_stok = $newStokOut->id;
             $newLogStok->id_barang = $barang['item'];
