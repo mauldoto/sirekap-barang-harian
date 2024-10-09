@@ -187,7 +187,9 @@
                 <tr>
                     <th>No</th>
                     <th>Nama barang</th>
+                    <th>Kondisi</th>
                     <th>Jumlah Terpakai</th>
+                    <th>Satuan</th>
                 </tr>
             </Thead>
             <Tbody>
@@ -195,7 +197,9 @@
                 <tr>
                     <td style="padding: 0 0 5px 0;">{{$kei+1}}</td>
                     <td style="padding: 0 5px;">{{$item->barang->nama}}</td>
+                    <td style="padding: 0 5px;">{{$item->is_new ? 'Baru' : 'Bekas'}}</td>
                     <td style="padding: 0 5px;">{{$item->qty < 0 ? $item->qty * -1 : $item->qty}}</td>
+                    <td style="padding: 0 5px;">{{$item->barang->satuan}}</td>
                 </tr>
                 @endforeach
             </Tbody>

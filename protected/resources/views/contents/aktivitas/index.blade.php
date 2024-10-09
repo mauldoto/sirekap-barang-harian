@@ -279,7 +279,7 @@
 
                 let tempBarang = ''
                 for (const item of res.data.barang) {
-                    tempBarang += '- ' + item.barang.nama + ' ('+ (item.qty < 1 ? item.qty * -1 : item.qty) + " " + item.barang.satuan + ')' + '<br />'
+                    tempBarang += '- ' + item.barang.nama + ' ('+ (item.qty < 1 ? item.qty * -1 : item.qty) + " " + item.barang.satuan + ')' + ' ['+(item.is_new ? 'Baru' : 'Bekas')+']' +'<br />'
                 }
 
                 $('.teknisi').html(tempTeknisi)
