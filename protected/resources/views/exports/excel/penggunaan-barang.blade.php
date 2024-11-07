@@ -29,6 +29,7 @@
             <th style="text-align: center; font-weight:bold;">Sublokasi</th>
             <th style="text-align: center; font-weight:bold;">Nama Barang</th>
             <th style="text-align: center; font-weight:bold;">Satuan</th>
+            <th style="text-align: center; font-weight:bold;">Kondisi</th>
             <th style="text-align: center; font-weight:bold;">Jumlah</th>
         </tr>
     </thead>
@@ -39,6 +40,7 @@
             <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->nama_sublokasi}}</td>
             <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->nama_barang}}</td>
             <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->satuan}}</td>
+            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->is_new ? "Baru" : "Bekas"}}</td>
             <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->total * -1}}</td>
         </tr>
         @endforeach

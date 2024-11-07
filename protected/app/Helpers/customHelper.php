@@ -10,7 +10,7 @@ if (!function_exists('generateReference')) {
                 $kode = App\Models\Barang::pluck('kode')->toArray();
 
                 do {
-                    $code = $prefix . '-';
+                    $code = $prefix . '-' . date('y');
                     for ($i = 0; $i < $length; $i++) {
                         $code .= $characters[rand(0, strlen($characters) - 1)];
                     }
@@ -23,7 +23,7 @@ if (!function_exists('generateReference')) {
                 $kode = App\Models\Karyawan::pluck('kode')->toArray();
                 
                 do {
-                    $code = $prefix . '-';
+                    $code = $prefix . '-' . date('y');
                     for ($i = 0; $i < $length; $i++) {
                         $code .= $characters[rand(0, strlen($characters) - 1)];
                     }
@@ -36,7 +36,7 @@ if (!function_exists('generateReference')) {
                 $kode = App\Models\Lokasi::pluck('kode')->toArray();
                 
                 do {
-                    $code = $prefix . '-';
+                    $code = $prefix . '-' . date('y');
                     for ($i = 0; $i < $length; $i++) {
                         $code .= $characters[rand(0, strlen($characters) - 1)];
                     }
@@ -49,7 +49,7 @@ if (!function_exists('generateReference')) {
                 $kode = App\Models\SubLokasi::pluck('kode')->toArray();
                 
                 do {
-                    $code = $prefix . '-';
+                    $code = $prefix . '-' . date('y');
                     for ($i = 0; $i < $length; $i++) {
                         $code .= $characters[rand(0, strlen($characters) - 1)];
                     }
@@ -62,7 +62,7 @@ if (!function_exists('generateReference')) {
                 $kode = App\Models\Stok::where('type', 'masuk')->pluck('no_referensi')->toArray();
                 
                 do {
-                    $code = $prefix . '-';
+                    $code = $prefix . '-' . date('y');
                     for ($i = 0; $i < $length; $i++) {
                         $code .= $characters[rand(0, strlen($characters) - 1)];
                     }
@@ -75,7 +75,7 @@ if (!function_exists('generateReference')) {
                 $kode = App\Models\Stok::where('type', 'keluar')->pluck('no_referensi')->toArray();
                 
                 do {
-                    $code = $prefix . '-';
+                    $code = $prefix . '-' . date('y');
                     for ($i = 0; $i < $length; $i++) {
                         $code .= $characters[rand(0, strlen($characters) - 1)];
                     }
@@ -88,7 +88,7 @@ if (!function_exists('generateReference')) {
                 $kode = App\Models\Aktivitas::pluck('no_referensi')->toArray();
                 
                 do {
-                    $code = $prefix . '-';
+                    $code = $prefix . '-' . date('y');
                     for ($i = 0; $i < $length; $i++) {
                         $code .= $characters[rand(0, strlen($characters) - 1)];
                     }
@@ -98,7 +98,7 @@ if (!function_exists('generateReference')) {
                 break;
             
             default:
-                $code = $prefix . '-';
+                $code = $prefix . '-' . date('y');
                 for ($i = 0; $i < $length; $i++) {
                     $code .= $characters[rand(0, strlen($characters) - 1)];
                 }
