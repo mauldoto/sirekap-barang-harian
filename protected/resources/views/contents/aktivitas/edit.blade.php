@@ -55,7 +55,9 @@
                             <div class="col-lg-5">
                                 <label class="form-label">Sub Lokasi</label>
                                 <select class="form-control" name="sublokasi" id="sublokasi">
-                                    <option value="{{$aktivitas->sublokasi->id}}">{{ $aktivitas->sublokasi->nama }}</option>
+                                    @foreach ($sublokasi as $sub)
+                                        <option value="{{$sub->id}}" {{$aktivitas->sublokasi->id == $sub->id ? "selected" : ''}}>{{ $sub->nama }}</option>
+                                    @endforeach
                                 </select>
                             </div>
                         </div>
@@ -128,7 +130,8 @@
         })
 
         function getSubLokasi(ids) {
-            $.get('lokasi/' + ids).done(function(response) {
+            let urlA = window.location.origin;
+            $.get(urlA + '/aktivitas/lokasi/' + ids).done(function(response) {
                 let res = response
                 if (!res.status) return
 

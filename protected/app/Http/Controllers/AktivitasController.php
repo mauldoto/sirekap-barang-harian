@@ -167,6 +167,8 @@ class AktivitasController extends Controller
             return back()->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
         }
 
+        $sublokasi = SubLokasi::where('id_lokasi', $aktivitas->id_lokasi)->get();
+
         if (in_array($aktivitas->status, ['done', 'cancel'])) {
             return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
         }
@@ -176,7 +178,7 @@ class AktivitasController extends Controller
             array_push($teknisiArr, $value->id_karyawan);
         }
 
-        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr'));
+        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr', 'sublokasi'));
     }
 
     public function update(Request $request, $tiket)
