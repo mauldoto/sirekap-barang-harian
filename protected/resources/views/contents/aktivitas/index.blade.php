@@ -87,7 +87,13 @@
                                             <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('aktivitas.update.status', $i->no_referensi)}}" data-status="{{$i->status}}"><i class='bx bx-task me-1'></i> Update Status</a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1' ></i> Edit</a>
+
+                                            @if ($i->stok)
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.stokout.view', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok Keluar</a>
+                                            @endif
                                         @endif
+                                        
                                     </div>
                                 </div>
                             </td>

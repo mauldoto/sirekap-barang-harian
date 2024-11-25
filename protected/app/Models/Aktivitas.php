@@ -28,4 +28,9 @@ class Aktivitas extends Model
     {
         return $this->belongsTo(User::class, 'input_by', 'id');
     }
+
+    public function stok()
+    {
+        return $this->hasOne(Stok::class, 'id_aktivitas', 'id');
+    }
 }

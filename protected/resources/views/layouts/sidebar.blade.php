@@ -55,6 +55,13 @@
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{route('alokasi')}}" class="waves-effect">
+                        <i class='bx bxs-directions'></i>
+                        <span key="t-kursus">Alokasi Perangkat</span>
+                    </a>
+                </li>
+
                 <li class="menu-title" key="t-masters">Report</li>
 
                 <li>

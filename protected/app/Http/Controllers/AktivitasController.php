@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Aktivitas;
 use App\Models\AktivitasKaryawan;
+use App\Models\Barang;
 use App\Models\Karyawan;
+use App\Models\LogStok;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
 use App\Models\Stok;
@@ -28,7 +30,7 @@ class AktivitasController extends Controller
             $endDate = $temp;
         }
 
-        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'user'])
+        $aktivitas = Aktivitas::with(['lokasi', 'sublokasi', 'user', 'stok'])
             ->where('tanggal_berangkat', '>=', $startDate)
             ->where('tanggal_berangkat', '<=', $endDate)
             ->get();
@@ -167,8 +169,6 @@ class AktivitasController extends Controller
             return back()->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
         }
 
-        $sublokasi = SubLokasi::where('id_lokasi', $aktivitas->id_lokasi)->get();
-
         if (in_array($aktivitas->status, ['done', 'cancel'])) {
             return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
         }
@@ -178,7 +178,7 @@ class AktivitasController extends Controller
             array_push($teknisiArr, $value->id_karyawan);
         }
 
-        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr', 'sublokasi'));
+        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr'));
     }
 
     public function update(Request $request, $tiket)
@@ -316,5 +316,110 @@ class AktivitasController extends Controller
 
         $pdf = LaravelMpdf::loadview('exports.pdf.tiket-aktivitas', ['aktivitas' => $aktivitas]);
         return $pdf->stream($aktivitas->no_referensi . '.pdf');
+    }
+
+    public function stockOut(Request $request, $tiket)
+    {
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
+        $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
+        $realStokLog = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+            ->with('barang')
+            ->where('id_stok', $realStok->id)
+            ->groupBy('id_barang', 'is_new')
+            ->get();
+
+        // untuk new stok out
+        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+            ->with('barang')
+            ->having('sumqty', '>', 0)
+            ->groupBy('id_barang', 'is_new')->get();
+
+        $ids = array_map(function ($item) {
+            return $item['id_barang'];
+        }, $stok->toArray());
+
+        $barang = Barang::whereIn('id', $ids)->get();
+
+        foreach ($barang as $key => $item) {
+            foreach ($stok as $key => $stokValue) {
+                if ($stokValue->id_barang == $item->id) {
+                    if ($stokValue->is_new) {
+                        $item->new = $stokValue->sumqty;
+                    } else {
+                        $item->second = $stokValue->sumqty;
+                    }
+                }
+            }
+        }
+
+        return view('contents.aktivitas.edit-stok', compact('barang', 'aktivitas', 'realStokLog'));
+    }
+
+    public function postStockOut(request $request, $tiket)
+    {
+        // $validator = Validator::make($request->all(), [
+        //     'barang'        => 'nullable|array',
+        //     'barang.*.item' => 'required',
+        //     'barang.*.qty'  => 'required',
+        //     'barang.*.bekas'  => 'nullable',
+        // ]);
+
+        // if ($validator->fails()) {
+        //     return back()
+        //         ->withErrors($validator)
+        //         ->withInput();
+        // }
+
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
+        $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
+        
+        DB::beginTransaction();
+
+        $idsOldBarang = array_map(function($value){
+            return $value['barang'];
+        }, ($request->input ?? []));
+
+        LogStok::where('id_stok', $realStok->id)->whereNotIn('id_barang', $idsOldBarang)->delete();
+        // if (!$deleteLogStok) {
+        //     return back()->withErrors(['Error update stok, OICD'])->withInput();
+        // }
+
+        $idsBarang = array_map(function($value){
+            return $value['item'];
+        }, $request->barang);
+
+        // dd($idsBarang);
+        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
+
+        if ($request->barang[0]['item']) {
+            foreach ($request->barang as $key => $barang) {
+
+                $checkStok = array_filter($stokLogs, function($value) use ($barang){
+                    if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
+                        return true;
+                    }
+                });
+    
+                if (!$checkStok) {
+                    DB::rollBack();
+                    return back()->withErrors(['Error input log stok, ada barang dengan stok minus.'])->withInput();
+                }
+    
+                $newLogStok = new LogStok();
+                $newLogStok->id_stok = $realStok->id;
+                $newLogStok->id_barang = $barang['item'];
+                $newLogStok->qty = -$barang['qty'];
+                $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
+    
+                if (!$newLogStok->save()) {
+                    DB::rollBack();
+                    return back()->withErrors(['Error input log stok.'])->withInput();
+                }
+            }
+        }
+
+        DB::commit();
+        return back()->with(['success' => 'Update stok keluar berhasil. ['.$tiket.']']);
+
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AktivitasController;
+use App\Http\Controllers\AlokasiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KaryawanController;
@@ -94,6 +95,13 @@ Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function
 
     Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');
     Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket');
+    Route::get('/{tiket}/stok-keluar', [AktivitasController::class, 'stockOut'])->name('aktivitas.stokout.view');
+    Route::post('/{tiket}/stok-keluar', [AktivitasController::class, 'postStockOut'])->name('aktivitas.stokout.post');
+});
+
+Route::prefix('alokasi')->middleware(['web', 'auth', 'admin'])->group(function () {
+    Route::get('/', [AlokasiController::class, 'index'])->name('alokasi');
+    Route::POST('/process', [AlokasiController::class, 'processAlokasi'])->name('alokasi.process');
 });
 
 Route::prefix('report')->middleware(['web', 'auth'])->group(function () {
