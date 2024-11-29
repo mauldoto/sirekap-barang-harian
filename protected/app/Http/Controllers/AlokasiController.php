@@ -36,7 +36,7 @@ class AlokasiController extends Controller
             ->get();
 
         $daftarLokasi = Lokasi::get();
-        $daftarSublokasi = SubLokasi::where('id', $sublokasi)->get();
+        $daftarSublokasi = SubLokasi::where('id_lokasi', $lokasi)->get();
         $devices = Barang::get();
         $selectedSublokasi = SubLokasi::where('id', $sublokasi)->first();
 
@@ -49,7 +49,7 @@ class AlokasiController extends Controller
 
         DB::beginTransaction();
 
-        $idsOldBarang = array_map(function($value){
+        $idsOldBarang = array_map(function ($value) {
             return $value['barang'];
         }, ($request->input ?? []));
 
@@ -57,12 +57,12 @@ class AlokasiController extends Controller
 
         if ($request->barang[0]['item']) {
             foreach ($request->barang as $key => $barang) {
-    
+
                 $alokasidevice = new AlokasiDevice();
                 $alokasidevice->id_sublokasi = $sublokasi->id;
                 $alokasidevice->id_barang = $barang['item'];
                 $alokasidevice->qty = $barang['qty'];
-    
+
                 if (!$alokasidevice->save()) {
                     DB::rollBack();
                     return back()->withErrors(['Error input log stok.'])->withInput();
@@ -71,6 +71,6 @@ class AlokasiController extends Controller
         }
 
         DB::commit();
-        return back()->with(['success' => 'Update stok keluar berhasil. ['.$sublokasi->nama.']']);
+        return back()->with(['success' => 'Update stok keluar berhasil. [' . $sublokasi->nama . ']']);
     }
 }

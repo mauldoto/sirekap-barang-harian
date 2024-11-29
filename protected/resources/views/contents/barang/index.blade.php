@@ -72,7 +72,7 @@
                                     <div class="dropdown-menu" style="">
                                         <a class="dropdown-item edit-btn" href="#" data-url="{{route('barang.update', $i->id)}}" data-id="{{$i->id}}">Edit</a>
                                         <div class="dropdown-divider"></div>
-                                        {{-- <a class="dropdown-item delete-btn" style="color: red" href="#" data-url="{{route('barang.delete', $i->id)}}">Hapus</a> --}}
+                                        <a class="dropdown-item delete-btn" style="color: red" href="#" data-url="{{route('barang.delete', $i->id)}}">Hapus</a>
                                     </div>
                                 </div>
                             </td>

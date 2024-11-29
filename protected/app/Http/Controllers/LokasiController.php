@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\LokasiImport;
 use App\Imports\SubLokasiImport;
+use App\Models\Aktivitas;
 use App\Models\Lokasi;
 use App\Models\SubLokasi;
 use Illuminate\Http\Request;
@@ -106,6 +107,9 @@ class LokasiController extends Controller
             return back()->withErrors(['Lokasi tidak ditemukan.']);
         }
 
+        $checkLokasi = Aktivitas::where('id_lokasi', $lokasi->id)->first();
+        if ($checkLokasi) return back()->withErrors(['Lokasi tidak bisa dihapus karena sudah ada dalam histori aktivitas, silakan kontak Administrator!']);
+
         if (!$lokasi->delete()) {
             return back()->withErrors(['Lokasi gagal dihapus.']);
         }
@@ -201,6 +205,9 @@ class LokasiController extends Controller
         if (!$sublokasi) {
             return back()->withErrors(['Sublokasi tidak ditemukan.']);
         }
+
+        $checkSubLokasi = Aktivitas::where('id_sub_lokasi', $sublokasi->id)->first();
+        if ($checkSubLokasi) return back()->withErrors(['Sublokasi tidak bisa dihapus karena sudah ada dalam histori aktivitas, silakan kontak Administrator!']);
 
         if (!$sublokasi->delete()) {
             return back()->withErrors(['Sublokasi gagal dihapus.']);

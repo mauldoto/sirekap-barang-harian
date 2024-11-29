@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Imports\BarangImport;
 use App\Models\Barang;
+use App\Models\LogStok;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
@@ -103,6 +104,9 @@ class BarangController extends Controller
         if (!$barang) {
             return back()->withErrors(['Barang tidak ditemukan.']);
         }
+
+        $checkOnStock = LogStok::where('id_barang', $barang->id)->first();
+        if ($checkOnStock) return back()->withErrors(['Barang tidak bisa dihapus karena sudah ada dalam stok, silakan kontak Administrator!']);
 
         if (!$barang->delete()) {
             return back()->withErrors(['Barang gagal dihapus.']);

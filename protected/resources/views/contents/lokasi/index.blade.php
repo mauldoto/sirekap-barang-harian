@@ -68,7 +68,7 @@
                                         <div class="dropdown-menu" style="">
                                             <a class="dropdown-item edit-btn" href="#" data-url="{{route('lokasi.update', $i->id)}}" data-id="{{$i->id}}">Edit</a>
                                             <div class="dropdown-divider"></div>
-                                            {{-- <a class="dropdown-item delete-btn" style="color: red" href="#" data-url="{{route('lokasi.delete', $i->id)}}">Hapus</a> --}}
+                                            <a class="dropdown-item delete-btn" style="color: red" href="#" data-url="{{route('lokasi.delete', $i->id)}}">Hapus</a>
                                         </div>
                                     </div>
                                 </td>
@@ -220,7 +220,7 @@
                                         <div class="dropdown-menu" style="">
                                             <a class="dropdown-item edit-btn-sublokasi" href="#" data-url="{{route('sublokasi.update', $i->id)}}" data-id="{{$i->id}}">Edit</a>
                                             <div class="dropdown-divider"></div>
-                                            {{-- <a class="dropdown-item delete-btn-sublokasi" style="color: red" href="#" data-url="{{route('sublokasi.delete', $i->id)}}">Hapus</a> --}}
+                                            <a class="dropdown-item delete-btn-sublokasi" style="color: red" href="#" data-url="{{route('sublokasi.delete', $i->id)}}">Hapus</a>
                                         </div>
                                     </div>
                                 </td>

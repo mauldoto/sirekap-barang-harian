@@ -31,6 +31,7 @@
                         <div class="col-lg-5">
                             <label class="form-label">Sub Lokasi</label>
                             <select class="form-control" name="sublokasi" id="sublokasi">
+                                <option value=""></option>
                                 @foreach ($daftarSublokasi as $sublok)
                                 <option value="{{$sublok->id}}" {{$sublokasi && $sublokasi == $sublok->id ? 'selected' : ''}}>{{$sublok->nama}}</option>
                                 @endforeach
@@ -82,14 +83,14 @@
             let select2Arr = $('.barang-select2')
             select2Arr.each(function(index, el) {
                 $(el).select2({
-                    placeholder: "-- Pilih Barang --",
-                });
+                    placeholder: "-- Pilih Barang --"
+                , });
             })
         })
 
         $(".barang-select2").select2({
-            placeholder: "-- Pilih Barang --",
-        });
+            placeholder: "-- Pilih Barang --"
+        , });
 
         let selectLokasi = $('#lokasi').select2({
             'placeholder': ' -- pilih lokasi --'
@@ -117,10 +118,10 @@
             })
         }
 
-        $(".dlt-data").on('click', function(){
+        $(".dlt-data").on('click', function() {
             const keyy = $(this).data('key')
             console.log(keyy)
-            $('.row-'+keyy).remove()
+            $('.row-' + keyy).remove()
         })
 
         $("#datatable-aktivitas").on("click", ".delete-btn", function() {

@@ -156,7 +156,7 @@ class StokController extends Controller
 
         DB::beginTransaction();
 
-        $idsBarang = array_map(function($value){
+        $idsBarang = array_map(function ($value) {
             return $value['item'];
         }, $request->barang);
 
@@ -164,7 +164,7 @@ class StokController extends Controller
         $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
 
         $newStokOut = Stok::where('id_aktivitas', $request->aktivitas)->first();
-        
+
         if (!$newStokOut) {
             $newStokOut = new Stok();
             $newStokOut->no_referensi = $request->noref;
@@ -182,7 +182,7 @@ class StokController extends Controller
 
         foreach ($request->barang as $key => $barang) {
 
-            $checkStok = array_filter($stokLogs, function($value) use ($barang){
+            $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
                 if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
                     return true;
                 }
@@ -299,14 +299,14 @@ class StokController extends Controller
                     return $item;
                 }
             });
-    
+
             $barangFinal = [];
             foreach ($request['lokasi_' . $subSelected] as $key => $barang) {
                 foreach ($barangSelected as $key => $dbb) {
                     if ($barang['item'] == $dbb['id']) {
                         $dbb['kondisi'] = array_key_exists('bekas', $barang) ? 'Bekas' : 'Baru';
                         $dbb['qty'] = $barang['qty'];
-    
+
                         array_push($barangFinal, $dbb);
                     }
                 }
@@ -322,6 +322,6 @@ class StokController extends Controller
             'barang'    => $data
         ]);
 
-        return $pdf->stream('pengeluaran-stok-'. $lokasi->nama . '-' . date('dmY') .'.pdf');
+        return $pdf->stream('pengeluaran-stok-' . $lokasi->nama . '-' . date('dmY') . '.pdf');
     }
 }

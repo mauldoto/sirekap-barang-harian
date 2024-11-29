@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Imports\KaryawanImport;
+use App\Models\Aktivitas;
+use App\Models\AktivitasKaryawan;
 use App\Models\Karyawan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -101,6 +103,9 @@ class KaryawanController extends Controller
         if (!$karyawan) {
             return back()->withErrors(['karyawan tidak ditemukan.']);
         }
+
+        $checkKaryawan = AktivitasKaryawan::where('id_karyawan', $karyawan->id)->first();
+        if ($checkKaryawan) return back()->withErrors(['Data karyawan tidak bisa dihapus karena sudah ada dalam histori aktivitas, silakan kontak Administrator!']);
 
         if (!$karyawan->delete()) {
             return back()->withErrors(['data karyawan gagal dihapus.']);
