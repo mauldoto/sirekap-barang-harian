@@ -65,13 +65,13 @@
                             <td>{{ $i->sublokasi->nama }}</td>
                             <td>
                                 @if ($i->status === 'waiting')
-                                    <span class="p-1 text-white rounded bg-secondary">Waiting</span>
+                                <span class="p-1 text-white rounded bg-secondary">Waiting</span>
                                 @elseif ($i->status === 'progress')
-                                    <span class="p-1 text-white rounded bg-warning">Progress</span>
+                                <span class="p-1 text-white rounded bg-warning">Progress</span>
                                 @elseif ($i->status === 'done')
-                                    <span class="p-1 text-white rounded bg-success">Done</span>
+                                <span class="p-1 text-white rounded bg-success">Done</span>
                                 @else
-                                    <span class="p-1 text-white rounded bg-danger">Cancel</span>
+                                <span class="p-1 text-white rounded bg-danger">Cancel</span>
                                 @endif
                             </td>
                             <td>{{ $i->user->username }}</td>
@@ -83,17 +83,17 @@
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a>
                                         @if (!in_array($i->status, ['done', 'cancel']))
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('aktivitas.update.status', $i->no_referensi)}}" data-status="{{$i->status}}"><i class='bx bx-task me-1'></i> Update Status</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1' ></i> Edit</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('aktivitas.update.status', $i->no_referensi)}}" data-status="{{$i->status}}"><i class='bx bx-task me-1'></i> Update Status</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit</a>
 
-                                            @if ($i->stok)
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.stokout.view', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok Keluar</a>
-                                            @endif
+                                        @if ($i->stok)
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.stokout.view', $i->no_referensi)}}" data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok Keluar</a>
                                         @endif
-                                        
+                                        @endif
+
                                     </div>
                                 </div>
                             </td>
@@ -204,7 +204,7 @@
                         <div class="mb-3 col-3">
                             <input class="form-check-input" type="radio" name="status" id="waiting" value="waiting">
                             <label class="form-check-label" for="waiting">
-                              <span class="p-1 rounded text-white bg-secondary">Waiting</span>
+                                <span class="p-1 rounded text-white bg-secondary">Waiting</span>
                             </label>
                         </div>
                         <div class="mb-3 col-3">
@@ -245,7 +245,7 @@
 @section('css')
 <link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
-{{-- <link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}"  rel="stylesheet" type="text/css" /> --}}
+{{-- <link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}" rel="stylesheet" type="text/css" /> --}}
 @endsection
 
 @section('script')
@@ -260,7 +260,9 @@
 <script>
     $(document).ready(function() {
         $("#datatable-aktivitas").dataTable({
-            "aaSorting":[[ 0, "desc" ]]
+            "aaSorting": [
+                [0, "desc"]
+            ]
         });
 
         // $('.job-select2').select2({
@@ -276,7 +278,7 @@
                 $('.lokasi').html(res.data.lokasi.nama)
                 $('.sublokasi').html(res.data.sublokasi.nama)
                 $('.ka').html(res.data.no_referensi)
-                $('.tanggal').html(res.data.tanggal_berangkat + ' / ' +res.data.tanggal_pulang)
+                $('.tanggal').html(res.data.tanggal_berangkat + ' / ' + res.data.tanggal_pulang)
 
                 let tempTeknisi = ''
                 for (const teknisi of res.data.teknisi) {
@@ -285,7 +287,7 @@
 
                 let tempBarang = ''
                 for (const item of res.data.barang) {
-                    tempBarang += '- ' + item.barang.nama + ' ('+ (item.qty < 1 ? item.qty * -1 : item.qty) + " " + item.barang.satuan + ')' + ' ['+(item.is_new ? 'Baru' : 'Bekas')+']' +'<br />'
+                    tempBarang += '- ' + item.barang.nama + ' (' + (item.qty < 1 ? item.qty * -1 : item.qty) + " " + item.barang.satuan + ')' + ' [' + (item.is_new ? 'Baru' : 'Bekas') + ']' + '<br />'
                 }
 
                 $('.teknisi').html(tempTeknisi)
@@ -299,7 +301,7 @@
         }
 
         document.querySelectorAll('input[type="radio"][name="status"]').forEach(element => {
-            element.addEventListener('change', function(e){
+            element.addEventListener('change', function(e) {
                 if (e.target.checked && e.target.value == 'cancel') {
                     document.querySelector('.edit-deskripsi').disabled = false;
                 } else {
