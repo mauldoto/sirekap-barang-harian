@@ -173,12 +173,14 @@ class AktivitasController extends Controller
             return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
         }
 
+        $sublokasi = SubLokasi::where('id_lokasi'. $aktivitas->id_sub_lokasi)->get();
+
         $teknisiArr = [];
         foreach ($aktivitas->teknisi as $key => $value) {
             array_push($teknisiArr, $value->id_karyawan);
         }
 
-        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr'));
+        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr', 'sublokasi'));
     }
 
     public function update(Request $request, $tiket)
@@ -274,6 +276,10 @@ class AktivitasController extends Controller
         $activity->status = $request->status;
         if ($request->status == 'cancel') {
             $activity->deskripsi = $activity->deskripsi . ' #[CANCEL]: ' . $request->deskripsi;
+        }
+
+        if ($request->status == 'done') {
+            $activity->deskripsi = $activity->deskripsi . ' #[DONE]: ' . $request->deskripsi;
         }
 
         if (!$activity->save()) {

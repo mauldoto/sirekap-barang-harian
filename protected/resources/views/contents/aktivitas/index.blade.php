@@ -302,7 +302,7 @@
 
         document.querySelectorAll('input[type="radio"][name="status"]').forEach(element => {
             element.addEventListener('change', function(e) {
-                if (e.target.checked && e.target.value == 'cancel') {
+                if (e.target.checked && (e.target.value == 'cancel' || e.target.value == 'done')) {
                     document.querySelector('.edit-deskripsi').disabled = false;
                 } else {
                     document.querySelector('.edit-deskripsi').disabled = true;

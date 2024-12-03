@@ -229,7 +229,6 @@ class StokController extends Controller
 
         $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
             ->with('barang')
-            ->having('sumqty', '>', 0)
             ->groupBy('id_barang', 'is_new')->get();
 
         $ids = array_map(function ($item) {
