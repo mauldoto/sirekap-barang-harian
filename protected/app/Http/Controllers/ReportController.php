@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Exports\AktivitasExport;
 use App\Exports\AktivitasKaryawanExport;
+use App\Exports\AlokasiExport;
 use App\Exports\PenggunaanBarangExport;
 use App\Exports\StokExport;
 use App\Models\Aktivitas;
 use App\Models\AktivitasKaryawan;
+use App\Models\AlokasiDevice;
 use App\Models\Barang;
 use App\Models\Karyawan;
 use App\Models\LogStok;
@@ -102,6 +104,11 @@ class ReportController extends Controller
 
                 return view('contents.report.report', compact('startDate', 'endDate', 'karyawan', 'report'));
                 break;
+            case 'alokasi':
+                $lokasi = Lokasi::orderBy('nama')->get();
+
+                return view('contents.report.report', compact('lokasi', 'report'));
+                break;
 
             default:
                 # code...
@@ -137,6 +144,9 @@ class ReportController extends Controller
                 break;
             case 'aktivitas-karyawan':
                 return $this->reportAktivitasKaryawan($request, $startDate, $endDate);
+                break;
+            case 'alokasi':
+                return $this->reportAlokasiPerangkat($request);
                 break;
 
             default:
@@ -419,8 +429,31 @@ class ReportController extends Controller
                 throw $th;
             }
         } 
+    }
 
+    protected function reportAlokasiPerangkat($request)
+    {
+        $item = AlokasiDevice::select('id_barang', 'id_sublokasi', DB::raw('SUM(qty) as sumqty'));
         
+        if ($request->lokasi && $request->sublokasi) {
+            $item = $item->whereIn('id_sublokasi', $request->sublokasi);
+        }
+
+        if ($request->lokasi && !$request->sublokasi) {
+            $sublokasi = SubLokasi::select('id')->where('id_lokasi', $request->lokasi)->get()->toArray();
+            $item = $item->whereIn('id_sublokasi', $sublokasi);
+        }
+        
+        $item = $item->with(['barang', 'sublok'])
+            ->groupBy('id_barang', 'id_sublokasi')->get();
+
+        if ($request->export == 'excel') {
+            try {
+                return Excel::download(new AlokasiExport($item), 'report-alokasi-perangkat.xlsx');
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
     }
 
 

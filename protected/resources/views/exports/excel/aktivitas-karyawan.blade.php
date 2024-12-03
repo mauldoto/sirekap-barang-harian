@@ -7,15 +7,9 @@
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
             <th colspan="6" style="text-align: center; font-size: 14px">Report Aktivitas Karyawan</th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
@@ -29,15 +23,9 @@
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
             <th colspan="6" style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>

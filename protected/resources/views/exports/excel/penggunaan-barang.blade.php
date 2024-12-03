@@ -5,9 +5,13 @@
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
             <th colspan="5" style="text-align: center; font-size: 14px">Report Penggunaan Barang</th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
@@ -17,9 +21,13 @@
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
             <th colspan="5" style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>

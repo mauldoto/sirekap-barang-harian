@@ -13,4 +13,9 @@ class AlokasiDevice extends Model
     {
         return $this->belongsTo(Barang::class, 'id_barang', 'id');
     }
+
+    public function sublok()
+    {
+        return $this->belongsTo(SubLokasi::class, 'id_sublokasi', 'id');
+    }
 }

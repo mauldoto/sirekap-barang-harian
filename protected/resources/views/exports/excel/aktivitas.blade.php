@@ -1,19 +1,7 @@
 <table class='table table-bordered' id="job">
     <thead>
         <tr>
-            <th colspan="8" style="text-align: center; font-weight:bold; font-size: 16px;">PT Jaringan Putra Nusantara</th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-            <th style="text-align: center; font-weight:bold;"></th>
-        </tr>
-        <tr>
-            <th colspan="8" style="text-align: center; font-size: 14px">Report Aktivitas</th>
-            <th style="text-align: center; font-weight:bold;"></th>
+            <th colspan="7" style="text-align: center; font-weight:bold; font-size: 16px;">PT Jaringan Putra Nusantara</th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
@@ -23,8 +11,7 @@
             <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
-            <th colspan="8" style="text-align: center;">Periode: {{$start}} - {{$end}}</th>
-            <th style="text-align: center; font-weight:bold;"></th>
+            <th colspan="7" style="text-align: center; font-size: 14px">Report Aktivitas</th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
@@ -34,8 +21,17 @@
             <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
-            <th colspan="8" style="text-align: center; font-weight:bold;"></th>
+            <th colspan="7" style="text-align: center;">Periode: {{$start}} - {{$end}}</th>
             <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+            <th style="text-align: center; font-weight:bold;"></th>
+        </tr>
+        <tr>
+            <th colspan="7" style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>

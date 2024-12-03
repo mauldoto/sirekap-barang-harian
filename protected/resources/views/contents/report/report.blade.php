@@ -26,6 +26,7 @@
                                 <option value="penggunaan-barang" {{$report && $report == 'penggunaan-barang' ? 'selected' : ''}}>Penggunaan Barang</option>
                                 <option value="aktivitas" {{$report && $report == 'aktivitas' ? 'selected' : ''}}>Aktivitas</option>
                                 <option value="aktivitas-karyawan" {{$report && $report == 'aktivitas-karyawan' ? 'selected' : ''}}>Detail Aktivitas Karyawan</option>
+                                <option value="alokasi" {{$report && $report == 'alokasi' ? 'selected' : ''}}>Alokasi Perangkat</option>
                             </select>
                         </div>
                         <div class="mb-2 col-lg-2 d-flex align-items-end">
@@ -59,6 +60,14 @@
 <script src="{{ URL::asset('assets/libs/select2/js/select2.min.js') }}"></script>
 @endsection
 
+@push('page-css')
+<style>
+    .select2-selection__clear {
+        padding-right: 20px;
+    }
+</style>
+@endpush
+
 @push('page-js')
 <script>
     $(document).ready(function() {
@@ -69,7 +78,8 @@
         $(".select2-barang").select2({});
 
         let selectLokasi = $('#lokasi').select2({
-            'placeholder': ' -- pilih lokasi --'
+            'placeholder': ' -- pilih lokasi --',
+            allowClear: true
         });
 
         let selectSubLokasi = $('#sublokasi').select2({
@@ -83,6 +93,11 @@
         selectLokasi.on('select2:select', function() {
             selectSubLokasi.html('<option></option');
             getSubLokasi($(this).val())
+        })
+
+        selectLokasi.on('select2:clear', function() {
+            selectSubLokasi.html('<option></option');
+            selectSubLokasi.val(null).trigger('change.select2');
         })
 
         $('.btn-export').on('click', function(){

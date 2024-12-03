@@ -173,7 +173,7 @@ class AktivitasController extends Controller
             return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
         }
 
-        $sublokasi = SubLokasi::where('id_lokasi'. $aktivitas->id_sub_lokasi)->get();
+        $sublokasi = SubLokasi::where('id_lokasi', $aktivitas->id_lokasi)->get();
 
         $teknisiArr = [];
         foreach ($aktivitas->teknisi as $key => $value) {
