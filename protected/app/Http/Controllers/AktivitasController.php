@@ -22,7 +22,7 @@ class AktivitasController extends Controller
     public function index(Request $request)
     {
         $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
-        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->addDays(1)->format('Y-m-d');
+        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->addMonths(2)->format('Y-m-d');
 
         if ($startDate > $endDate) {
             $temp = $startDate;
@@ -276,6 +276,19 @@ class AktivitasController extends Controller
         $activity->status = $request->status;
         if ($request->status == 'cancel') {
             $activity->deskripsi = $activity->deskripsi . ' #[CANCEL]: ' . $request->deskripsi;
+
+            $stok = Stok::where('id_aktivitas', $activity->id)->first();
+
+            if ($stok) {
+                $logs = LogStok::where('id_stok', $stok->id)->delete();
+                if (!$logs) {
+                    return back()->withErrors(['Gagal hapus data tiket, on delete stock out']);
+                }
+
+                if(!$stok->delete()){
+                    return back()->withErrors(['Gagal hapus data tiket, on delete master stock out']);
+                }
+            }
         }
 
         if ($request->status == 'done') {
@@ -324,7 +337,7 @@ class AktivitasController extends Controller
         return $pdf->stream($aktivitas->no_referensi . '.pdf');
     }
 
-    public function stockOut(Request $request, $tiket)
+    public function editStockOut(Request $request, $tiket)
     {
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
         $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
@@ -361,7 +374,7 @@ class AktivitasController extends Controller
         return view('contents.aktivitas.edit-stok', compact('barang', 'aktivitas', 'realStokLog'));
     }
 
-    public function postStockOut(request $request, $tiket)
+    public function postEditStockOut(request $request, $tiket)
     {
         // $validator = Validator::make($request->all(), [
         //     'barang'        => 'nullable|array',
@@ -427,5 +440,146 @@ class AktivitasController extends Controller
         DB::commit();
         return back()->with(['success' => 'Update stok keluar berhasil. ['.$tiket.']']);
 
+    }
+
+    public function inputStockOut(Request $request, $tiket)
+    {
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
+        $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
+
+        if ($realStok) {
+            return back()->withErrors(['Stok untuk tiket '. $aktivitas->no_referensi .' sudah terinput, silakan menggunakan fitur edit.']);
+        }
+
+        // untuk new stok out
+        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+            ->with('barang')
+            ->having('sumqty', '>', 0)
+            ->groupBy('id_barang', 'is_new')->get();
+
+        $ids = array_map(function ($item) {
+            return $item['id_barang'];
+        }, $stok->toArray());
+
+        $barang = Barang::whereIn('id', $ids)->get();
+
+        foreach ($barang as $key => $item) {
+            foreach ($stok as $key => $stokValue) {
+                if ($stokValue->id_barang == $item->id) {
+                    if ($stokValue->is_new) {
+                        $item->new = $stokValue->sumqty;
+                    } else {
+                        $item->second = $stokValue->sumqty;
+                    }
+                }
+            }
+        }
+
+        return view('contents.aktivitas.input-stok', compact('barang', 'aktivitas'));
+    }
+
+    public function postInputStockOut(request $request, $tiket)
+    {
+        $validator = Validator::make($request->all(), [
+            'noref'         => 'required|string',
+            'barang'        => 'nullable|array',
+            'barang.*.item' => 'required',
+            'barang.*.qty'  => 'required',
+            'barang.*.bekas'  => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
+        
+        DB::beginTransaction();
+
+        $idsBarang = array_map(function ($value) {
+            return $value['item'];
+        }, $request->barang);
+
+        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
+
+        $newStokOut = Stok::where('id_aktivitas', $request->aktivitas)->first();
+
+        if (!$newStokOut) {
+            $newStokOut = new Stok();
+            $newStokOut->no_referensi = $request->noref;
+            $newStokOut->id_aktivitas = $aktivitas;
+            $newStokOut->tanggal = $aktivitas->tanggal_pulang;
+            $newStokOut->type = 'keluar';
+            $newStokOut->input_by = $request->user()->id;
+        }
+
+        if (!$newStokOut->save()) {
+            DB::rollBack();
+            return back()->withErrors(['Input stok keluar gagal.'])->withInput();
+        }
+
+        foreach ($request->barang as $key => $barang) {
+
+            $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
+                if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
+                    return true;
+                }
+            });
+
+            if (!$checkStok) {
+                DB::rollBack();
+                return back()->withErrors(['Error input log stok, ada barang dengan stok minus.'])->withInput();
+            }
+
+            $newLogStok = new LogStok();
+            $newLogStok->id_stok = $newStokOut->id;
+            $newLogStok->id_barang = $barang['item'];
+            $newLogStok->qty = -$barang['qty'];
+            $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
+
+            if (!$newLogStok->save()) {
+                DB::rollBack();
+                return back()->withErrors(['Error input log stok.'])->withInput();
+            }
+        }
+
+        DB::commit();
+        return redirect(route('aktivitas.index'))->with(['success' => 'Input stok keluar berhasil.']);
+
+    }
+
+    public function hapusTiket(Request $request, $tiket)
+    {
+        
+        $activity = Aktivitas::where('no_referensi', $tiket)->first();
+        if (!$activity) {
+            return redirect(route('aktivitas.index'))->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
+        }
+
+        DB::beginTransaction();
+        $stok = Stok::where('id_aktivitas', $activity->id)->first();
+
+        if ($stok) {
+            $logs = LogStok::where('id_stok', $stok->id)->delete();
+            if (!$logs) {
+                DB::rollBack();
+                return back()->withErrors(['Gagal hapus data tiket, on delete stock out']);
+            }
+
+            if(!$stok->delete()){
+                DB::rollBack();
+                return back()->withErrors(['Gagal hapus data tiket, on delete master stock out']);
+            }
+        }
+
+        if(!$activity->delete()){
+            DB::rollBack();
+            return back()->withErrors(['Gagal hapus data tiket']);
+        }
+
+        DB::commit();
+        return back()->with(['success' => 'Tiket ' . $tiket . ' berhasil dihapus.']);
     }
 }

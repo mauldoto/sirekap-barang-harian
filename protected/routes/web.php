@@ -91,12 +91,15 @@ Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function
     Route::get('/lokasi/{id}', [AktivitasController::class, 'getSubLokasi'])->name('aktivitas.sublokasi');
     Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store');
     Route::post('/{tiket}/update', [AktivitasController::class, 'update'])->name('aktivitas.update');
+    Route::post('/{tiket}/hapus', [AktivitasController::class, 'hapusTiket'])->name('aktivitas.hapus');
     Route::put('/{tiket}/update-status', [AktivitasController::class, 'updateStatus'])->name('aktivitas.update.status');
 
     Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');
     Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket');
-    Route::get('/{tiket}/stok-keluar', [AktivitasController::class, 'stockOut'])->name('aktivitas.stokout.view');
-    Route::post('/{tiket}/stok-keluar', [AktivitasController::class, 'postStockOut'])->name('aktivitas.stokout.post');
+    Route::get('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'editStockOut'])->name('aktivitas.editstokout.view');
+    Route::post('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'postEditStockOut'])->name('aktivitas.editstokout.post');
+    Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputStockOut'])->name('aktivitas.inputstokout.view');
+    Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputStockOut'])->name('aktivitas.inputstokout.post');
 });
 
 Route::prefix('alokasi')->middleware(['web', 'auth', 'admin'])->group(function () {

@@ -83,15 +83,21 @@
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a>
                                         @if (!in_array($i->status, ['done', 'cancel']))
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('aktivitas.update.status', $i->no_referensi)}}" data-status="{{$i->status}}"><i class='bx bx-task me-1'></i> Update Status</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('aktivitas.update.status', $i->no_referensi)}}" data-status="{{$i->status}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-task me-1'></i> Update Status</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a>
 
-                                        @if ($i->stok)
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.stokout.view', $i->no_referensi)}}" data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok Keluar</a>
-                                        @endif
+                                            @if ($i->stok)
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.editstokout.view', $i->no_referensi)}}" data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok Keluar</a>
+                                            @else
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.inputstokout.view', $i->no_referensi)}}" data-url=""><i class='bx bx-archive-out me-1'></i> Input Stok Keluar</a>
+                                            @endif
+
+                                            {{-- <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center hapus-btn" style="color: red" href="#" data-url="{{route('aktivitas.hapus', $i->no_referensi)}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-trash me-1'></i> Hapus</a> --}}
                                         @endif
 
                                     </div>
@@ -225,6 +231,8 @@
                                 <span class="p-1 rounded text-white bg-danger">Cancel</span>
                             </label>
                         </div>
+
+                        <input type="hidden" name="stokStatus" id="stokStatus">
                     </div>
                     <div class="mb-2">
                         <label class="form-label">Deskripsi</label>
@@ -239,6 +247,10 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div>
+
+<form class="hidden" id="hapusTiket" action="" method="POST">
+    @csrf
+</form>
 
 @endsection
 
@@ -344,47 +356,95 @@
 
         $('#datatable-aktivitas').on('click', '.update-status-btn', function() {
             getDetailStatus($(this).data('status'))
+            let checkStok = document.querySelector('input[name="stokStatus"]');
+            checkStok.value = $(this).data('stok')
 
             const url = $(this).data("url");
             const form = $("#formUpdateStatus").attr("action", url);
         })
 
-        $('.btn-submit-u').on('click', function() {
-            Swal.fire({
-                title: "Apakah anda yakin?"
-                , text: "Status aktivitas akan diupdate!"
-                , icon: "warning"
-                , showCancelButton: true
-                , confirmButtonColor: "#3085d6"
-                , cancelButtonColor: "#d33"
-                , confirmButtonText: "Ya, Update!"
-                , cancelButtonText: "Batalkan"
-            , }).then((result) => {
-                if (result.isConfirmed) {
-                    $('#formUpdateStatus')[0].submit();
-                }
-            });
-        })
-
-        $("#datatable-aktivitas").on("click", ".delete-btn", function() {
+        $('#datatable-aktivitas').on('click', '.hapus-btn', function() {
             const url = $(this).data("url");
-            const form = $(".form-delete").attr("action", url);
+            const form = $("#hapusTiket").attr("action", url);
 
-            Swal.fire({
-                title: "Apakah anda yakin?"
-                , text: "Data akan dialihkan ke folder sampah!"
+            if ($(this).data("stok")) {
+                Swal.fire({
+                title: "No tiket memiliki data stok keluar, Apakah anda yakin?"
+                , text: "Data akan dialihkan ke folder sampah dan data stok keluar akan kembali ke stok aktif!"
                 , icon: "warning"
                 , showCancelButton: true
                 , confirmButtonColor: "#3085d6"
                 , cancelButtonColor: "#d33"
                 , confirmButtonText: "Ya, Hapus!"
                 , cancelButtonText: "Batalkan"
-            , }).then((result) => {
-                if (result.isConfirmed) {
-                    form[0].submit();
-                }
-            });
-        });
+                , }).then((result) => {
+                    if (result.isConfirmed) {
+                        form[0].submit();
+                    }
+                });
+            } else {
+                Swal.fire({
+                    title: "Apakah anda yakin?"
+                    , text: "Data akan dialihkan ke folder sampah!"
+                    , icon: "warning"
+                    , showCancelButton: true
+                    , confirmButtonColor: "#3085d6"
+                    , cancelButtonColor: "#d33"
+                    , confirmButtonText: "Ya, Hapus!"
+                    , cancelButtonText: "Batalkan"
+                , }).then((result) => {
+                    if (result.isConfirmed) {
+                        form[0].submit();
+                    }
+                });
+            }
+        })
+
+        $('.btn-submit-u').on('click', function() {
+            let checkStok = document.querySelector('input[name="stokStatus"]').value;
+            let checkStatus = document.querySelector('input[type="radio"][name="status"]:checked').value;
+
+            if (checkStatus == 'done' && !checkStok) {
+                Swal.fire({
+                    title: "Stok belum diinput, Apakah anda yakin?"
+                    , text: "No tiket belum memiliki data stok keluar"
+                    , icon: "warning"
+                    , showCancelButton: true
+                    , confirmButtonColor: "#3085d6"
+                    , cancelButtonColor: "#d33"
+                    , confirmButtonText: "Ya, Update!"
+                    , cancelButtonText: "Batalkan"
+                , }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#formUpdateStatus')[0].submit();
+                    }
+                });
+                
+            } else if (checkStatus == 'cancel' && checkStok) {
+                Swal.fire({
+                    title: "Perhatian!",
+                    text: "No tiket memiliki data stok keluar, kontak Mas Udin / Bang Indra!",
+                    icon: "warning"
+                    });
+            } else {
+                Swal.fire({
+                    title: "Apakah anda yakin?"
+                    , text: "Status aktivitas akan diupdate!"
+                    , icon: "warning"
+                    , showCancelButton: true
+                    , confirmButtonColor: "#3085d6"
+                    , cancelButtonColor: "#d33"
+                    , confirmButtonText: "Ya, Update!"
+                    , cancelButtonText: "Batalkan"
+                , }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#formUpdateStatus')[0].submit();
+                    }
+                });
+            }
+
+            return
+        })
 
         $('.exportpdf-modal-btn').on('click', function() {
             const myModal = new bootstrap.Modal('#modalExportPdf', {

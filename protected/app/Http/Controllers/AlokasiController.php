@@ -58,6 +58,11 @@ class AlokasiController extends Controller
         if ($request->barang[0]['item']) {
             foreach ($request->barang as $key => $barang) {
 
+                if ($barang['qty'] == '' || $barang['qty'] < 1) {
+                    DB::rollBack();
+                    return back()->withErrors(['Error input log stok, QTY harus diisi dan minimal 1.'])->withInput();
+                }
+
                 $alokasidevice = new AlokasiDevice();
                 $alokasidevice->id_sublokasi = $sublokasi->id;
                 $alokasidevice->id_barang = $barang['item'];

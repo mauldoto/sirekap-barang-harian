@@ -17,7 +17,7 @@
                     <h4 class="card-title mb-4">Log Stok</h4>
                     <div class="button-group">
                         <a href="{{route('stok.masuk.view')}}" class="btn btn-sm btn-success"><i class='bx bx-archive-in'></i> Stok Masuk</a>
-                        <a href="{{route('stok.keluar.view')}}" class="btn btn-sm btn-warning"><i class='bx bx-archive-out'></i> Stok Keluar</a>
+                        {{-- <a href="{{route('stok.keluar.view')}}" class="btn btn-sm btn-warning"><i class='bx bx-archive-out'></i> Stok Keluar</a> --}}
                         <a href="{{route('stok.log')}}" class="btn btn-sm btn-primary"><i class='bx bx-search-alt-2'></i> Cek Log</a>
                         <a href="{{route('stok.rencana')}}" class="btn btn-sm btn-secondary"><i class='bx bx-print-alt-2'></i> Lembar Stok</a>
                         {{-- <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export PDF</a> --}}
