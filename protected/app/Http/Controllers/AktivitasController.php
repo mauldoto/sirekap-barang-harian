@@ -504,12 +504,12 @@ class AktivitasController extends Controller
 
         $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
 
-        $newStokOut = Stok::where('id_aktivitas', $request->aktivitas)->first();
+        $newStokOut = Stok::where('id_aktivitas', $aktivitas->id)->first();
 
         if (!$newStokOut) {
             $newStokOut = new Stok();
             $newStokOut->no_referensi = $request->noref;
-            $newStokOut->id_aktivitas = $aktivitas;
+            $newStokOut->id_aktivitas = $aktivitas->id;
             $newStokOut->tanggal = $aktivitas->tanggal_pulang;
             $newStokOut->type = 'keluar';
             $newStokOut->input_by = $request->user()->id;
