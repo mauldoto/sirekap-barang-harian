@@ -33,4 +33,9 @@ class Aktivitas extends Model
     {
         return $this->hasOne(Stok::class, 'id_aktivitas', 'id');
     }
+
+    public function akomodasi()
+    {
+        return $this->belongsToMany(Akomodasi::class, 'akomodasi_aktivitas', 'id_aktivitas', 'id_akomodasi');
+    }
 }

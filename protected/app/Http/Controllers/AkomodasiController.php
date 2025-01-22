@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Akomodasi;
+use App\Models\Aktivitas;
 
 class AkomodasiController extends Controller
 {
@@ -29,5 +30,14 @@ class AkomodasiController extends Controller
         // $reportAktivitas = Akomodasi::orderBy('tanggal_terbit', 'DESC')->get();
 
         return view('contents.akomodasi.index', compact('akomodasi', 'startDate', 'endDate'));
+    }
+
+    public function inputView(Request $request)
+    {
+        $aktivitas = Aktivitas::whereIn('status', ['waiting', 'progress'])
+            ->without('akomodasi')
+            ->get();
+
+            return view('contents.akomodasi.input', compact('aktivitas'));
     }
 }
