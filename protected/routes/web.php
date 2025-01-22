@@ -111,3 +111,7 @@ Route::prefix('report')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [ReportController::class, 'report'])->name('report');
     Route::POST('/process', [ReportController::class, 'processReport'])->name('report.process');
 });
+
+Route::prefix('akomodasi')->middleware(['web', 'auth', 'finance'])->group(function () {
+    
+});
