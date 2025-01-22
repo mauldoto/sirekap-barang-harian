@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AkomodasiController;
 use App\Http\Controllers\AktivitasController;
 use App\Http\Controllers\AlokasiController;
 use App\Http\Controllers\AuthController;
@@ -104,14 +105,20 @@ Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function
 
 Route::prefix('alokasi')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/', [AlokasiController::class, 'index'])->name('alokasi');
-    Route::POST('/process', [AlokasiController::class, 'processAlokasi'])->name('alokasi.process');
+    Route::post('/process', [AlokasiController::class, 'processAlokasi'])->name('alokasi.process');
 });
 
 Route::prefix('report')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [ReportController::class, 'report'])->name('report');
-    Route::POST('/process', [ReportController::class, 'processReport'])->name('report.process');
+    Route::post('/process', [ReportController::class, 'processReport'])->name('report.process');
 });
 
 Route::prefix('akomodasi')->middleware(['web', 'auth', 'finance'])->group(function () {
-    
+    Route::get('/', [AkomodasiController::class, 'index'])->name('akomodasi');
+    Route::get('/input', [AkomodasiController::class, 'inputView'])->name('akomodasi.input');
+    Route::get('/{noref}/edit', [AkomodasiController::class, 'editView'])->name('akomodasi.edit');
+
+    Route::post('/input', [AkomodasiController::class, 'inputAkomodasi'])->name('akomodasi.store');
+    Route::post('/{noref}/edit', [AkomodasiController::class, 'editAkomodasi'])->name('akomodasi.update');
+    Route::post('/{noref}/delete', [AkomodasiController::class, 'deleteAkomodasi'])->name('akomodasi.delete');
 });
