@@ -96,6 +96,19 @@ if (!function_exists('generateReference')) {
                 
                 return $code;
                 break;
+
+            case 'AKM':
+                $kode = App\Models\Akomodasi::pluck('no_referensi')->toArray();
+                
+                do {
+                    $code = $prefix . '-' . date('y');
+                    for ($i = 0; $i < $length; $i++) {
+                        $code .= $characters[rand(0, strlen($characters) - 1)];
+                    }
+                } while (in_array($code, $kode));
+                
+                return $code;
+                break;
             
             default:
                 $code = $prefix . '-' . date('y');
