@@ -22,12 +22,12 @@ class AkomodasiController extends Controller
             $endDate = $temp;
         }
 
-        $aktivitas = Akomodasi::where('tanggal_terbit', '>=', $startDate)
+        $akomodasi = Akomodasi::where('tanggal_terbit', '>=', $startDate)
             ->where('tanggal_terbit', '<=', $endDate)
             ->get();
 
-        $reportAktivitas = Akomodasi::orderBy('tanggal_terbit', 'DESC')->get();
+        // $reportAktivitas = Akomodasi::orderBy('tanggal_terbit', 'DESC')->get();
 
-        return view('contents.aktivitas.index', compact('aktivitas', 'startDate', 'endDate', 'reportAktivitas'));
+        return view('contents.akomodasi.index', compact('akomodasi', 'startDate', 'endDate'));
     }
 }

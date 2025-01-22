@@ -49,6 +49,7 @@
                             <th>Noref</th>
                             <th>Nominal Pengajuan</th>
                             <th>Nominal Realisasi</th>
+                            <th>Status</th>
                             <th>Diinput Oleh</th>
                             <th>Aksi</th>
                         </tr>
@@ -58,19 +59,17 @@
                     <tbody>
                         @foreach($akomodasi as $key => $i)
                         <tr>
-                            <td>{{ $i->tanggal_berangkat }} s/d {{ $i->tanggal_pulang }}</td>
+                            <td>{{ $i->tanggal_terbit }}</td>
                             <td>{{ $i->no_referensi }}</td>
-                            <td>{{ $i->lokasi->nama }}</td>
-                            <td>{{ $i->sublokasi->nama }}</td>
+                            <td>{{ $i->nominal_pengajuan }}</td>
+                            <td>{{ $i->nominal_realisasi }}</td>
                             <td>
-                                @if ($i->status === 'waiting')
-                                <span class="p-1 text-white rounded bg-secondary">Waiting</span>
-                                @elseif ($i->status === 'progress')
-                                <span class="p-1 text-white rounded bg-warning">Progress</span>
-                                @elseif ($i->status === 'done')
-                                <span class="p-1 text-white rounded bg-success">Done</span>
+                                @if ($i->status === 'created')
+                                <span class="p-1 text-white rounded bg-secondary">Created</span>
+                                @elseif ($i->status === 'closed')
+                                <span class="p-1 text-white rounded bg-success">Closed</span>
                                 @else
-                                <span class="p-1 text-white rounded bg-danger">Cancel</span>
+                                <span class="p-1 text-white rounded bg-danger">Canceled</span>
                                 @endif
                             </td>
                             <td>{{ $i->user->username }}</td>
@@ -79,21 +78,21 @@
                                     <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">Aksi <i class="mdi mdi-chevron-down"></i></button>
                                     <div class="dropdown-menu" style="">
                                         <a class="dropdown-item detail-btn d-flex align-items-center" href="#" data-url="" data-id="{{$i->id}}"><i class='bx bx-search-alt-2 me-1'></i> Detail</a>
-                                        <div class="dropdown-divider"></div>
-                                        <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a>
+                                        {{-- <div class="dropdown-divider"></div> --}}
+                                        {{-- <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a> --}}
                                         @if (!in_array($i->status, ['done', 'cancel']))
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('akomodasi.update.status', $i->no_referensi)}}" data-status="{{$i->status}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-task me-1'></i> Update Status</a>
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a>
 
-                                            @if ($i->stok)
+                                            {{-- @if ($i->stok)
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.editstokout.view', $i->no_referensi)}}" data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok Keluar</a>
                                             @else
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.inputstokout.view', $i->no_referensi)}}" data-url=""><i class='bx bx-archive-out me-1'></i> Input Stok Keluar</a>
-                                            @endif
+                                            @endif --}}
 
                                             {{-- <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center hapus-btn" style="color: red" href="#" data-url="{{route('akomodasi.hapus', $i->no_referensi)}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-trash me-1'></i> Hapus</a> --}}
@@ -164,7 +163,7 @@
     </div><!-- /.modal-dialog -->
 </div>
 
-<div id="modalExportPdf" class="modal fade" tabindex="-1" aria-labelledby="modalExportPdfLabel" style="display: none;" aria-hidden="true">
+{{-- <div id="modalExportPdf" class="modal fade" tabindex="-1" aria-labelledby="modalExportPdfLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -192,7 +191,7 @@
 
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
-</div>
+</div> --}}
 
 <div id="modalUpdateStatus" class="modal fade" tabindex="-1" aria-labelledby="modalUpdateStatusLabel" style="display: none;" aria-hidden="true">
     <div class="modal-dialog">
