@@ -11,5 +11,13 @@ class Akomodasi extends Model
 
     protected $table = 'akomodasi';
 
-    
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'input_by', 'id');
+    }
+
+    public function aktivitas()
+    {
+        return $this->belongsToMany(Aktivitas::class, 'akomodasi_aktivitas', 'id_akomodasi', 'id_aktivitas');
+    }
 }
