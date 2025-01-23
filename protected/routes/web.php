@@ -116,6 +116,7 @@ Route::prefix('report')->middleware(['web', 'auth'])->group(function () {
 Route::prefix('akomodasi')->middleware(['web', 'auth', 'finance'])->group(function () {
     Route::get('/', [AkomodasiController::class, 'index'])->name('akomodasi.index');
     Route::get('/input', [AkomodasiController::class, 'inputView'])->name('akomodasi.input');
+    Route::get('/{noref}/detail', [AkomodasiController::class, 'getDetail'])->name('akomodasi.detail');
     Route::get('/{noref}/edit', [AkomodasiController::class, 'editView'])->name('akomodasi.edit');
 
     Route::post('/input', [AkomodasiController::class, 'inputAkomodasi'])->name('akomodasi.store');

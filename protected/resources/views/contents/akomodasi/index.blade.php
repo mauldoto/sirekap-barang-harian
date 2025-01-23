@@ -77,14 +77,14 @@
                                 <div class="btn-group">
                                     <button type="button" class="btn btn-info dropdown-toggle btn-sm" data-bs-toggle="dropdown" aria-expanded="false">Aksi <i class="mdi mdi-chevron-down"></i></button>
                                     <div class="dropdown-menu" style="">
-                                        <a class="dropdown-item detail-btn d-flex align-items-center" href="#" data-url="" data-id="{{$i->id}}"><i class='bx bx-search-alt-2 me-1'></i> Detail</a>
+                                        <a class="dropdown-item detail-btn d-flex align-items-center" href="#" data-url="" data-id="{{$i->no_referensi}}"><i class='bx bx-search-alt-2 me-1'></i> Detail</a>
                                         {{-- <div class="dropdown-divider"></div> --}}
                                         {{-- <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a> --}}
                                         @if (!in_array($i->status, ['done', 'cancel']))
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('akomodasi.update.status', $i->no_referensi)}}" data-status="{{$i->status}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-task me-1'></i> Update Status</a>
-                                            <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a>
+                                            {{-- <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('akomodasi.update.status', $i->no_referensi)}}" data-status="{{$i->status}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-task me-1'></i> Update Status</a> --}}
+                                            {{-- <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a> --}}
 
                                             {{-- @if ($i->stok)
                                             <div class="dropdown-divider"></div>
@@ -132,29 +132,24 @@
                             <td class="tanggal"></td>
                         </tr>
                         <tr>
-                            <td>Lokasi</td>
+                            <td>Nominal Pengajuan</td>
                             <td>:</td>
-                            <td class="lokasi"></td>
+                            <td class="np"></td>
                         </tr>
                         <tr>
-                            <td>Sublokasi</td>
+                            <td>Nominal Realisasi</td>
                             <td>:</td>
-                            <td class="sublokasi"></td>
+                            <td class="nr"></td>
                         </tr>
                         <tr>
-                            <td>Teknisi</td>
+                            <td>Aktivitas</td>
                             <td>:</td>
-                            <td class="teknisi"></td>
+                            <td class="aktivitas"></td>
                         </tr>
                         <tr>
-                            <td>Deskripsi</td>
+                            <td>Keterangan</td>
                             <td>:</td>
-                            <td class="deskripsi"></td>
-                        </tr>
-                        <tr>
-                            <td>Barang Terpakai</td>
-                            <td>:</td>
-                            <td class="perangkat"></td>
+                            <td class="keterangan"></td>
                         </tr>
                     </tbody>
                 </table>
@@ -285,24 +280,17 @@
                 if (!res.status) return
 
                 $('.ka').html(res.data.no_referensi)
-                $('.lokasi').html(res.data.lokasi.nama)
-                $('.sublokasi').html(res.data.sublokasi.nama)
-                $('.ka').html(res.data.no_referensi)
-                $('.tanggal').html(res.data.tanggal_berangkat + ' / ' + res.data.tanggal_pulang)
+                $('.np').html(res.data.nominal_pengajuan)
+                $('.nr').html(res.data.nominal_realisasi)
+                $('.tanggal').html(res.data.tanggal_terbit)
 
-                let tempTeknisi = ''
-                for (const teknisi of res.data.teknisi) {
-                    tempTeknisi += '- ' + teknisi.karyawan.nama + '<br/>'
+                let tempAktivitas = ''
+                for (const akt of res.data.aktivitas) {
+                    tempAktivitas += '- ' + akt.no_referensi + '<br/>'
                 }
 
-                let tempBarang = ''
-                for (const item of res.data.barang) {
-                    tempBarang += '- ' + item.barang.nama + ' (' + (item.qty < 1 ? item.qty * -1 : item.qty) + " " + item.barang.satuan + ')' + ' [' + (item.is_new ? 'Baru' : 'Bekas') + ']' + '<br />'
-                }
-
-                $('.teknisi').html(tempTeknisi)
-                $('.perangkat').html(tempBarang)
-                $('.deskripsi').html(res.data.deskripsi)
+                $('.aktivitas').html(tempAktivitas)
+                $('.keterangan').html(res.data.deskripsi)
 
                 setTimeout(() => {
                     showModalAkomodasi();

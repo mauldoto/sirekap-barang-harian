@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <form action="{{route('stok.masuk.store')}}" method="post">
+                <form action="{{route('akomodasi.store')}}" method="post">
                     @csrf
                     <div class="mb-2 col-lg-5">
                         <label class="form-label">No Referensi</label>
@@ -30,23 +30,32 @@
 
                     <div class="mb-2 col-lg-5">
                         <label class="form-label">Tanggal Terbit</label>
-                        <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required>
+                        <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" value="{{$dateNow}}" required>
+                    </div>
+                    
+                    <div class="mb-2 col-lg-5">
+                        <label class="form-label">Aktivitas/Job</label>
+                        {{-- <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required> --}}
+                        <select class="form-control job-select2" name="aktivitas[]" id="ak" multiple>
+                            @foreach ($aktivitas as $act)
+                            <option value="{{$act->id}}">[{{ $act->no_referensi }}] {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mb-2 col-lg-5">
+                        <label class="form-label">Nominal Pengajuan</label>
+                        <input class="form-control" type="number" name="nominal_pengajuan" required>
+                    </div>
+
+                    <div class="mb-2 col-lg-5">
+                        <label class="form-label">Nominal Realisasi</label>
+                        <input class="form-control" type="number" name="nominal_realisasi" required>
                     </div>
 
                     <div class="mb-3 col-lg-5">
                         <label class="form-label">Keterangan</label>
                         <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
-                    </div>
-
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Aktivitas/Job</label>
-                        {{-- <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required> --}}
-                        <select class="form-control job-select2" name="aktivitas" id="ak">
-                            <option></option>
-                            {{-- @foreach ($aktivitas as $act)
-                            <option value="{{$act->id}}">[{{ $act->no_referensi }}] {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
-                            @endforeach --}}
-                        </select>
                     </div>
 
                     <div class="btn-submit mt-5 d-flex justify-content-end">
@@ -84,21 +93,8 @@
 @push('page-js')
 <script>
     $(document).ready(function() {
-        $("#repeater").createRepeater({
-            showFirstItemToDefault: true
-        , });
-
-        $(".repeater-add-btn").click(function() {
-            let select2Arr = $('.select2')
-            select2Arr.each(function(index, el) {
-                $(el).select2({
-                    placeholder: "-- Pilih Barang --"
-                });
-            })
-        })
-
-        $('.select2').select2({
-            placeholder: "-- Pilih Barang --"
+        $('.job-select2').select2({
+            placeholder: "-- Pilih Job --"
         });
 
         $("#datatable-stok").on("click", ".delete-btn", function() {
