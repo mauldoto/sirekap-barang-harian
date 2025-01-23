@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 
 use App\Models\Akomodasi;
 use App\Models\Aktivitas;
+use App\Models\LogAkomodasi;
 
 class AkomodasiController extends Controller
 {
@@ -23,21 +24,88 @@ class AkomodasiController extends Controller
             $endDate = $temp;
         }
 
-        $akomodasi = Akomodasi::where('tanggal_terbit', '>=', $startDate)
+        $akomodasi = Akomodasi::with(['user'])
+            ->where('tanggal_terbit', '>=', $startDate)
             ->where('tanggal_terbit', '<=', $endDate)
             ->get();
-
+        
         // $reportAktivitas = Akomodasi::orderBy('tanggal_terbit', 'DESC')->get();
 
         return view('contents.akomodasi.index', compact('akomodasi', 'startDate', 'endDate'));
     }
 
+    public function getDetail(request $request, $noref)
+    {
+        $akm = Akomodasi::where('no_referensi', $noref)->with(['aktivitas'])->first();
+
+        if (!$akm) {
+            return;
+        }
+
+        return response()->json([
+            'status' => 'success',
+            'data'   => $akm
+        ]);
+    }
+
     public function inputView(Request $request)
     {
+        $dateNow = Carbon::now()->format('Y-m-d');
         $aktivitas = Aktivitas::whereIn('status', ['waiting', 'progress'])
-            ->without('akomodasi')
+            ->doesntHave('akomodasi')
+            ->with(['lokasi', 'sublokasi'])
             ->get();
 
-            return view('contents.akomodasi.input', compact('aktivitas'));
+        // dd($dateNow);
+        return view('contents.akomodasi.input', compact('aktivitas', 'dateNow'));
+    }
+
+    public function inputAkomodasi(Request $request)
+    {
+        // validasi
+        $validator = Validator::make($request->all(), [
+            'noref'             => 'required',
+            'tanggal'           => 'required|date',
+            'nominal_pengajuan' => 'required|numeric',
+            'nominal_realisasi' => 'required|numeric',
+            'keterangan'        => 'nullable',
+            'aktivitas'         => 'required|array',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        DB::beginTransaction();
+
+        $newAkomodasi = new Akomodasi();
+        $newAkomodasi->no_referensi = $request->noref;
+        $newAkomodasi->tanggal_terbit = $request->tanggal;
+        $newAkomodasi->nominal_pengajuan = $request->nominal_pengajuan;
+        $newAkomodasi->nominal_realisasi = $request->nominal_realisasi;
+        $newAkomodasi->id_pemohon = $request->pemohon;
+        $newAkomodasi->input_by = $request->user()->id;
+        $newAkomodasi->deskripsi = $request->keterangan;
+
+        if (!$newAkomodasi->save()) {
+            DB::rollback();
+            return back()->withErrors(['Gagal input akomodasi.']);
+        }
+
+        foreach ($request->aktivitas as $key => $aktv) {
+            $newRel = new LogAkomodasi();
+            $newRel->id_akomodasi = $newAkomodasi->id;
+            $newRel->id_aktivitas = $aktv;
+
+            if (!$newRel->save()) {
+                DB::rollback();
+                return back()->withErrors(['Gagal link akomodasi dan aktivitas.']);
+            }
+        }
+
+        DB::commit();
+        return back()->with(['success' => 'Input akomodasi berhasil.']);
     }
 }
