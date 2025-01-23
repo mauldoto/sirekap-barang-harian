@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('akomodasi_aktivitas', function (Blueprint $table) {
             $table->unsignedBigInteger('id_akomodasi');
             $table->unsignedBigInteger('id_aktivitas');
+            $table->timestamps();
         });
     }
 
