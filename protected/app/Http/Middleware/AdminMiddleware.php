@@ -15,8 +15,11 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->username != 'jpn') {
+        if (auth()->user()->role == 'admin') {
             return $next($request);
+        } 
+        elseif (auth()->user()->role == 'finance') {
+            return redirect('akomodasi');
         } else {
             return redirect('report');
         }

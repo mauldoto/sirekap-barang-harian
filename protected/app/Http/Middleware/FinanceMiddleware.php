@@ -15,7 +15,7 @@ class FinanceMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (auth()->user()->username != 'jpn') {
+        if (auth()->user()->role == 'finance') {
             return $next($request);
         } else {
             return redirect('report');
