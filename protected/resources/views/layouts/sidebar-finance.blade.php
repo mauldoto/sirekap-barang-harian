@@ -8,19 +8,19 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
 
-                <li class="menu-title" key="t-masters">Log Aktivitas</li>
+                {{-- <li class="menu-title" key="t-masters">Log Aktivitas</li>
 
                 <li>
                     <a href="{{route('aktivitas.index')}}" class="waves-effect">
                         <i class='bx bx-calendar-event'></i>
                         <span key="t-kursus">Aktivitas/Job</span>
                     </a>
-                </li>
+                </li> --}}
 
                 <li class="menu-title" key="t-menu">Finance</li>
 
                 <li>
-                    <a href="{{route('akomodasi')}}" class="waves-effect">
+                    <a href="{{route('akomodasi.index')}}" class="waves-effect">
                         <i class='bx bx-dollar-circle' ></i>
                         <span key="t-kursus">Rekapan Akomodasi</span>
                     </a>

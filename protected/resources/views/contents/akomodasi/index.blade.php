@@ -49,7 +49,7 @@
                             <th>Noref</th>
                             <th>Nominal Pengajuan</th>
                             <th>Nominal Realisasi</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                             <th>Diinput Oleh</th>
                             <th>Aksi</th>
                         </tr>
@@ -61,9 +61,9 @@
                         <tr>
                             <td>{{ $i->tanggal_terbit }}</td>
                             <td>{{ $i->no_referensi }}</td>
-                            <td>{{ $i->nominal_pengajuan }}</td>
-                            <td>{{ $i->nominal_realisasi }}</td>
-                            <td>
+                            <td>{{ number_format($i->nominal_pengajuan,2,",",".") }}</td>
+                            <td>{{ number_format($i->nominal_realisasi,2,",",".") }}</td>
+                            {{-- <td>
                                 @if ($i->status === 'created')
                                 <span class="p-1 text-white rounded bg-secondary">Created</span>
                                 @elseif ($i->status === 'closed')
@@ -71,7 +71,7 @@
                                 @else
                                 <span class="p-1 text-white rounded bg-danger">Canceled</span>
                                 @endif
-                            </td>
+                            </td> --}}
                             <td>{{ $i->user->username }}</td>
                             <td class="text-center">
                                 <div class="btn-group">
@@ -80,11 +80,11 @@
                                         <a class="dropdown-item detail-btn d-flex align-items-center" href="#" data-url="" data-id="{{$i->no_referensi}}"><i class='bx bx-search-alt-2 me-1'></i> Detail</a>
                                         {{-- <div class="dropdown-divider"></div> --}}
                                         {{-- <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a> --}}
-                                        @if (!in_array($i->status, ['done', 'cancel']))
+                                        @if (!in_array($i->status, ['closed', 'canceled']))
                                             {{-- <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('akomodasi.update.status', $i->no_referensi)}}" data-status="{{$i->status}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-task me-1'></i> Update Status</a> --}}
-                                            {{-- <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a> --}}
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item d-flex align-items-center" href="{{route('akomodasi.edit', $i->no_referensi)}}" data-url=""><i class='bx bxs-edit me-1'></i> Edit AKM</a>
 
                                             {{-- @if ($i->stok)
                                             <div class="dropdown-divider"></div>

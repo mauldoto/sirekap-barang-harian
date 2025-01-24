@@ -20,8 +20,10 @@
     <div id="layout-wrapper">
         @include('layouts.topbar')
 
-        @if (auth()->user()->username == 'jpn')
+        @if (auth()->user()->role == 'jpn')
         @include('layouts.sidebar-report')
+        @elseif (auth()->user()->role == 'finance')
+        @include('layouts.sidebar-finance')
         @else
         @include('layouts.sidebar')
         @endif

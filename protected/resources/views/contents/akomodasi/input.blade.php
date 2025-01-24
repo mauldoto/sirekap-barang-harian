@@ -22,40 +22,42 @@
 
                 <form action="{{route('akomodasi.store')}}" method="post">
                     @csrf
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">No Referensi</label>
-                        <input class="form-control" type="text" name="norefv" value="{{generateReference('AKM')}}" disabled required>
-                        <input class="form-control" type="hidden" name="noref" value="{{generateReference('AKM')}}" required>
-                    </div>
+                    <div class="row">
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">No Referensi</label>
+                            <input class="form-control" type="text" name="norefv" value="{{generateReference('AKM')}}" disabled required>
+                            <input class="form-control" type="hidden" name="noref" value="{{generateReference('AKM')}}" required>
+                        </div>
+    
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">Tanggal Terbit</label>
+                            <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" value="{{$dateNow}}" required>
+                        </div>
+    
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">Nominal Pengajuan</label>
+                            <input class="form-control" type="number" name="nominal_pengajuan" required>
+                        </div>
+    
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">Nominal Realisasi</label>
+                            <input class="form-control" type="number" name="nominal_realisasi" required>
+                        </div>
 
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Tanggal Terbit</label>
-                        <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" value="{{$dateNow}}" required>
-                    </div>
-                    
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Aktivitas/Job</label>
-                        {{-- <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required> --}}
-                        <select class="form-control job-select2" name="aktivitas[]" id="ak" multiple>
-                            @foreach ($aktivitas as $act)
-                            <option value="{{$act->id}}">[{{ $act->no_referensi }}] {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Nominal Pengajuan</label>
-                        <input class="form-control" type="number" name="nominal_pengajuan" required>
-                    </div>
-
-                    <div class="mb-2 col-lg-5">
-                        <label class="form-label">Nominal Realisasi</label>
-                        <input class="form-control" type="number" name="nominal_realisasi" required>
-                    </div>
-
-                    <div class="mb-3 col-lg-5">
-                        <label class="form-label">Keterangan</label>
-                        <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">Aktivitas/Job</label>
+                            {{-- <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required> --}}
+                            <select class="form-control job-select2" name="aktivitas[]" id="ak" multiple>
+                                @foreach ($aktivitas as $act)
+                                <option value="{{$act->id}}">[{{ $act->no_referensi }}] {{ $act->lokasi->nama }} - {{ $act->sublokasi->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+    
+                        <div class="mb-3 col-lg-5">
+                            <label class="form-label">Keterangan</label>
+                            <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
+                        </div>
                     </div>
 
                     <div class="btn-submit mt-5 d-flex justify-content-end">
