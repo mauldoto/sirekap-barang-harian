@@ -83,8 +83,8 @@ class AkomodasiController extends Controller
         $newAkomodasi = new Akomodasi();
         $newAkomodasi->no_referensi = $request->noref;
         $newAkomodasi->tanggal_terbit = $request->tanggal;
-        $newAkomodasi->nominal_pengajuan = $request->nominal_pengajuan;
-        $newAkomodasi->nominal_realisasi = $request->nominal_realisasi;
+        $newAkomodasi->nominal_pengajuan = str_replace('.', '', $request->nominal_pengajuan);
+        $newAkomodasi->nominal_realisasi = str_replace('.', '', $request->nominal_realisasi);
         $newAkomodasi->id_pemohon = $request->pemohon;
         $newAkomodasi->input_by = $request->user()->id;
         $newAkomodasi->deskripsi = $request->keterangan;
@@ -140,6 +140,8 @@ class AkomodasiController extends Controller
                 ->withInput();
         }
 
+        // dd($request);
+
         $akomodasi = Akomodasi::where('no_referensi', $noref)->first();
         if (!$akomodasi) {
             return back()->withErrors(['Data akomodasi tidak ditemukan atau sudah dihapus.']);
@@ -148,8 +150,8 @@ class AkomodasiController extends Controller
         DB::beginTransaction();
 
         $akomodasi->tanggal_terbit = $request->tanggal;
-        $akomodasi->nominal_pengajuan = $request->nominal_pengajuan;
-        $akomodasi->nominal_realisasi = $request->nominal_realisasi;
+        $akomodasi->nominal_pengajuan = str_replace('.', '', $request->nominal_pengajuan);
+        $akomodasi->nominal_realisasi = str_replace('.', '', $request->nominal_realisasi);
         $akomodasi->id_pemohon = $request->pemohon;
         $akomodasi->input_by = $request->user()->id;
         $akomodasi->deskripsi = $request->keterangan;
