@@ -36,12 +36,18 @@
     
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Nominal Pengajuan</label>
-                            <input class="form-control" type="number" name="nominal_pengajuan" required>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Rp.</span>
+                                <input class="form-control" id="np" type="text" name="nominal_pengajuan" required>
+                            </div>
                         </div>
     
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Nominal Realisasi</label>
-                            <input class="form-control" type="number" name="nominal_realisasi" required>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text" id="basic-addon1">Rp.</span>
+                                <input class="form-control" id="nr" type="text" name="nominal_realisasi" required>
+                            </div>
                         </div>
 
                         <div class="mb-2 col-lg-5">
@@ -72,7 +78,6 @@
 @endsection
 
 @section('css')
-<link href="{{ URL::asset('assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <link href="{{ URL::asset('assets/libs/select2/css/select2.min.css') }}" id="app-style" rel="stylesheet" type="text/css" />
 <style>
@@ -85,11 +90,9 @@
 
 @section('script')
 <!-- datatables -->
-<script src="{{ URL::asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
-<script src="{{ URL::asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
 <script src="{{ URL::asset('assets/libs/select2/js/select2.min.js') }}"></script>
-<script src="{{ URL::asset('assets/libs/repeater.js') }}"></script>
+<script src="{{ URL::asset('assets/libs/imask.js') }}"></script>
 @endsection
 
 @push('page-js')
@@ -98,6 +101,26 @@
         $('.job-select2').select2({
             placeholder: "-- Pilih Job --"
         });
+
+        IMask(
+            document.getElementById('np'),
+            {
+                mask: Number,
+                min: 0,
+                max: 10000000,
+                thousandsSeparator: '.'
+            }
+        )
+
+        IMask(
+            document.getElementById('nr'),
+            {
+                mask: Number,
+                min: 0,
+                max: 10000000,
+                thousandsSeparator: '.'
+            }
+        )
 
         $("#datatable-stok").on("click", ".delete-btn", function() {
             const url = $(this).data("url");
