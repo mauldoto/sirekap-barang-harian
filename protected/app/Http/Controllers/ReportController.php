@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\AkomodasiExport;
 use App\Exports\AktivitasExport;
 use App\Exports\AktivitasKaryawanExport;
 use App\Exports\AlokasiExport;
 use App\Exports\PenggunaanBarangExport;
 use App\Exports\StokExport;
+use App\Models\Akomodasi;
 use App\Models\Aktivitas;
 use App\Models\AktivitasKaryawan;
 use App\Models\AlokasiDevice;
@@ -147,6 +149,9 @@ class ReportController extends Controller
                 break;
             case 'alokasi':
                 return $this->reportAlokasiPerangkat($request);
+                break;
+            case 'akomodasi':
+                return $this->reportAkomodasi($request, $startDate, $endDate);
                 break;
 
             default:
@@ -450,6 +455,22 @@ class ReportController extends Controller
         if ($request->export == 'excel') {
             try {
                 return Excel::download(new AlokasiExport($item), 'report-alokasi-perangkat.xlsx');
+            } catch (\Throwable $th) {
+                throw $th;
+            }
+        }
+    }
+
+    protected function reportAkomodasi($request, $startDate, $endDate)
+    {
+        $item = Akomodasi::with(['aktivitas'])
+            ->where('tanggal_terbit', '>=', $startDate)
+            ->where('tanggal_terbit', '<=', $endDate)
+            ->get();
+        
+        if ($request->export == 'excel') {
+            try {
+                return Excel::download(new AkomodasiExport($item, [$startDate, $endDate]), 'report-akomodasi.xlsx');
             } catch (\Throwable $th) {
                 throw $th;
             }
