@@ -27,6 +27,7 @@
                                 <option value="aktivitas" {{$report && $report == 'aktivitas' ? 'selected' : ''}}>Aktivitas</option>
                                 <option value="aktivitas-karyawan" {{$report && $report == 'aktivitas-karyawan' ? 'selected' : ''}}>Detail Aktivitas Karyawan</option>
                                 <option value="alokasi" {{$report && $report == 'alokasi' ? 'selected' : ''}}>Alokasi Perangkat</option>
+                                <option value="akomodasi" {{$report && $report == 'akomodasi' ? 'selected' : ''}}>Akomodasi</option>
                             </select>
                         </div>
                         <div class="mb-2 col-lg-2 d-flex align-items-end">

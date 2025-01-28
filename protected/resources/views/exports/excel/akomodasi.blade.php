@@ -15,7 +15,7 @@
             <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: center; font-size: 14px">Periode: </th>
+            <th colspan="5" style="text-align: center; font-size: 14px">Periode: {{$start}} - {{$end}}</th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
@@ -44,7 +44,7 @@
             <td style="text-align: center; padding: 0 5px; width: 150px;">{{$akm->nominal_pengajuan}}</td>
             <td style="text-align: center; padding: 0 5px; width: 150px;">{{$akm->nominal_realisasi}}</td>
             <td style="padding: 0 5px; width: 150px; height: 50px;">
-                @foreach ($akomodasi->aktivitas as $index => $act)
+                @foreach ($akm->aktivitas as $index => $act)
                 - {{$act->no_referensi}} <br />
                 @endforeach
             </td>
