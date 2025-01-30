@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <form action="{{route('akomodasi.update', $akomodasi->no_referensi)}}" method="post">
+                <form action="{{route('akomodasi.update', $akomodasi->no_referensi)}}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="mb-2 col-lg-5">
@@ -74,7 +74,7 @@
                             @if($akomodasi->dokumen)
                             <br>
                             <div style="padding: 5px;" class="bg-light d-flex justify-content-between align-items-center">
-                                <a href="">{{ $akomodasi->dokumen->nama }}</a>
+                                <a href="{{route('akomodasi.open', $akomodasi->no_referensi)}}" target="_blank">{{ $akomodasi->dokumen->nama }}</a>
                                 <button type="button" class="btn btn-sm btn-danger delete-file" data-url="{{route('akomodasi.delete.file', $akomodasi->no_referensi)}}">
                                     <i class='bx bx-trash'></i>
                                 </button>

@@ -229,6 +229,8 @@ class AkomodasiController extends Controller
         if (!$akomodasi) {
             return back()->withErrors(['Data akomodasi tidak ditemukan atau sudah dihapus.']);
         }
+
+        return response()->file(storage_path('app/' . $akomodasi->dokumen->path));
     }
 
     public function deleteFile(Request $request, $noref)
