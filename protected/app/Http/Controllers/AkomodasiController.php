@@ -8,8 +8,10 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 use App\Models\Akomodasi;
+use App\Models\AkomodasiDokumen;
 use App\Models\Aktivitas;
 use App\Models\LogAkomodasi;
+use Illuminate\Support\Facades\Storage;
 
 class AkomodasiController extends Controller
 {
@@ -28,7 +30,7 @@ class AkomodasiController extends Controller
             ->where('tanggal_terbit', '>=', $startDate)
             ->where('tanggal_terbit', '<=', $endDate)
             ->get();
-        
+
         // $reportAktivitas = Akomodasi::orderBy('tanggal_terbit', 'DESC')->get();
 
         return view('contents.akomodasi.index', compact('akomodasi', 'startDate', 'endDate'));
@@ -70,6 +72,7 @@ class AkomodasiController extends Controller
             'nominal_realisasi' => 'required|numeric',
             'keterangan'        => 'nullable',
             'aktivitas'         => 'required|array',
+            'dokumen'           => 'nullable|mimes:pdf|max:1024'
         ]);
 
         if ($validator->fails()) {
@@ -105,13 +108,29 @@ class AkomodasiController extends Controller
             }
         }
 
+        if ($request->file('dokumen')) {
+            $file = $request->file('dokumen');
+            $fileName = $file->hashName();
+            $file->storeAs('akomodasi/dokumen', $fileName);
+
+            $saveDok = new AkomodasiDokumen();
+            $saveDok->id_akomodasi = $newAkomodasi->id;
+            $saveDok->nama = $newAkomodasi->no_referensi . '-' . 'dokumentasi.pdf';
+            $saveDok->path = 'akomodasi/dokumen/' . $fileName;
+
+            if (!$saveDok->save()) {
+                DB::rollBack();
+                return back()->withErrors(['Gagal menyimpan file dokumen.']);
+            }
+        }
+
         DB::commit();
         return back()->with(['success' => 'Input akomodasi berhasil.']);
     }
 
     public function editView(Request $request, $noref)
     {
-        $akomodasi = Akomodasi::where('no_referensi', $noref)->with(['aktivitas' => ['lokasi', 'sublokasi']])->first();
+        $akomodasi = Akomodasi::where('no_referensi', $noref)->with(['aktivitas' => ['lokasi', 'sublokasi'], 'dokumen'])->first();
 
         $aktivitas = Aktivitas::whereIn('status', ['waiting', 'progress'])
             ->doesntHave('akomodasi')
@@ -132,6 +151,7 @@ class AkomodasiController extends Controller
             'nominal_realisasi' => 'required|numeric',
             'keterangan'        => 'nullable',
             'aktivitas'         => 'required|array',
+            'dokumen'           => 'nullable|mimes:pdf|max:1024'
         ]);
 
         if ($validator->fails()) {
@@ -142,7 +162,7 @@ class AkomodasiController extends Controller
 
         // dd($request);
 
-        $akomodasi = Akomodasi::where('no_referensi', $noref)->first();
+        $akomodasi = Akomodasi::where('no_referensi', $noref)->with(['dokumen'])->first();
         if (!$akomodasi) {
             return back()->withErrors(['Data akomodasi tidak ditemukan atau sudah dihapus.']);
         }
@@ -178,7 +198,52 @@ class AkomodasiController extends Controller
             }
         }
 
+        if ($request->file('dokumen')) {
+
+            if ($akomodasi->dokumen) {
+                Storage::delete($akomodasi->dokumen->path);
+            }
+
+            $file = $request->file('dokumen');
+            $fileName = $file->hashName();
+            $file->storeAs('akomodasi/dokumen', $fileName);
+
+            $saveDok = new AkomodasiDokumen();
+            $saveDok->id_akomodasi = $akomodasi->id;
+            $saveDok->nama = $akomodasi->no_referensi . '-' . 'dokumentasi.pdf';
+            $saveDok->path = 'akomodasi/dokumen/' . $fileName;
+
+            if (!$saveDok->save()) {
+                DB::rollBack();
+                return back()->withErrors(['Gagal menyimpan file dokumen.']);
+            }
+        }
+
         DB::commit();
         return back()->with(['success' => 'Update data akomodasi berhasil.']);
+    }
+
+    public function openFile(Request $request, $noref)
+    {
+        $akomodasi = Akomodasi::where('no_referensi', $noref)->with(['dokumen'])->first();
+        if (!$akomodasi) {
+            return back()->withErrors(['Data akomodasi tidak ditemukan atau sudah dihapus.']);
+        }
+    }
+
+    public function deleteFile(Request $request, $noref)
+    {
+        $akomodasi = Akomodasi::where('no_referensi', $noref)->with(['dokumen'])->first();
+        if (!$akomodasi) {
+            return back()->withErrors(['Data akomodasi tidak ditemukan atau sudah dihapus.']);
+        }
+
+        Storage::delete($akomodasi->dokumen->path);
+        $delFile = AkomodasiDokumen::where('id', $akomodasi->dokumen->id)->delete();
+        if (!$delFile) {
+            return back()->withErrors(['Gagal hapus dokumen akomodasi ' . $akomodasi->no_referensi . '.']);
+        }
+
+        return back()->with(['success' => 'Hapus dokumen akomodasi ' . $akomodasi->no_referensi . ' berhasil.']);
     }
 }
