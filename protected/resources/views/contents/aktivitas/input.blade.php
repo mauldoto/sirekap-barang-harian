@@ -63,16 +63,69 @@
                         </select>
                     </div>
 
-                    <div class="mb-2 col-lg-8">
-                        <label class="form-label">Deskripsi</label>
-                        <textarea class="form-control" name="deskripsi" id="desc" cols="30" rows="10"></textarea>
-                    </div>
+                    <div class="mb-2">
+                        <div class="repeater-heading mb-3 mt-3">
+                            <button type="button" class="btn btn-primary pull-right generate-btn">
+                                Generate Form
+                            </button>
+                        </div>
+                       
+                        <div class="review">
+                            <div id="repeater-shadow" class="border rounded p-3 repeater-1 mb-2" style="">
+                                <!-- Repeater Heading -->
+                                <div class="row">
+                                    <div class="mb-2 col-lg-5">
+                                        <label class="form-label fw-bold">OFKTE</label>
+                                        <input id="selectedSublokasi" type="hidden" name="selected_sublokasi[]">
+                                    </div>
+                                </div>
 
-                    <div class="btn-submit mt-5 d-flex justify-content-end">
-                        <button class="btn btn-md btn-primary">Submit</button>
+                                <div class="mb-2 col-lg-8">
+                                    <label class="form-label">Jenis Pekerjaan</label>
+                                    <br>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="jenis_pekerjaan" id="flexRadioDefault1">
+                                        <label class="form-check-label" for="flexRadioDefault1">
+                                          Infrastruktur
+                                        </label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="jenis_pekerjaan" id="flexRadioDefault2">
+                                        <label class="form-check-label" for="flexRadioDefault2">
+                                          Maintenance
+                                        </label>
+                                      </div>
+                                      <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" name="jenis_pekerjaan" id="flexRadioDefault3" >
+                                        <label class="form-check-label" for="flexRadioDefault3">
+                                          Penambahan Titik Baru
+                                        </label>
+                                      </div>
+                                </div>
+
+                                <div class="mb-2 col-lg-8">
+                                    <label class="form-label">Deskripsi</label>
+                                    <textarea class="form-control" name="deskripsi" id="desc" cols="20" rows="5"></textarea>
+                                </div>
+                            </div>
+                        </div>
+        
+                        <div class="btn-submit mt-5 d-flex justify-content-end">
+                            <button class="btn btn-md btn-primary">Submit</button>
+                        </div>
                     </div>
                 </form>
             </div>
+        </div>
+    </div>
+</div>
+
+<div id="repeater-shadow" class="border rounded p-3 repeater-1 mb-2" style="display: none">
+    <!-- Repeater Heading -->
+    <div class="row">
+        <div class="mb-2 col-lg-5">
+            <label class="form-label"></label>
+            <input id="selectedSublokasi" type="hidden" name="selected_sublokasi[]">
         </div>
     </div>
 </div>
