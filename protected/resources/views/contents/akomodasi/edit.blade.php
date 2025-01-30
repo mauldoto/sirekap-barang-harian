@@ -28,12 +28,12 @@
                             <input class="form-control" type="text" name="norefv" value="{{$akomodasi->no_referensi}}" disabled required>
                             {{-- <input class="form-control" type="hidden" name="noref" value="{{generateReference('AKM')}}" required> --}}
                         </div>
-    
+
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Tanggal Terbit</label>
                             <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" value="{{$akomodasi->tanggal_terbit}}" required>
                         </div>
-                        
+
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Nominal Pengajuan</label>
                             <div class="input-group mb-3">
@@ -41,7 +41,7 @@
                                 <input class="form-control" id="np" type="text" name="nominal_pengajuan" value="{{$akomodasi->nominal_pengajuan}}" required>
                             </div>
                         </div>
-    
+
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Nominal Realisasi</label>
                             <div class="input-group mb-3">
@@ -62,10 +62,24 @@
                                 @endforeach
                             </select>
                         </div>
-    
+
                         <div class="mb-3 col-lg-5">
                             <label class="form-label">Keterangan</label>
                             <textarea class="form-control" name="keterangan" cols="30" rows="5">{!! $akomodasi->deskripsi !!}</textarea>
+                        </div>
+
+                        <div class="mb-3 col-lg-5">
+                            <label class="form-label">Upload Dokumen <small>(Tidak Wajib)</small></label>
+                            <input type="file" class="form-control" name="dokumen" id="" accept=".pdf">
+                            @if($akomodasi->dokumen)
+                            <br>
+                            <div style="padding: 5px;" class="bg-light d-flex justify-content-between align-items-center">
+                                <a href="">{{ $akomodasi->dokumen->nama }}</a>
+                                <button type="button" class="btn btn-sm btn-danger delete-file" data-url="{{route('akomodasi.delete.file', $akomodasi->no_referensi)}}">
+                                    <i class='bx bx-trash'></i>
+                                </button>
+                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -77,6 +91,10 @@
         </div>
     </div>
 </div>
+
+<form class="hidden" id="hapusFile" action="" method="POST">
+    @csrf
+</form>
 
 @endsection
 
@@ -106,32 +124,30 @@
         });
 
         IMask(
-            document.getElementById('np'),
-            {
-                mask: Number,
-                min: 0,
-                max: 10000000,
-                thousandsSeparator: '.'
+            document.getElementById('np'), {
+                mask: Number
+                , min: 0
+                , max: 10000000
+                , thousandsSeparator: '.'
             }
         )
 
         IMask(
-            document.getElementById('nr'),
-            {
-                mask: Number,
-                min: 0,
-                max: 10000000,
-                thousandsSeparator: '.'
+            document.getElementById('nr'), {
+                mask: Number
+                , min: 0
+                , max: 10000000
+                , thousandsSeparator: '.'
             }
         )
 
-        $("#datatable-stok").on("click", ".delete-btn", function() {
+        $(".delete-file").on("click", function() {
             const url = $(this).data("url");
-            const form = $(".form-delete").attr("action", url);
+            const form = $("#hapusFile").attr("action", url);
 
             Swal.fire({
                 title: "Apakah anda yakin?"
-                , text: "Data akan dialihkan ke folder sampah!"
+                , text: "Dokumen akan dihapus dari sistem!"
                 , icon: "warning"
                 , showCancelButton: true
                 , confirmButtonColor: "#3085d6"

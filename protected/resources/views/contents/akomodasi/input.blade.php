@@ -20,7 +20,7 @@
                     </div>
                 </div>
 
-                <form action="{{route('akomodasi.store')}}" method="post">
+                <form action="{{route('akomodasi.store')}}" method="post" enctype="multipart/form-data">
                     @csrf
                     <div class="row">
                         <div class="mb-2 col-lg-5">
@@ -28,12 +28,12 @@
                             <input class="form-control" type="text" name="norefv" value="{{generateReference('AKM')}}" disabled required>
                             <input class="form-control" type="hidden" name="noref" value="{{generateReference('AKM')}}" required>
                         </div>
-    
+
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Tanggal Terbit</label>
                             <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" value="{{$dateNow}}" required>
                         </div>
-    
+
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Nominal Pengajuan</label>
                             <div class="input-group mb-3">
@@ -41,7 +41,7 @@
                                 <input class="form-control" id="np" type="text" name="nominal_pengajuan" required>
                             </div>
                         </div>
-    
+
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Nominal Realisasi</label>
                             <div class="input-group mb-3">
@@ -59,10 +59,15 @@
                                 @endforeach
                             </select>
                         </div>
-    
+
                         <div class="mb-3 col-lg-5">
                             <label class="form-label">Keterangan</label>
                             <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
+                        </div>
+
+                        <div class="mb-3 col-lg-5">
+                            <label class="form-label">Upload Dokumen <small>(Tidak Wajib)</small></label>
+                            <input type="file" class="form-control" name="dokumen" id="" accept=".pdf">
                         </div>
                     </div>
 
@@ -103,22 +108,20 @@
         });
 
         IMask(
-            document.getElementById('np'),
-            {
-                mask: Number,
-                min: 0,
-                max: 10000000,
-                thousandsSeparator: '.'
+            document.getElementById('np'), {
+                mask: Number
+                , min: 0
+                , max: 10000000
+                , thousandsSeparator: '.'
             }
         )
 
         IMask(
-            document.getElementById('nr'),
-            {
-                mask: Number,
-                min: 0,
-                max: 10000000,
-                thousandsSeparator: '.'
+            document.getElementById('nr'), {
+                mask: Number
+                , min: 0
+                , max: 10000000
+                , thousandsSeparator: '.'
             }
         )
 
