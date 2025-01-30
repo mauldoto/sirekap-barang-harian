@@ -118,8 +118,10 @@ Route::prefix('akomodasi')->middleware(['web', 'auth', 'finance'])->group(functi
     Route::get('/input', [AkomodasiController::class, 'inputView'])->name('akomodasi.input');
     Route::get('/{noref}/detail', [AkomodasiController::class, 'getDetail'])->name('akomodasi.detail');
     Route::get('/{noref}/edit', [AkomodasiController::class, 'editView'])->name('akomodasi.edit');
+    Route::get('/{noref}/open', [AkomodasiController::class, 'openFile'])->name('akomodasi.open');
 
     Route::post('/input', [AkomodasiController::class, 'inputAkomodasi'])->name('akomodasi.store');
     Route::post('/{noref}/edit', [AkomodasiController::class, 'editAkomodasi'])->name('akomodasi.update');
     Route::post('/{noref}/delete', [AkomodasiController::class, 'deleteAkomodasi'])->name('akomodasi.delete');
+    Route::post('/{noref}/delete-file', [AkomodasiController::class, 'deleteFile'])->name('akomodasi.delete.file');
 });
