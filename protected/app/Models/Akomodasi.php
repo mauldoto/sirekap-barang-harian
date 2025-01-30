@@ -20,4 +20,9 @@ class Akomodasi extends Model
     {
         return $this->belongsToMany(Aktivitas::class, 'akomodasi_aktivitas', 'id_akomodasi', 'id_aktivitas');
     }
+
+    public function dokumen()
+    {
+        return $this->hasOne(AkomodasiDokumen::class, 'id_akomodasi');
+    }
 }
