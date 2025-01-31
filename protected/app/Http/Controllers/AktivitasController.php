@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Aktivitas;
 use App\Models\AktivitasKaryawan;
 use App\Models\Barang;
+use App\Models\JenisPekerjaan;
 use App\Models\Karyawan;
 use App\Models\LogStok;
 use App\Models\Lokasi;
@@ -90,7 +91,9 @@ class AktivitasController extends Controller
     {
         $karyawan = Karyawan::orderBy('nama')->get();
         $lokasi = Lokasi::orderBy('nama')->get();
-        return view('contents.aktivitas.input', compact('karyawan', 'lokasi'));
+        $jenisKerja = JenisPekerjaan::orderBy('nama')->get();
+
+        return view('contents.aktivitas.input', compact('karyawan', 'lokasi', 'jenisKerja'));
     }
 
     public function store(Request $request)
@@ -129,7 +132,7 @@ class AktivitasController extends Controller
             $newActivity->id_sub_lokasi = $sublokasi;
             $newActivity->tanggal_berangkat = $request->tanggal_berangkat;
             $newActivity->tanggal_pulang = $request->tanggal_pulang;
-            $newActivity->deskripsi = $request->deskripsi;
+            $newActivity->deskripsi = $request->deskripsi[$sublokasi];
             $newActivity->input_by = $request->user()->id;
             $newActivity->status = 'waiting';
     
@@ -174,13 +177,14 @@ class AktivitasController extends Controller
         }
 
         $sublokasi = SubLokasi::where('id_lokasi', $aktivitas->id_lokasi)->get();
+        $jenisKerja = JenisPekerjaan::orderBy('nama')->get();
 
         $teknisiArr = [];
         foreach ($aktivitas->teknisi as $key => $value) {
             array_push($teknisiArr, $value->id_karyawan);
         }
 
-        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr', 'sublokasi'));
+        return view('contents.aktivitas.edit', compact('karyawan', 'lokasi', 'aktivitas', 'teknisiArr', 'sublokasi', 'jenisKerja'));
     }
 
     public function update(Request $request, $tiket)
