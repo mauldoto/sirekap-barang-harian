@@ -91,7 +91,7 @@
         </div>
     </div>
 
-    <div class="mb-2 col-lg-8 border border-warning rounded p-3">
+    <div class="mb-2 col-lg-8 border border-warning rounded p-3" style="display: none;">
         <label class="form-label col-12">Jenis Pekerjaan</label>
         <div class="ms-2 row">
             @foreach ($jenisKerja as $jenis)
