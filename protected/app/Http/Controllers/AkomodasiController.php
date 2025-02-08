@@ -53,7 +53,7 @@ class AkomodasiController extends Controller
     public function inputView(Request $request)
     {
         $dateNow = Carbon::now()->format('Y-m-d');
-        $aktivitas = Aktivitas::whereIn('status', ['waiting', 'progress'])
+        $aktivitas = Aktivitas::where('tanggal_berangkat', '>=', Carbon::now()->subDays(10))
             ->doesntHave('akomodasi')
             ->with(['lokasi', 'sublokasi'])
             ->get();
