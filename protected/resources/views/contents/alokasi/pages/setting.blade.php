@@ -60,7 +60,35 @@
 
                 <hr>
 
-                <table class="table table-hover">
+                <div class="table-here">
+
+                </div>
+
+                <table class="table table-bordered dt-responsive w-100 dataTable no-footer dtr-inline table-alokasi shadow-table" aria-describedby="datatable_info" style="width: 100%; display: none;">
+                    <thead>
+                        <tr>
+                            <th>Nama Barang</th>
+                            <th>Jumlah</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($alokasiDevice as $key => $item)
+                        <tr class="row-{{$item->id_barang}}">
+                            <input type="hidden" name="input[{{$key}}][barang]" value="{{$item->id_barang}}">
+
+                            <td>{{$item->barang->nama}}</td>
+                            <td>{{$item->sumqty}}</td>
+                            <td>
+                                <button type="button" class="btn btn-sm btn-danger dlt-data" data-key="{{$item->id_barang}}">Remove</button>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+
+                </table>
+
+                {{-- <table class="table table-hover">
                     <thead>
                         <tr>
                             <th>Nama Barang</th>
@@ -81,7 +109,7 @@
                         </tr>
                         @endforeach
                     </tbody>
-                </table>
+                </table> --}}
 
                 <div class="btn-submit mt-5 d-flex justify-content-end">
                     <button class="btn btn-md btn-primary">Submit</button>

@@ -74,6 +74,26 @@
 @push('page-js')
 <script>
     $(document).ready(function() {
+        var DTalokasi;
+        
+        renderTable();
+        function renderTable() {
+            var checkDT = $('.table-here').find('.table-alokasi')
+            console.log(checkDT)
+            if (checkDT.length > 0) {
+                DTalokasi.destroy()
+            }
+            var DTSalokasi = $('.table-alokasi').clone()
+            $('.table-here').append(DTSalokasi)
+            DTSalokasi.css('display', '')
+            DTSalokasi.attr('id', 'datatable-alokasi')
+
+            DTalokasi = $('.table-here').find('.table-alokasi').dataTable({
+                "aaSorting": [
+                    [0, "asc"]
+                ]
+            });
+        }
 
         $("#repeater").createRepeater({
             showFirstItemToDefault: true
@@ -118,31 +138,17 @@
             })
         }
 
-        $(".dlt-data").on('click', function() {
-            const keyy = $(this).data('key')
-            console.log(keyy)
-            $('.row-' + keyy).remove()
-        })
+        handleDeleteItem()
+        function handleDeleteItem() {
+            $("#datatable-alokasi").on('click', ".dlt-data", function() {
+                const keyy = $(this).data('key')
+                $('.shadow-table').find('.row-' + keyy).remove()
+                $('.table-here').html('')
+                renderTable()
 
-        $("#datatable-aktivitas").on("click", ".delete-btn", function() {
-            const url = $(this).data("url");
-            const form = $(".form-delete").attr("action", url);
-
-            Swal.fire({
-                title: "Apakah anda yakin?"
-                , text: "Data akan dialihkan ke folder sampah!"
-                , icon: "warning"
-                , showCancelButton: true
-                , confirmButtonColor: "#3085d6"
-                , cancelButtonColor: "#d33"
-                , confirmButtonText: "Ya, Hapus!"
-                , cancelButtonText: "Batalkan"
-            , }).then((result) => {
-                if (result.isConfirmed) {
-                    form[0].submit();
-                }
-            });
-        });
+                handleDeleteItem()
+            })
+        }
     })
 
 </script>
