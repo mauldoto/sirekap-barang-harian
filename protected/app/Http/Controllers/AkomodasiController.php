@@ -72,7 +72,7 @@ class AkomodasiController extends Controller
             'nominal_realisasi' => 'required|numeric',
             'keterangan'        => 'nullable',
             'aktivitas'         => 'required|array',
-            'dokumen'           => 'nullable|mimes:pdf|max:1024'
+            'dokumen'           => 'nullable|mimes:pdf|max:10000'
         ]);
 
         if ($validator->fails()) {
@@ -151,7 +151,7 @@ class AkomodasiController extends Controller
             'nominal_realisasi' => 'required|numeric',
             'keterangan'        => 'nullable',
             'aktivitas'         => 'required|array',
-            'dokumen'           => 'nullable|mimes:pdf|max:1024'
+            'dokumen'           => 'nullable|mimes:pdf|max:10000'
         ]);
 
         if ($validator->fails()) {
