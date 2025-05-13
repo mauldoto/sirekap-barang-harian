@@ -104,8 +104,8 @@ class KaryawanController extends Controller
             return back()->withErrors(['karyawan tidak ditemukan.']);
         }
 
-        $checkKaryawan = AktivitasKaryawan::where('id_karyawan', $karyawan->id)->first();
-        if ($checkKaryawan) return back()->withErrors(['Data karyawan tidak bisa dihapus karena sudah ada dalam histori aktivitas, silakan kontak Administrator!']);
+        // $checkKaryawan = AktivitasKaryawan::where('id_karyawan', $karyawan->id)->first();
+        // if ($checkKaryawan) return back()->withErrors(['Data karyawan tidak bisa dihapus karena sudah ada dalam histori aktivitas, silakan kontak Administrator!']);
 
         if (!$karyawan->delete()) {
             return back()->withErrors(['data karyawan gagal dihapus.']);

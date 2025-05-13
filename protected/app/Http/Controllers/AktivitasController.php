@@ -43,7 +43,11 @@ class AktivitasController extends Controller
 
     public function getDetail(request $request, $id)
     {
-        $aktivitas = Aktivitas::where('id', $id)->with(['teknisi.karyawan', 'lokasi', 'sublokasi'])->first();
+        $aktivitas = Aktivitas::where('id', $id)->with([
+            'teknisi.karyawan' => function ($query) {
+                $query->withTrashed();
+            }, 'lokasi', 'sublokasi'])->first();
+
         $barang = Stok::where('type', 'keluar')->where('id_aktivitas', $aktivitas->id)->with('stok.barang')->first();
 
         $aktivitas->barang = $barang ? $barang->stok : [];
