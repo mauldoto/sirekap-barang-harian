@@ -46,7 +46,10 @@ class AktivitasController extends Controller
         $aktivitas = Aktivitas::where('id', $id)->with([
             'teknisi.karyawan' => function ($query) {
                 $query->withTrashed();
-            }, 'lokasi', 'sublokasi'])->first();
+            },
+            'lokasi',
+            'sublokasi'
+        ])->first();
 
         $barang = Stok::where('type', 'keluar')->where('id_aktivitas', $aktivitas->id)->with('stok.barang')->first();
 
@@ -139,23 +142,23 @@ class AktivitasController extends Controller
             $newActivity->deskripsi = $request->deskripsi[$sublokasi];
             $newActivity->input_by = $request->user()->id;
             $newActivity->status = 'waiting';
-    
+
             if (!$newActivity->save()) {
                 DB::rollBack();
                 return back()->withErrors(['Input data aktivitas gagal.'])->withInput();
             }
-    
+
             foreach ($request->teknisi as $key => $teknisi) {
                 $checkTeknisi = Karyawan::where('id', $teknisi)->first();
                 if (!$checkTeknisi) {
                     DB::rollBack();
                     return back()->withErrors(['Input data teknisi ke aktivitas gagal, data teknisi tidak ditemukan.'])->withInput();
                 }
-    
+
                 $inpTeknisi = new AktivitasKaryawan();
                 $inpTeknisi->id_aktivitas = $newActivity->id;
                 $inpTeknisi->id_karyawan = $checkTeknisi->id;
-    
+
                 if (!$inpTeknisi->save()) {
                     DB::rollBack();
                     return back()->withErrors(['Input data teknisi ke aktivitas gagal.'])->withInput();
@@ -277,7 +280,7 @@ class AktivitasController extends Controller
             return redirect(route('aktivitas.index'))->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
         }
 
-        if (in_array($activity->status, ['done', 'cancel'])) {
+        if (auth()->user()->username != 'superadmin' && in_array($activity->status, ['done', 'cancel'])) {
             return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
         }
 
@@ -293,7 +296,7 @@ class AktivitasController extends Controller
                     return back()->withErrors(['Gagal hapus data tiket, on delete stock out']);
                 }
 
-                if(!$stok->delete()){
+                if (!$stok->delete()) {
                     return back()->withErrors(['Gagal hapus data tiket, on delete master stock out']);
                 }
             }
@@ -399,10 +402,10 @@ class AktivitasController extends Controller
 
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
         $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
-        
+
         DB::beginTransaction();
 
-        $idsOldBarang = array_map(function($value){
+        $idsOldBarang = array_map(function ($value) {
             return $value['barang'];
         }, ($request->input ?? []));
 
@@ -411,7 +414,7 @@ class AktivitasController extends Controller
         //     return back()->withErrors(['Error update stok, OICD'])->withInput();
         // }
 
-        $idsBarang = array_map(function($value){
+        $idsBarang = array_map(function ($value) {
             return $value['item'];
         }, $request->barang);
 
@@ -421,23 +424,23 @@ class AktivitasController extends Controller
         if ($request->barang[0]['item']) {
             foreach ($request->barang as $key => $barang) {
 
-                $checkStok = array_filter($stokLogs, function($value) use ($barang){
+                $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
                     if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
                         return true;
                     }
                 });
-    
+
                 if (!$checkStok) {
                     DB::rollBack();
                     return back()->withErrors(['Error input log stok, ada barang dengan stok minus.'])->withInput();
                 }
-    
+
                 $newLogStok = new LogStok();
                 $newLogStok->id_stok = $realStok->id;
                 $newLogStok->id_barang = $barang['item'];
                 $newLogStok->qty = -$barang['qty'];
                 $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
-    
+
                 if (!$newLogStok->save()) {
                     DB::rollBack();
                     return back()->withErrors(['Error input log stok.'])->withInput();
@@ -446,8 +449,7 @@ class AktivitasController extends Controller
         }
 
         DB::commit();
-        return back()->with(['success' => 'Update stok keluar berhasil. ['.$tiket.']']);
-
+        return back()->with(['success' => 'Update stok keluar berhasil. [' . $tiket . ']']);
     }
 
     public function inputStockOut(Request $request, $tiket)
@@ -456,7 +458,7 @@ class AktivitasController extends Controller
         $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
 
         if ($realStok) {
-            return back()->withErrors(['Stok untuk tiket '. $aktivitas->no_referensi .' sudah terinput, silakan menggunakan fitur edit.']);
+            return back()->withErrors(['Stok untuk tiket ' . $aktivitas->no_referensi . ' sudah terinput, silakan menggunakan fitur edit.']);
         }
 
         // untuk new stok out
@@ -503,7 +505,7 @@ class AktivitasController extends Controller
         }
 
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
-        
+
         DB::beginTransaction();
 
         $idsBarang = array_map(function ($value) {
@@ -555,12 +557,11 @@ class AktivitasController extends Controller
 
         DB::commit();
         return redirect(route('aktivitas.index'))->with(['success' => 'Input stok keluar berhasil.']);
-
     }
 
     public function hapusTiket(Request $request, $tiket)
     {
-        
+
         $activity = Aktivitas::where('no_referensi', $tiket)->first();
         if (!$activity) {
             return redirect(route('aktivitas.index'))->withErrors(['Aktivitas dengan no tiket ' . $tiket . ' tidak ditemukan.']);
@@ -576,13 +577,13 @@ class AktivitasController extends Controller
                 return back()->withErrors(['Gagal hapus data tiket, on delete stock out']);
             }
 
-            if(!$stok->delete()){
+            if (!$stok->delete()) {
                 DB::rollBack();
                 return back()->withErrors(['Gagal hapus data tiket, on delete master stock out']);
             }
         }
 
-        if(!$activity->delete()){
+        if (!$activity->delete()) {
             DB::rollBack();
             return back()->withErrors(['Gagal hapus data tiket']);
         }

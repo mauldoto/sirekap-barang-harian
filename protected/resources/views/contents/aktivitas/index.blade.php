@@ -82,7 +82,7 @@
                                         <a class="dropdown-item detail-btn d-flex align-items-center" href="#" data-url="" data-id="{{$i->id}}"><i class='bx bx-search-alt-2 me-1'></i> Detail</a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item d-flex align-items-center" href="{{route('aktivitas.print.tiket', $i->no_referensi)}}" target="_blank" data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a>
-                                        @if (!in_array($i->status, ['done', 'cancel']))
+                                        @if (auth()->user()->username == 'superadmin' || !in_array($i->status, ['done', 'cancel']))
                                             <div class="dropdown-divider"></div>
                                             <a class="dropdown-item d-flex align-items-center update-status-btn" href="#" data-url="{{route('aktivitas.update.status', $i->no_referensi)}}" data-status="{{$i->status}}" data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i class='bx bx-task me-1'></i> Update Status</a>
                                             <div class="dropdown-divider"></div>
