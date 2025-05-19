@@ -284,9 +284,17 @@ class AktivitasController extends Controller
             return back()->withErrors(['Aktivitas sudah berstatus DONE dan CANCEL tidak dapat diupdate.']);
         }
 
+        $pos = strpos($activity->deskripsi, "#[");
+
+        if ($pos !== false) {
+            $deskripsi = substr($activity->deskripsi, 0, $pos);
+        } else {
+            $deskripsi = $activity->deskripsi; // tidak ada #[, biarkan tetap
+        }
+
         $activity->status = $request->status;
         if ($request->status == 'cancel') {
-            $activity->deskripsi = $activity->deskripsi . ' #[CANCEL]: ' . $request->deskripsi;
+            $activity->deskripsi = $deskripsi . ' #[CANCEL]: ' . $request->deskripsi;
 
             $stok = Stok::where('id_aktivitas', $activity->id)->first();
 
@@ -303,7 +311,7 @@ class AktivitasController extends Controller
         }
 
         if ($request->status == 'done') {
-            $activity->deskripsi = $activity->deskripsi . ' #[DONE]: ' . $request->deskripsi;
+            $activity->deskripsi = $deskripsi . ' #[DONE]: ' . $request->deskripsi;
         }
 
         if (!$activity->save()) {
