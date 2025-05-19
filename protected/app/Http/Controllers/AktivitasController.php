@@ -292,6 +292,7 @@ class AktivitasController extends Controller
             $deskripsi = $activity->deskripsi; // tidak ada #[, biarkan tetap
         }
 
+        $activity->deskripsi = $deskripsi;
         $activity->status = $request->status;
         if ($request->status == 'cancel') {
             $activity->deskripsi = $deskripsi . ' #[CANCEL]: ' . $request->deskripsi;
