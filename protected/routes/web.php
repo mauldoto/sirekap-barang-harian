@@ -76,8 +76,8 @@ Route::prefix('stok')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/log', [StokController::class, 'log'])->name('stok.log');
     Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view');
     Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store');
-    Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view');
-    Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store');
+    Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view')->middleware('super');
+    Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store')->middleware('super');
 
     Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf');
     Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi');

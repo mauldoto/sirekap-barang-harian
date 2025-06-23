@@ -141,7 +141,7 @@ class StokController extends Controller
         $validator = Validator::make($request->all(), [
             'noref'         => 'required|string',
             'tanggal'       => 'required|date',
-            'aktivitas'     => 'required',
+            'deskripsi'     => 'nullable',
             'barang'        => 'required|array',
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
@@ -163,17 +163,13 @@ class StokController extends Controller
         // dd($idsBarang);
         $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
 
-        $newStokOut = Stok::where('id_aktivitas', $request->aktivitas)->first();
-
-        if (!$newStokOut) {
-            $newStokOut = new Stok();
-            $newStokOut->no_referensi = $request->noref;
-            $newStokOut->id_aktivitas = $request->aktivitas ?? null;
-            $newStokOut->tanggal = $request->tanggal;
-            $newStokOut->type = 'keluar';
-            $newStokOut->deskripsi = $request->keterangan;
-            $newStokOut->input_by = $request->user()->id;
-        }
+        $newStokOut = new Stok();
+        $newStokOut->no_referensi = $request->noref;
+        $newStokOut->id_aktivitas = null;
+        $newStokOut->tanggal = $request->tanggal;
+        $newStokOut->type = 'keluar';
+        $newStokOut->deskripsi = $request->deskripsi;
+        $newStokOut->input_by = $request->user()->id;
 
         if (!$newStokOut->save()) {
             DB::rollBack();
