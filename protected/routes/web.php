@@ -9,6 +9,7 @@ use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StokController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -124,4 +125,12 @@ Route::prefix('akomodasi')->middleware(['web', 'auth', 'finance'])->group(functi
     Route::post('/{noref}/edit', [AkomodasiController::class, 'editAkomodasi'])->name('akomodasi.update');
     Route::post('/{noref}/delete', [AkomodasiController::class, 'deleteAkomodasi'])->name('akomodasi.delete');
     Route::post('/{noref}/delete-file', [AkomodasiController::class, 'deleteFile'])->name('akomodasi.delete.file');
+});
+
+Route::prefix('user')->middleware(['web', 'auth', 'super'])->group(function () {
+    Route::get('/', [UserController::class, 'index'])->name('user');
+    Route::get('/{id}/detail', [UserController::class, 'getDetail'])->name('user.detail');
+    Route::post('/store', [UserController::class, 'store'])->name('user.store');
+    Route::put('/{id}/update', [UserController::class, 'update'])->name('user.update');
+    Route::post('/{id}/delete', [UserController::class, 'delete'])->name('user.delete');
 });
