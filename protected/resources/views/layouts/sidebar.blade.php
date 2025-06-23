@@ -77,7 +77,7 @@
 
                 @if (auth()->user()->username == 'superadmin')
                     <li>
-                        <a href="{{ route('user') }}" class="waves-effect logout-link">
+                        <a href="{{ route('user') }}" class="waves-effect">
                             <i class='bx bx-user'></i>
                             <span key="t-kursus">User</span>
                         </a>
