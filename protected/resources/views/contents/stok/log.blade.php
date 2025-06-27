@@ -130,7 +130,8 @@
                         <input type="hidden" class="edit-stok" name="stok">
                         <input type="hidden" class="edit-item" name="item">
                         <div class="mb-2">
-                            <select class="form-control select2" id="inputItem" name="item">
+                            <label class="form-label">Barang</label>
+                            <select class="form-control select2" id="inputItem" name="new_item">
                                 <option value=""></option>
                                 @foreach ($barang as $item)
                                     <option value="{{ $item->id }}">{{ $item->nama }} ({{ $item->kode }}) -

@@ -323,6 +323,18 @@ class StokController extends Controller
 
     public function logupdate(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'new_item'      => 'required',
+            'bekas'         => 'nullable',
+            'qty'           => 'required|numeric',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $upOrCreate = DB::table('log_stok')
             ->updateOrInsert(
                 ['id_stok' => $request->stok, 'id_barang' => $request->item],
