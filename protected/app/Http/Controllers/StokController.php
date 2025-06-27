@@ -31,6 +31,7 @@ class StokController extends Controller
         $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
         $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
         $type = $request->filter_type;
+        $barang = Barang::all();
 
         if ($startDate > $endDate) {
             $temp = $startDate;
@@ -49,7 +50,7 @@ class StokController extends Controller
 
         $stok = LogStok::whereIn('id_stok', $stokM)->with(['barang', 'stok' => ['user', 'aktivitas']])->get();
 
-        return view('contents.stok.log', compact('stok', 'startDate', 'endDate', 'type'));
+        return view('contents.stok.log', compact('stok', 'startDate', 'endDate', 'type', 'barang'));
     }
 
     public function viewStokMasuk()
@@ -318,5 +319,40 @@ class StokController extends Controller
         ]);
 
         return $pdf->stream('pengeluaran-stok-' . $lokasi->nama . '-' . date('dmY') . '.pdf');
+    }
+
+    public function logupdate(Request $request)
+    {
+        $upOrCreate = DB::table('log_stok')
+            ->updateOrInsert(
+                ['id_stok' => $request->stok, 'id_barang' => $request->item],
+                [
+                    'id_stok' => $request->stok,
+                    'id_barang' => $request->item,
+                    'is_new' => $request->bekas ? false : true,
+                    'qty' => $request->qty
+                ]
+            );
+
+        if (!$upOrCreate) {
+            return back()->withErrors(['Gagal update stok log.']);
+        }
+
+        return back()->with(['success', 'Update stok log berhasil']);
+    }
+
+
+    public function logdelete(Request $request)
+    {
+        $dataDeleted = DB::table('log_stok')
+            ->where(
+                ['id_stok' => $request->delete_stok, 'id_barang' => $request->delete_item]
+            )->delete();
+
+        if (!$dataDeleted) {
+            return back()->withErrors(['Gagal hapus stok log.']);
+        }
+
+        return back()->with(['success', 'Hapus stok log berhasil']);
     }
 }
