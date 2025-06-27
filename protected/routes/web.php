@@ -83,6 +83,9 @@ Route::prefix('stok')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi');
     Route::get('/rencana-sk', [StokController::class, 'rencanaSK'])->name('stok.rencana');
     Route::post('/rencana-sk', [StokController::class, 'cetakRencanaSK'])->name('stok.rencana.cetak');
+
+    Route::put('/log/update', [StokController::class, 'logupdate'])->name('stok.log.update')->middleware('super');
+    Route::delete('/log/delete', [StokController::class, 'logdelete'])->name('stok.log.delete')->middleware('super');
 });
 
 Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function () {
