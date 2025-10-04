@@ -5,6 +5,7 @@ use App\Http\Controllers\AktivitasController;
 use App\Http\Controllers\AlokasiController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
+use App\Http\Controllers\GudangController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\LokasiController;
 use App\Http\Controllers\ReportController;
@@ -42,6 +43,14 @@ Route::prefix('barang')->middleware(['web', 'auth', 'admin'])->group(function ()
 
     Route::get('/download-format', [BarangController::class, 'downloadFormat'])->name('barang.format');
     Route::post('/import', [BarangController::class, 'import'])->name('barang.import');
+});
+
+Route::prefix('gudang')->middleware(['web', 'auth', 'admin'])->group(function () {
+    Route::get('/', [GudangController::class, 'index'])->name('gudang.index');
+    Route::get('/{id}/detail', [GudangController::class, 'detail'])->name('gudang.detail');
+    Route::post('/store', [GudangController::class, 'store'])->name('gudang.store');
+    Route::put('/{id}/update', [GudangController::class, 'update'])->name('gudang.update');
+    Route::post('/{id}/delete', [GudangController::class, 'delete'])->name('gudang.delete');
 });
 
 Route::prefix('lokasi')->middleware(['web', 'auth', 'admin'])->group(function () {
@@ -86,6 +95,8 @@ Route::prefix('stok')->middleware(['web', 'auth', 'admin'])->group(function () {
 
     Route::put('/log/update', [StokController::class, 'logupdate'])->name('stok.log.update')->middleware('super');
     Route::delete('/log/delete', [StokController::class, 'logdelete'])->name('stok.log.delete')->middleware('super');
+
+    Route::get('/gudang/{idgudang}', [StokController::class, 'getItemWithStock'])->name('stok.keluar.bygudang');
 });
 
 Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function () {
