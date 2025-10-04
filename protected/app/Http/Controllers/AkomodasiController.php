@@ -68,8 +68,8 @@ class AkomodasiController extends Controller
         $validator = Validator::make($request->all(), [
             'noref'             => 'required',
             'tanggal'           => 'required|date',
-            'nominal_pengajuan' => 'required|numeric',
-            'nominal_realisasi' => 'required|numeric',
+            'nominal_pengajuan' => 'required',
+            'nominal_realisasi' => 'required',
             'keterangan'        => 'nullable',
             'aktivitas'         => 'required|array',
             'dokumen'           => 'nullable|mimes:pdf|max:10000'

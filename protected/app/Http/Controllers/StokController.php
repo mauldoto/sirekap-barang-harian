@@ -121,14 +121,16 @@ class StokController extends Controller
         return view('contents.stok.stokout', compact('gudang', 'aktivitas'));
     }
 
-    public function getItemWithStock($idgudang)
+    public function getItemWithStock($idgudang, $level = 2)
     {
+        // level 1 take all item
+        // level 2 take item with qty > 0
         try {
             $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
                 ->where('id_gudang', $idgudang)
-                ->with('barang')
-                ->having('sumqty', '>', 0)
-                ->groupBy('id_barang', 'is_new', 'id_gudang')->get();
+                ->with('barang');
+            if ($level == 2) $stok = $stok->having('sumqty', '>', 0);
+            $stok = $stok->groupBy('id_barang', 'is_new', 'id_gudang')->get();
 
             $ids = array_map(function ($item) {
                 return $item['id_barang'];
@@ -245,34 +247,11 @@ class StokController extends Controller
 
     public function rencanaSK()
     {
-
-
-        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
-            ->with('barang')
-            ->groupBy('id_barang', 'is_new')->get();
-
-        $ids = array_map(function ($item) {
-            return $item['id_barang'];
-        }, $stok->toArray());
-
-        $barang = Barang::whereIn('id', $ids)->get();
-
-        foreach ($barang as $key => $item) {
-            foreach ($stok as $key => $stokValue) {
-                if ($stokValue->id_barang == $item->id) {
-                    if ($stokValue->is_new) {
-                        $item->new = $stokValue->sumqty;
-                    } else {
-                        $item->second = $stokValue->sumqty;
-                    }
-                }
-            }
-        }
-
+        $gudang = Gudang::all();
         $lokasi = Lokasi::all();
         $karyawan = Karyawan::all();
 
-        return view('contents.stok.rencana', compact('barang', 'lokasi', 'karyawan'));
+        return view('contents.stok.rencana', compact('gudang', 'lokasi', 'karyawan'));
     }
 
     public function cetakRencanaSK(Request $request)
@@ -301,6 +280,7 @@ class StokController extends Controller
         $karyawan = Karyawan::whereIn('id', $request->teknisi)->get();
 
         $dbBarang = Barang::get()->toArray();
+        $dbGudang = Gudang::get()->toArray();
 
         $data = [];
         foreach ($request->selected_sublokasi as $key => $subSelected) {
@@ -325,6 +305,11 @@ class StokController extends Controller
                     if ($barang['item'] == $dbb['id']) {
                         $dbb['kondisi'] = array_key_exists('bekas', $barang) ? 'Bekas' : 'Baru';
                         $dbb['qty'] = $barang['qty'];
+                        foreach ($dbGudang as $key => $gudang) {
+                            if ($barang['gudang'] == $gudang['id']) {
+                                $dbb['gudang'] = $gudang['nama'];
+                            }
+                        }
 
                         array_push($barangFinal, $dbb);
                     }
