@@ -7,25 +7,27 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta content="JPN Sirekap" name="description" />
     <meta content="bayemsore" name="author" />
-    <meta content="{{env('APP_URL')}}" name="author" />
+    <meta content="{{ env('APP_URL') }}" name="baseURL" />
     <!-- App favicon -->
-    <link rel="shortcut icon" href="{{ URL::asset('assets/images/logo-jpn.png')}}">
+    <link rel="shortcut icon" href="{{ URL::asset('assets/images/logo-jpn.png') }}">
     @include('layouts.head-css')
+    <style></style>
 </head>
 
 @section('body')
-<body data-sidebar="dark">
+
+    <body data-sidebar="dark">
     @show
     <!-- Begin page -->
     <div id="layout-wrapper">
         @include('layouts.topbar')
 
         @if (auth()->user()->role == 'jpn')
-        @include('layouts.sidebar-report')
+            @include('layouts.sidebar-report')
         @elseif (auth()->user()->role == 'finance')
-        @include('layouts.sidebar-finance')
+            @include('layouts.sidebar-finance')
         @else
-        @include('layouts.sidebar')
+            @include('layouts.sidebar')
         @endif
         <!-- ============================================================== -->
         <!-- Start right Content here -->
