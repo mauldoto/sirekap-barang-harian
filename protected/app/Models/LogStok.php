@@ -16,6 +16,11 @@ class LogStok extends Model
         return $this->belongsTo(Barang::class, 'id_barang', 'id');
     }
 
+    public function gudang()
+    {
+        return $this->belongsTo(Gudang::class, 'id_gudang', 'id');
+    }
+
     public function stok()
     {
         return $this->belongsTo(Stok::class, 'id_stok', 'id');

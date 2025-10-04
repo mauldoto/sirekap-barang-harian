@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Aktivitas;
 use App\Models\Barang;
+use App\Models\Gudang;
 use App\Models\Karyawan;
 use App\Models\LogStok;
 use App\Models\Lokasi;
 use App\Models\Stok;
 use App\Models\SubLokasi;
 use Carbon\Carbon;
+use Error;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,9 +21,9 @@ class StokController extends Controller
 {
     public function index()
     {
-        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
-            ->with('barang')
-            ->groupBy('id_barang', 'is_new')->get();
+        $stok = LogStok::select('id_barang', 'id_gudang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+            ->with('barang', 'gudang')
+            ->groupBy('id_barang', 'is_new', 'id_gudang')->get();
 
         return view('contents.stok.index', compact('stok'));
     }
@@ -48,15 +50,16 @@ class StokController extends Controller
 
         $stokM = $stokM->pluck('id');
 
-        $stok = LogStok::whereIn('id_stok', $stokM)->with(['barang', 'stok' => ['user', 'aktivitas']])->get();
+        $stok = LogStok::whereIn('id_stok', $stokM)->with(['barang', 'gudang', 'stok' => ['user', 'aktivitas']])->get();
 
         return view('contents.stok.log', compact('stok', 'startDate', 'endDate', 'type', 'barang'));
     }
 
     public function viewStokMasuk()
     {
+        $gudang = Gudang::all();
         $barang = Barang::all();
-        return view('contents.stok.stokin', compact('barang'));
+        return view('contents.stok.stokin', compact('barang', 'gudang'));
     }
 
     public function storeStokMasuk(Request $request)
@@ -68,6 +71,7 @@ class StokController extends Controller
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
             'barang.*.bekas'  => 'nullable',
+            'barang.*.gudang'  => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -96,6 +100,7 @@ class StokController extends Controller
             $newLogStok->id_stok = $newStokIn->id;
             $newLogStok->id_barang = $barang['item'];
             $newLogStok->qty = $barang['qty'];
+            $newLogStok->id_gudang = $barang['gudang'];
             $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
 
             if (!$newLogStok->save()) {
@@ -111,30 +116,46 @@ class StokController extends Controller
     // this section is for out stock
     public function viewStokKeluar()
     {
-        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
-            ->with('barang')
-            ->having('sumqty', '>', 0)
-            ->groupBy('id_barang', 'is_new')->get();
+        $gudang = Gudang::all();
+        $aktivitas = Aktivitas::whereIn('status', ['waiting', 'progress'])->orderBy('tanggal_berangkat', 'DESC')->get();
+        return view('contents.stok.stokout', compact('gudang', 'aktivitas'));
+    }
 
-        $ids = array_map(function ($item) {
-            return $item['id_barang'];
-        }, $stok->toArray());
+    public function getItemWithStock($idgudang)
+    {
+        try {
+            $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+                ->where('id_gudang', $idgudang)
+                ->with('barang')
+                ->having('sumqty', '>', 0)
+                ->groupBy('id_barang', 'is_new', 'id_gudang')->get();
 
-        $barang = Barang::whereIn('id', $ids)->get();
+            $ids = array_map(function ($item) {
+                return $item['id_barang'];
+            }, $stok->toArray());
 
-        foreach ($barang as $key => $item) {
-            foreach ($stok as $key => $stokValue) {
-                if ($stokValue->id_barang == $item->id) {
-                    if ($stokValue->is_new) {
-                        $item->new = $stokValue->sumqty;
-                    } else {
-                        $item->second = $stokValue->sumqty;
+            $barang = Barang::whereIn('id', $ids)->get();
+
+            foreach ($barang as $key => $item) {
+                foreach ($stok as $key => $stokValue) {
+                    if ($stokValue->id_barang == $item->id) {
+                        if ($stokValue->is_new) {
+                            $item->new = $stokValue->sumqty;
+                        } else {
+                            $item->second = $stokValue->sumqty;
+                        }
                     }
                 }
-            }
+            };
+
+            if (count($barang) <= 0) throw new Error('Tidak ada stok di gudang ini.');
+
+            return response()->json([
+                'data' => $barang
+            ]);
+        } catch (\Throwable $th) {
+            throw $th->getMessage($th);
         }
-        $aktivitas = Aktivitas::whereIn('status', ['waiting', 'progress'])->orderBy('tanggal_berangkat', 'DESC')->get();
-        return view('contents.stok.stokout', compact('barang', 'aktivitas'));
     }
 
     public function storeStokKeluar(Request $request)
@@ -147,6 +168,7 @@ class StokController extends Controller
             'barang.*.item' => 'required',
             'barang.*.qty'  => 'required',
             'barang.*.bekas'  => 'nullable',
+            'barang.*.gudang'  => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -162,7 +184,7 @@ class StokController extends Controller
         }, $request->barang);
 
         // dd($idsBarang);
-        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
+        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'id_gudang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new', 'id_gudang')->get()->toArray();
 
         $newStokOut = new Stok();
         $newStokOut->no_referensi = $request->noref;
@@ -180,7 +202,7 @@ class StokController extends Controller
         foreach ($request->barang as $key => $barang) {
 
             $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
-                if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
+                if ($value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
                     return true;
                 }
             });
@@ -194,6 +216,7 @@ class StokController extends Controller
             $newLogStok->id_stok = $newStokOut->id;
             $newLogStok->id_barang = $barang['item'];
             $newLogStok->qty = -$barang['qty'];
+            $newLogStok->id_gudang = $barang['gudang'];
             $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
 
             if (!$newLogStok->save()) {

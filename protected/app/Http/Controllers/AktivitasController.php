@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Aktivitas;
 use App\Models\AktivitasKaryawan;
 use App\Models\Barang;
+use App\Models\Gudang;
 use App\Models\JenisPekerjaan;
 use App\Models\Karyawan;
 use App\Models\LogStok;
@@ -361,53 +362,31 @@ class AktivitasController extends Controller
     {
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
         $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
-        $realStokLog = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
+        $realStokLog = LogStok::select('id_barang', 'id_gudang', DB::raw('SUM(qty) as sumqty'), 'is_new')
             ->with('barang')
             ->where('id_stok', $realStok->id)
-            ->groupBy('id_barang', 'is_new')
+            ->groupBy('id_barang', 'is_new', 'id_gudang')
             ->get();
+        $gudang = Gudang::all();
 
-        // untuk new stok out
-        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
-            ->with('barang')
-            ->having('sumqty', '>', 0)
-            ->groupBy('id_barang', 'is_new')->get();
-
-        $ids = array_map(function ($item) {
-            return $item['id_barang'];
-        }, $stok->toArray());
-
-        $barang = Barang::whereIn('id', $ids)->get();
-
-        foreach ($barang as $key => $item) {
-            foreach ($stok as $key => $stokValue) {
-                if ($stokValue->id_barang == $item->id) {
-                    if ($stokValue->is_new) {
-                        $item->new = $stokValue->sumqty;
-                    } else {
-                        $item->second = $stokValue->sumqty;
-                    }
-                }
-            }
-        }
-
-        return view('contents.aktivitas.edit-stok', compact('barang', 'aktivitas', 'realStokLog'));
+        return view('contents.aktivitas.edit-stok', compact('gudang', 'aktivitas', 'realStokLog'));
     }
 
     public function postEditStockOut(request $request, $tiket)
     {
-        // $validator = Validator::make($request->all(), [
-        //     'barang'        => 'nullable|array',
-        //     'barang.*.item' => 'required',
-        //     'barang.*.qty'  => 'required',
-        //     'barang.*.bekas'  => 'nullable',
-        // ]);
+        $validator = Validator::make($request->all(), [
+            'barang'        => 'nullable|array',
+            'barang.*.item' => 'nullable',
+            'barang.*.qty'  => 'nullable|numeric|min:1',
+            'barang.*.bekas'  => 'nullable',
+            'barang.*.gudang'  => 'nullable',
+        ]);
 
-        // if ($validator->fails()) {
-        //     return back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
         $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
@@ -419,22 +398,18 @@ class AktivitasController extends Controller
         }, ($request->input ?? []));
 
         LogStok::where('id_stok', $realStok->id)->whereNotIn('id_barang', $idsOldBarang)->delete();
-        // if (!$deleteLogStok) {
-        //     return back()->withErrors(['Error update stok, OICD'])->withInput();
-        // }
 
-        $idsBarang = array_map(function ($value) {
-            return $value['item'];
-        }, $request->barang);
+        if (isset($request->barang[0]['item'])) {
+            $idsBarang = array_map(function ($value) {
+                return $value['item'];
+            }, $request->barang);
 
-        // dd($idsBarang);
-        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
+            $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', 'id_gudang', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new', 'id_gudang')->get()->toArray();
 
-        if ($request->barang[0]['item']) {
             foreach ($request->barang as $key => $barang) {
 
                 $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
-                    if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
+                    if ($value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
                         return true;
                     }
                 });
@@ -448,6 +423,7 @@ class AktivitasController extends Controller
                 $newLogStok->id_stok = $realStok->id;
                 $newLogStok->id_barang = $barang['item'];
                 $newLogStok->qty = -$barang['qty'];
+                $newLogStok->id_gudang = $barang['gudang'];
                 $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
 
                 if (!$newLogStok->save()) {
@@ -465,46 +441,24 @@ class AktivitasController extends Controller
     {
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
         $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
+        $gudang = Gudang::all();
 
         if ($realStok) {
             return back()->withErrors(['Stok untuk tiket ' . $aktivitas->no_referensi . ' sudah terinput, silakan menggunakan fitur edit.']);
         }
 
-        // untuk new stok out
-        $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
-            ->with('barang')
-            ->having('sumqty', '>', 0)
-            ->groupBy('id_barang', 'is_new')->get();
-
-        $ids = array_map(function ($item) {
-            return $item['id_barang'];
-        }, $stok->toArray());
-
-        $barang = Barang::whereIn('id', $ids)->get();
-
-        foreach ($barang as $key => $item) {
-            foreach ($stok as $key => $stokValue) {
-                if ($stokValue->id_barang == $item->id) {
-                    if ($stokValue->is_new) {
-                        $item->new = $stokValue->sumqty;
-                    } else {
-                        $item->second = $stokValue->sumqty;
-                    }
-                }
-            }
-        }
-
-        return view('contents.aktivitas.input-stok', compact('barang', 'aktivitas'));
+        return view('contents.aktivitas.input-stok', compact('aktivitas', 'gudang'));
     }
 
     public function postInputStockOut(request $request, $tiket)
     {
         $validator = Validator::make($request->all(), [
             'noref'         => 'required|string',
-            'barang'        => 'nullable|array',
+            'barang'        => 'required|array',
             'barang.*.item' => 'required',
-            'barang.*.qty'  => 'required',
+            'barang.*.qty'  => 'required|numeric|min:1',
             'barang.*.bekas'  => 'nullable',
+            'barang.*.gudang'  => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -521,7 +475,7 @@ class AktivitasController extends Controller
             return $value['item'];
         }, $request->barang);
 
-        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new')->get()->toArray();
+        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', 'id_gudang', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new', 'id_gudang')->get()->toArray();
 
         $newStokOut = Stok::where('id_aktivitas', $aktivitas->id)->first();
 
@@ -542,7 +496,7 @@ class AktivitasController extends Controller
         foreach ($request->barang as $key => $barang) {
 
             $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
-                if ($value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
+                if ($value['id_gudang'] == $barang['gudang'] && $value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
                     return true;
                 }
             });
@@ -556,6 +510,7 @@ class AktivitasController extends Controller
             $newLogStok->id_stok = $newStokOut->id;
             $newLogStok->id_barang = $barang['item'];
             $newLogStok->qty = -$barang['qty'];
+            $newLogStok->id_gudang = $barang['gudang'];
             $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
 
             if (!$newLogStok->save()) {
