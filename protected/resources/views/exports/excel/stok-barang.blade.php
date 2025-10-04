@@ -1,25 +1,27 @@
 <table style="border: 1px black solid;">
     <thead>
         <tr>
-            <th colspan="5" style="text-align: center; font-weight:bold; font-size: 16px;">PT Jaringan Putra Nusantara</th>
+            <th colspan="6" style="text-align: center; font-weight:bold; font-size: 16px;">PT Jaringan Putra Nusantara
+            </th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
             <th style="text-align: center; font-weight:bold;"></th>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: center; font-size: 14px">Report Stok Barang</th>
+            <th colspan="6" style="text-align: center; font-size: 14px">Report Stok Barang</th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: center;">Di report pada: {{Carbon\Carbon::now()->format('d/m/Y')}}</th>
+            <th colspan="6" style="text-align: center;">Di report pada: {{ Carbon\Carbon::now()->format('d/m/Y') }}
+            </th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
         </tr>
         <tr>
-            <th colspan="5" style="text-align: center;"></th>
+            <th colspan="6" style="text-align: center;"></th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
             <th style="text-align: center;"></th>
@@ -30,17 +32,20 @@
             <th style="text-align: center; font-weight:bold;">Kondisi</th>
             <th style="text-align: center; font-weight:bold;">Satuan</th>
             <th style="text-align: center; font-weight:bold;">Stok</th>
+            <th style="text-align: center; font-weight:bold;">Gudang</th>
         </tr>
     </thead>
     <tbody>
-        @foreach($stok as $i => $item)
-        <tr>
-            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->barang->kode}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 200px;">{{$item->barang->nama}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->is_new ? 'Baru':'Bekas'}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->barang->satuan}}</td>
-            <td style="text-align: center; padding: 0 5px; width: 150px;">{{$item->sumqty}}</td>
-        </tr>
+        @foreach ($stok as $i => $item)
+            <tr>
+                <td style="text-align: center; padding: 0 5px; width: 150px;">{{ $item->barang->kode }}</td>
+                <td style="text-align: center; padding: 0 5px; width: 200px;">{{ $item->barang->nama }}</td>
+                <td style="text-align: center; padding: 0 5px; width: 150px;">{{ $item->is_new ? 'Baru' : 'Bekas' }}
+                </td>
+                <td style="text-align: center; padding: 0 5px; width: 150px;">{{ $item->barang->satuan }}</td>
+                <td style="text-align: center; padding: 0 5px; width: 150px;">{{ $item->sumqty }}</td>
+                <td style="text-align: center; padding: 0 5px; width: 150px;">{{ $item->gudang->nama }}</td>
+            </tr>
         @endforeach
     </tbody>
 </table>
