@@ -26,6 +26,13 @@
                 </li>
 
                 <li>
+                    <a href="{{ route('gudang.index') }}" class="waves-effect">
+                        <i class='bx bx-building-house'></i>
+                        <span key="t-gudang">Gudang</span>
+                    </a>
+                </li>
+
+                <li>
                     <a href="{{ route('karyawan.index') }}" class="waves-effect">
                         <i class='bx bx-group'></i>
                         <span key="t-siswa">Karyawan</span>
