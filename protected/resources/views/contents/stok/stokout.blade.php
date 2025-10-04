@@ -215,10 +215,11 @@
                     });
 
                     s2element.attr('disabled', false)
+                    hideLoadingScreen()
                 } catch (error) {
                     // Tangani kesalahan jaringan ATAU kesalahan HTTP/konversi data
                     console.error('Proses Fetch Gagal:', error);
-
+                    hideLoadingScreen()
                 }
             }
 
@@ -246,6 +247,7 @@
                 })
 
                 $('.gudang-select2').on('select2:select', function(e) {
+                    showLoadingScreen()
                     let select2this = $(this).parent().parent().find(".barang-select2")
                     getData(e.params.data.id, select2this)
                 })

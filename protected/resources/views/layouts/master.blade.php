@@ -20,6 +20,9 @@
     @show
     <!-- Begin page -->
     <div id="layout-wrapper">
+        <div id="loading-overlay" style="display: none;">
+            <div class="loader"></div>
+        </div>
         @include('layouts.topbar')
 
         @if (auth()->user()->role == 'jpn')
