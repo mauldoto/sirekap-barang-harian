@@ -162,12 +162,12 @@ class ReportController extends Controller
 
     protected function reportStok($request)
     {
-        $stok = LogStok::select('id_barang', 'is_new', DB::raw('SUM(qty) as sumqty'));
+        $stok = LogStok::select('id_barang', 'is_new', 'id_gudang', DB::raw('SUM(qty) as sumqty'));
         if ($request->barang) {
             $stok = $stok->whereIn('id_barang', $request->barang);
         }
         $stok = $stok->with('barang')
-            ->groupBy('id_barang', 'is_new')->get();
+            ->groupBy('id_barang', 'is_new', 'id_gudang')->get();
 
         if ($request->export == 'excel') {
             try {
@@ -204,7 +204,7 @@ class ReportController extends Controller
             INNER JOIN sub_lokasi as sub
             ON act.id_sub_lokasi = sub.id
             WHERE act.status = 'done'";
-        
+
         if ($lokasi) {
             $query .= " AND act.id_lokasi = ?";
             array_push($filter, $lokasi);
@@ -226,11 +226,11 @@ class ReportController extends Controller
             $filter
         );
 
-        $idsStok = array_filter(array_map(function($item){
+        $idsStok = array_filter(array_map(function ($item) {
             return $item->idstok;
         }, $dataMain));
 
-        $idsAktivitas = array_filter(array_map(function($item){
+        $idsAktivitas = array_filter(array_map(function ($item) {
             return $item->id;
         }, $dataMain));
 
@@ -273,7 +273,7 @@ class ReportController extends Controller
         );
 
 
-        $dataFinal = array_map(function($aktivitas) use ($dataBarang, $dataKaryawan) {
+        $dataFinal = array_map(function ($aktivitas) use ($dataBarang, $dataKaryawan) {
             $datakar = [];
             foreach ($dataKaryawan as $key => $teknisi) {
                 if ($teknisi->id_aktivitas == $aktivitas->id) {
@@ -301,7 +301,6 @@ class ReportController extends Controller
                 throw $th;
             }
         }
-        
     }
 
     protected function reportPenggunanBarang($request, $startDate, $endDate)
@@ -320,10 +319,12 @@ class ReportController extends Controller
                 act.id_sub_lokasi,
                 ls.id_barang as ls_idbarang,
                 ls.is_new,
+                ls.id_gudang,
                 lokasi.nama as nama_lokasi,
                 sub.nama as nama_sublokasi,
                 barang.nama as nama_barang,
                 barang.satuan as satuan,
+                gudang.nama as nama_gudang,
                 SUM(ls.qty) as total
             FROM aktivitas as act
             INNER JOIN stok AS st
@@ -336,8 +337,11 @@ class ReportController extends Controller
             ON act.id_sub_lokasi = sub.id
             INNER JOIN barang
             ON ls.id_barang = barang.id
+            INNER JOIN gudang
+            ON ls.id_gudang = gudang.id
             WHERE act.status = 'done'";
-        
+
+
         if ($lokasi) {
             $query .= " AND act.id_lokasi = ?";
             array_push($filter, $lokasi);
@@ -363,6 +367,7 @@ class ReportController extends Controller
                 act.id_sub_lokasi,
                 ls.id_barang,
                 ls.is_new,
+                ls.id_gudang,
                 lokasi.nama,
                 sub.nama,
                 barang.nama,
@@ -410,7 +415,7 @@ class ReportController extends Controller
             INNER JOIN sub_lokasi AS sub
             ON act.id_sub_lokasi = sub.id
             WHERE act.status = 'done'";
-        
+
         if ($karyawan) {
             $query .= " AND k.id_karyawan IN ($tkaryawan)";
             array_push($filter, ...$karyawan);
@@ -433,13 +438,13 @@ class ReportController extends Controller
             } catch (\Throwable $th) {
                 throw $th;
             }
-        } 
+        }
     }
 
     protected function reportAlokasiPerangkat($request)
     {
         $item = AlokasiDevice::select('id_barang', 'id_sublokasi', DB::raw('SUM(qty) as sumqty'));
-        
+
         if ($request->lokasi && $request->sublokasi) {
             $item = $item->whereIn('id_sublokasi', $request->sublokasi);
         }
@@ -448,7 +453,7 @@ class ReportController extends Controller
             $sublokasi = SubLokasi::select('id')->where('id_lokasi', $request->lokasi)->get()->toArray();
             $item = $item->whereIn('id_sublokasi', $sublokasi);
         }
-        
+
         $item = $item->with(['barang', 'sublok'])
             ->groupBy('id_barang', 'id_sublokasi')->get();
 
@@ -467,7 +472,7 @@ class ReportController extends Controller
             ->where('tanggal_terbit', '>=', $startDate)
             ->where('tanggal_terbit', '<=', $endDate)
             ->get();
-        
+
         if ($request->export == 'excel') {
             try {
                 return Excel::download(new AkomodasiExport($item, [$startDate, $endDate]), 'report-akomodasi.xlsx');
@@ -476,6 +481,4 @@ class ReportController extends Controller
             }
         }
     }
-
-
 }
