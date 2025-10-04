@@ -75,31 +75,44 @@
                                     <!-- Repeater Content -->
                                     <div class="item-content">
                                         <div class="row">
-                                            <div class="col-lg-5">
+                                            <div class="col-lg-3">
                                                 {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
-                                                <select class="form-control select2 barang-select2" id="inputItem"
-                                                    data-name="item">
+                                                <select class="form-control gudang-select2" id="inputWs"
+                                                    data-name="gudang">
                                                     <option value=""></option>
-                                                    @foreach ($barang as $item)
-                                                        <option value="{{ $item->id }}"
-                                                            title="Baru: {{ $item->new ? $item->new : 0 }} | Bekas: {{ $item->second ? $item->second : 0 }}">
-                                                            {{ $item->nama }} ({{ $item->kode }}) - {{ $item->satuan }}
+                                                    @foreach ($gudang as $ws)
+                                                        <option value="{{ $ws->id }}">{{ $ws->nama }}
+                                                            ({{ $ws->kode }})
                                                         </option>
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col-lg-2 pt-2">
+                                            <div class="col-lg-4">
+                                                {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
+                                                <select class="form-control select2 barang-select2" id="inputItem"
+                                                    data-name="item" disabled>
+                                                    <option value=""></option>
+                                                    {{-- @foreach ($barang as $item)
+                                                        <option value="{{ $item->id }}"
+                                                            title="Baru: {{ $item->new ? $item->new : 0 }} | Bekas: {{ $item->second ? $item->second : 0 }}">
+                                                            {{ $item->nama }} ({{ $item->kode }}) -
+                                                            {{ $item->satuan }}
+                                                        </option>
+                                                    @endforeach --}}
+                                                </select>
+                                            </div>
+                                            <div class="col-lg-1 pt-2">
                                                 <input class="form-check-input" type="checkbox" data-name="bekas"
                                                     id="inputCondition" value="bekas">
                                                 <label class="form-check-label" for="inputCondition">
                                                     Bekas
                                                 </label>
                                             </div>
-                                            <div class="col-lg-3">
+                                            <div class="col-lg-2">
                                                 <input type="text" class="form-control" id="inputQty" placeholder="Qty"
                                                     data-name="qty">
                                             </div>
-                                            <div class="col-lg-2 repeater-remove-btn">
+                                            <div class="col-lg-1 repeater-remove-btn">
                                                 <button class="btn btn-danger remove-btn">
                                                     Remove
                                                 </button>
@@ -158,19 +171,56 @@
             });
 
             $(".repeater-add-btn").click(function() {
-                let select2Arr = $('.barang-select2')
-                select2Arr.each(function(index, el) {
-                    $(el).select2({
-                        placeholder: "-- Pilih Barang --",
-                        templateResult: formatOption
-                    });
-                })
+                regenerateS2()
             })
+
+            $('.gudang-select2').select2({
+                placeholder: "-- Pilih Gudang --",
+            });
 
             $('.barang-select2').select2({
                 placeholder: "-- Pilih Barang --",
                 templateResult: formatOption
             });
+
+            $('.gudang-select2').on('select2:select', function(e) {
+                let select2this = $(this).parent().parent().find(".barang-select2")
+                getData(e.params.data.id, select2this)
+            })
+
+            async function getData(idGudang, s2element) {
+                const metaTag = document.querySelector(`meta[name="baseURL"]`);
+                const url = metaTag.content;
+                s2element.attr('disabled', true)
+                s2element.html('')
+                s2element.append('<option></option>')
+
+                try {
+                    const response = await fetch(url + '/stok/gudang/' + idGudang);
+
+                    if (!response.ok) {
+                        throw new Error(`Gagal mengambil data, status: ${response.status}`);
+                    }
+
+                    const result = await response.json();
+                    for (const item of result.data) {
+                        let newOption =
+                            `<option value="${item.id}" title="Baru: ${item.new?item.new:0} | Bekas: ${item.second?item.second:0}">${item.nama} (${ item.kode }) - ${item.satuan} </option>`
+                        s2element.append(newOption)
+                    }
+
+                    s2element.select2({
+                        placeholder: "-- Pilih Barang --",
+                        templateResult: formatOption
+                    });
+
+                    s2element.attr('disabled', false)
+                } catch (error) {
+                    // Tangani kesalahan jaringan ATAU kesalahan HTTP/konversi data
+                    console.error('Proses Fetch Gagal:', error);
+
+                }
+            }
 
             function formatOption(option) {
                 var $option = $('<div>' + option.text + '</div><small> ' + option.title + ' </small>');
@@ -180,6 +230,26 @@
             $('.job-select2').select2({
                 placeholder: "-- Pilih Aktivitas/Job --"
             });
+
+            function regenerateS2() {
+                let select2Gudang = $('.gudang-select2')
+                select2Gudang.each(function(index, el) {
+                    $(el).select2({
+                        placeholder: "-- Pilih Gudang --"
+                    });
+                })
+                let select2Arr = $('.barang-select2')
+                select2Arr.each(function(index, el) {
+                    $(el).select2({
+                        placeholder: "-- Pilih Barang --"
+                    });
+                })
+
+                $('.gudang-select2').on('select2:select', function(e) {
+                    let select2this = $(this).parent().parent().find(".barang-select2")
+                    getData(e.params.data.id, select2this)
+                })
+            }
         })
     </script>
 @endpush

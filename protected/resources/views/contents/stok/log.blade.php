@@ -70,6 +70,7 @@
                                 <th>Barang</th>
                                 <th>Kondisi</th>
                                 <th>Jumlah</th>
+                                <th>Gudang</th>
                             </tr>
                         </thead>
 
@@ -106,6 +107,7 @@
                                             class="{{ $i->qty < 0 ? 'text-danger' : 'text-success' }}">{{ $i->qty < 0 ? -1 * $i->qty : $i->qty }}</span>
                                         ({{ $i->barang->satuan }})
                                     </td>
+                                    <td>{{ $i->gudang->nama }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

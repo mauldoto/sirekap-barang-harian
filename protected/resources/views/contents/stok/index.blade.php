@@ -44,6 +44,7 @@
                                 <th>Nama Barang</th>
                                 <th>Kondisi</th>
                                 <th>Stok</th>
+                                <th>Gudang</th>
                             </tr>
                         </thead>
 
@@ -56,6 +57,7 @@
                                             class="badge rounded-pill {{ $i->is_new ? 'bg-primary' : 'bg-warning' }}">{{ $i->is_new ? 'Baru' : 'Bekas' }}</span>
                                     </td>
                                     <td>{{ $i->sumqty }} ({{ $i->barang->satuan }})</td>
+                                    <td>{{ $i->gudang->nama }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
