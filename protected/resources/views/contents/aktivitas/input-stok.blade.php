@@ -162,6 +162,7 @@
             });
 
             $('.gudang-select2').on('select2:select', function(e) {
+                showLoadingScreen()
                 let select2this = $(this).parent().parent().find(".barang-select2")
                 getData(e.params.data.id, select2this)
             })
@@ -170,8 +171,8 @@
                 const metaTag = document.querySelector(`meta[name="baseURL"]`);
                 const url = metaTag.content;
                 s2element.attr('disabled', true)
+                s2element.attr('disabled', true)
                 s2element.html('')
-                s2element.append('<option></option>')
 
                 try {
                     const response = await fetch(url + '/stok/gudang/' + idGudang);
@@ -181,11 +182,13 @@
                     }
 
                     const result = await response.json();
+                    let newOption = `<option></option>`
                     for (const item of result.data) {
-                        let newOption =
+                        newOption +=
                             `<option value="${item.id}" title="Baru: ${item.new?item.new:0} | Bekas: ${item.second?item.second:0}">${item.nama} (${ item.kode }) - ${item.satuan} </option>`
-                        s2element.append(newOption)
                     }
+
+                    s2element.html(newOption)
 
                     s2element.select2({
                         placeholder: "-- Pilih Barang --",
@@ -224,7 +227,7 @@
                     });
                 })
 
-                $('.gudang-select2').on('select2:select', function(e) {
+                select2Gudang.on('select2:select', function(e) {
                     showLoadingScreen()
                     let select2this = $(this).parent().parent().find(".barang-select2")
                     getData(e.params.data.id, select2this)
