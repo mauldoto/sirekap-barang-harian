@@ -171,7 +171,6 @@
                 const metaTag = document.querySelector(`meta[name="baseURL"]`);
                 const url = metaTag.content;
                 s2element.attr('disabled', true)
-                s2element.attr('disabled', true)
                 s2element.html('')
 
                 try {
