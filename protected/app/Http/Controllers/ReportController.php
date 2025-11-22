@@ -371,7 +371,8 @@ class ReportController extends Controller
                 lokasi.nama,
                 sub.nama,
                 barang.nama,
-                barang.satuan
+                barang.satuan,
+                gudang.nama
             ";
 
         $data = DB::select(
