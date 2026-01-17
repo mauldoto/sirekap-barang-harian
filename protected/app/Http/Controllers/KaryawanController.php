@@ -86,7 +86,6 @@ class KaryawanController extends Controller
             return back()->withErrors(['karyawan tidak ditemukan.']);
         }
 
-        $karyawan = new Karyawan();
         $karyawan->nama = $request->nama;
         $karyawan->deskripsi = $request->deskripsi;
 
