@@ -65,13 +65,13 @@ class StokController extends Controller
     public function storeStokMasuk(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'noref'         => 'required|string',
-            'tanggal'       => 'required|date',
-            'barang'        => 'required|array',
+            'noref' => 'required|string',
+            'tanggal' => 'required|date',
+            'barang' => 'required|array',
             'barang.*.item' => 'required',
-            'barang.*.qty'  => 'required',
-            'barang.*.bekas'  => 'nullable',
-            'barang.*.gudang'  => 'required',
+            'barang.*.qty' => 'required',
+            'barang.*.bekas' => 'nullable',
+            'barang.*.gudang' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -129,7 +129,8 @@ class StokController extends Controller
             $stok = LogStok::select('id_barang', DB::raw('SUM(qty) as sumqty'), 'is_new')
                 ->where('id_gudang', $idgudang)
                 ->with('barang');
-            if ($level == 2) $stok = $stok->having('sumqty', '>', 0);
+            if ($level == 2)
+                $stok = $stok->having('sumqty', '>', 0);
             $stok = $stok->groupBy('id_barang', 'is_new', 'id_gudang')->get();
 
             $ids = array_map(function ($item) {
@@ -148,9 +149,11 @@ class StokController extends Controller
                         }
                     }
                 }
-            };
+            }
+            ;
 
-            if (count($barang) <= 0) throw new Error('Tidak ada stok di gudang ini.');
+            if (count($barang) <= 0)
+                throw new Error('Tidak ada stok di gudang ini.');
 
             return response()->json([
                 'data' => $barang
@@ -163,14 +166,14 @@ class StokController extends Controller
     public function storeStokKeluar(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'noref'         => 'required|string',
-            'tanggal'       => 'required|date',
-            'deskripsi'     => 'nullable',
-            'barang'        => 'required|array',
+            'noref' => 'required|string',
+            'tanggal' => 'required|date',
+            'deskripsi' => 'nullable',
+            'barang' => 'required|array',
             'barang.*.item' => 'required',
-            'barang.*.qty'  => 'required',
-            'barang.*.bekas'  => 'nullable',
-            'barang.*.gudang'  => 'required',
+            'barang.*.qty' => 'required',
+            'barang.*.bekas' => 'nullable',
+            'barang.*.gudang' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -220,6 +223,7 @@ class StokController extends Controller
             $newLogStok->qty = -$barang['qty'];
             $newLogStok->id_gudang = $barang['gudang'];
             $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
+            $newLogStok->harga = $barang['harga'];
 
             if (!$newLogStok->save()) {
                 DB::rollBack();
@@ -257,10 +261,10 @@ class StokController extends Controller
     public function cetakRencanaSK(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'tanggal'       => 'required|date',
-            'lokasi'        => 'required',
-            'sublokasi'     => 'required|array',
-            'teknisi'       => 'required',
+            'tanggal' => 'required|date',
+            'lokasi' => 'required',
+            'sublokasi' => 'required|array',
+            'teknisi' => 'required',
             // 'barang'        => 'required|array',
             // 'barang.*.item' => 'required',
             // 'barang.*.qty'  => 'required',
@@ -320,10 +324,10 @@ class StokController extends Controller
         }
 
         $pdf = LaravelMpdf::loadview('exports.pdf.cetak-perencanaan', [
-            'tanggal'   => Carbon::createFromFormat('Y-m-d', $request->tanggal)->format('d-m-Y'),
-            'lokasi'    => $lokasi,
-            'karyawan'  => $karyawan,
-            'barang'    => $data
+            'tanggal' => Carbon::createFromFormat('Y-m-d', $request->tanggal)->format('d-m-Y'),
+            'lokasi' => $lokasi,
+            'karyawan' => $karyawan,
+            'barang' => $data
         ]);
 
         return $pdf->stream('pengeluaran-stok-' . $lokasi->nama . '-' . date('dmY') . '.pdf');
@@ -332,9 +336,9 @@ class StokController extends Controller
     public function logupdate(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'new_item'      => 'required',
-            'bekas'         => 'nullable',
-            'qty'           => 'required|numeric',
+            'new_item' => 'required',
+            'bekas' => 'nullable',
+            'qty' => 'required|numeric',
         ]);
 
         if ($validator->fails()) {
@@ -374,5 +378,37 @@ class StokController extends Controller
         }
 
         return back()->with(['success', 'Hapus stok log berhasil']);
+    }
+
+    public function invoice($noref)
+    {
+        $stok = Stok::where('no_referensi', $noref)
+            ->with(['user', 'aktivitas' => ['lokasi', 'sublokasi']])
+            ->firstOrFail();
+
+        $items = LogStok::where('id_stok', $stok->id)
+            ->with(['barang', 'gudang'])
+            ->get();
+
+        return view('contents.stok.invoice', compact('stok', 'items'));
+    }
+
+    public function printInvoice($noref)
+    {
+        $stok = Stok::where('no_referensi', $noref)
+            ->with(['user', 'aktivitas' => ['lokasi', 'sublokasi']])
+            ->firstOrFail();
+
+        $items = LogStok::where('id_stok', $stok->id)
+            ->with(['barang', 'gudang'])
+            ->get();
+
+        $pdf = LaravelMpdf::loadview('exports.pdf.invoice-stok', [
+            'stok' => $stok,
+            'items' => $items,
+            'tanggal' => Carbon::now()->format('d-m-Y H:i')
+        ]);
+
+        return $pdf->stream('invoice-' . $noref . '.pdf');
     }
 }

@@ -96,6 +96,9 @@ Route::prefix('stok')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::put('/log/update', [StokController::class, 'logupdate'])->name('stok.log.update')->middleware('super');
     Route::delete('/log/delete', [StokController::class, 'logdelete'])->name('stok.log.delete')->middleware('super');
 
+    Route::get('/invoice/{noref}', [StokController::class, 'invoice'])->name('stok.invoice');
+    Route::get('/invoice/{noref}/print', [StokController::class, 'printInvoice'])->name('stok.invoice.print');
+
     Route::get('/gudang/{idgudang}/{level?}', [StokController::class, 'getItemWithStock'])->name('stok.keluar.bygudang');
 });
 

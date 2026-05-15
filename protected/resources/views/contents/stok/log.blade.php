@@ -80,12 +80,10 @@
                                 <tr>
                                     <td>{{ $i->stok->tanggal }}</td>
                                     <td>
-                                        <span class="{{ $i->stok->type == 'masuk' ? 'edit-btn' : '' }}"
-                                            data-stok="{{ $i->stok->id }}" data-item="{{ $i->barang->id }}"
-                                            data-new="{{ $i->is_new ? 'Baru' : 'Bekas' }}"
-                                            data-name="{{ $i->barang->nama }}" data-qty="{{ $i->qty }}">
-                                            {{ $i->stok->no_referensi }} {{-- // value to be renderer --}}
-                                        </span>
+                                        <a href="{{ route('stok.invoice', $i->stok->no_referensi) }}"
+                                            class="text-primary fw-bold">
+                                            {{ $i->stok->no_referensi }}
+                                        </a>
                                     </td>
                                     <td class="text-white"><span
                                             class="rounded p-1 {{ $i->stok->type == 'masuk' ? 'bg-success' : 'bg-danger' }}">{{ $i->stok->type }}</span>

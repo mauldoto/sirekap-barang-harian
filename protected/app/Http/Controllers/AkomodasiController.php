@@ -46,7 +46,7 @@ class AkomodasiController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data'   => $akm
+            'data' => $akm
         ]);
     }
 
@@ -66,13 +66,13 @@ class AkomodasiController extends Controller
     {
         // validasi
         $validator = Validator::make($request->all(), [
-            'noref'             => 'required',
-            'tanggal'           => 'required|date',
+            'noref' => 'required',
+            'tanggal' => 'required|date',
             'nominal_pengajuan' => 'required',
             'nominal_realisasi' => 'required',
-            'keterangan'        => 'nullable',
-            'aktivitas'         => 'required|array',
-            'dokumen'           => 'nullable|mimes:pdf|max:10000'
+            'keterangan' => 'nullable',
+            'aktivitas' => 'required|array',
+            'dokumen' => 'nullable|mimes:pdf|max:10000'
         ]);
 
         if ($validator->fails()) {
@@ -146,12 +146,12 @@ class AkomodasiController extends Controller
         // validasi
         $validator = Validator::make($request->all(), [
             // 'noref'             => 'required',
-            'tanggal'           => 'required|date',
+            'tanggal' => 'required|date',
             'nominal_pengajuan' => 'required|numeric',
             'nominal_realisasi' => 'required|numeric',
-            'keterangan'        => 'nullable',
-            'aktivitas'         => 'required|array',
-            'dokumen'           => 'nullable|mimes:pdf|max:10000'
+            'keterangan' => 'nullable',
+            'aktivitas' => 'required|array',
+            'dokumen' => 'nullable|mimes:pdf|max:10000'
         ]);
 
         if ($validator->fails()) {

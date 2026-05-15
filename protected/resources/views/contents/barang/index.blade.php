@@ -6,12 +6,12 @@
 
 @section('content')
     @component('components.breadcrumb')
-        @slot('li_1')
-            Master Data
-        @endslot
-        @slot('title')
-            Barang
-        @endslot
+    @slot('li_1')
+    Master Data
+    @endslot
+    @slot('title')
+    Barang
+    @endslot
     @endcomponent
 
     <div class="row">
@@ -32,6 +32,16 @@
                         <div class="mb-2">
                             <label class="form-label">Satuan</label>
                             <input class="form-control" type="text" name="satuan" placeholder="Contoh: pcs, meter, kg">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Harga Baru</label>
+                            <input class="form-control" id="hargaBaru" type="text" name="harga_baru"
+                                placeholder="Contoh: 10000">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Harga Bekas</label>
+                            <input class="form-control" id="hargaBekas" type="text" name="harga_bekas"
+                                placeholder="Contoh: 5000">
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Deskripsi</label>
@@ -63,6 +73,8 @@
                                 <th>Kode</th>
                                 <th>Nama</th>
                                 <th>Satuan</th>
+                                <th>Harga Baru</th>
+                                <th>Harga Bekas</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -74,6 +86,8 @@
                                     <td>{{ $i->kode }}</td>
                                     <td>{{ $i->nama }}</td>
                                     <td>{{ $i->satuan }}</td>
+                                    <td>{{ number_format($i->h_new, 2, ',', '.') }}</td>
+                                    <td>{{ number_format($i->h_second, 2, ',', '.') }}</td>
                                     <td>
                                         <div class="btn-group">
                                             <button type="button" class="btn btn-info dropdown-toggle btn-sm"
@@ -125,18 +139,27 @@
                             <input class="form-control edit-satuan" type="text" name="satuan"
                                 placeholder="Contoh: pcs, meter, kg">
                         </div>
+                        <div class="mb-2">
+                            <label class="form-label">Harga Baru</label>
+                            <input class="form-control edit-harga_baru" id="editHargaBaru" type="text" name="harga_baru"
+                                placeholder="Contoh: 10000">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label">Harga Bekas</label>
+                            <input class="form-control edit-harga_bekas" id="editHargaBekas" type="text" name="harga_bekas"
+                                placeholder="Contoh: 5000">
+                        </div>
                         {{-- <div class="mb-2">
-                        <label class="form-label">Nama Pendek</label>
-                        <input class="form-control edit-namap" type="text" name="nama_pendek" placeholder="Contoh: IPS">
-                    </div> --}}
+                            <label class="form-label">Nama Pendek</label>
+                            <input class="form-control edit-namap" type="text" name="nama_pendek" placeholder="Contoh: IPS">
+                        </div> --}}
                         <div class="mb-2">
                             <label class="form-label">Deskripsi</label>
                             <textarea class="form-control edit-deskripsi" name="deskripsi" cols="30" rows="5"></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary waves-effect"
-                            data-bs-dismiss="modal">Tutup</button>
+                        <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Tutup</button>
                         <button type="submit" class="btn btn-primary waves-effect waves-light">Simpan</button>
                     </div>
                 </form>
@@ -158,8 +181,7 @@
                         @csrf
                         <div class="mb-3">
                             <label class="form-label">Masukan file import</label>
-                            <input type="file" name="import_barang" class="form-control"
-                                placeholder="Cari file import"
+                            <input type="file" name="import_barang" class="form-control" placeholder="Cari file import"
                                 accept=".csv, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel">
                         </div>
                         <div>
@@ -186,23 +208,51 @@
     <!-- datatables -->
     <script src="{{ URL::asset('assets/libs/datatables.net/js/jquery.dataTables.min.js') }}"></script>
     <script src="{{ URL::asset('assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ URL::asset('assets/libs/imask.js') }}"></script>
 @endsection
 
 @push('page-js')
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             $("#datatable-barang").dataTable();
 
+            const priceMask = IMask(document.getElementById('hargaBaru'), {
+                mask: Number
+                , min: 0
+                , max: 10000000
+                , thousandsSeparator: '.'
+            })
+            const priceMask2 = IMask(document.getElementById('hargaBekas'), {
+                mask: Number
+                , min: 0
+                , max: 10000000
+                , thousandsSeparator: '.'
+            })
+
             function getDetail(ids) {
-                $.get('barang/' + ids + '/detail').done(function(response) {
+                $.get('barang/' + ids + '/detail').done(function (response) {
                     let res = response
                     if (!res.status) return
 
                     $('.edit-nama').val(res.data.nama)
                     $('.edit-satuan').val(res.data.satuan)
                     $('.edit-deskripsi').val(res.data.deskripsi)
+                    $('.edit-harga_baru').val(res.data.h_new)
+                    $('.edit-harga_bekas').val(res.data.h_second)
 
                     setTimeout(() => {
+                        const priceMask = IMask(document.getElementById('editHargaBaru'), {
+                            mask: Number
+                            , min: 0
+                            , max: 10000000
+                            , thousandsSeparator: '.'
+                        })
+                        const priceMask2 = IMask(document.getElementById('editHargaBekas'), {
+                            mask: Number
+                            , min: 0
+                            , max: 10000000
+                            , thousandsSeparator: '.'
+                        })
                         showModal();
                     }, 500);
                 })
@@ -215,12 +265,12 @@
                 myModal.show()
             }
 
-            $('#datatable-barang').on('click', '.edit-btn', function() {
+            $('#datatable-barang').on('click', '.edit-btn', function () {
                 getDetail($(this).data('id'))
                 $('.modal-form').attr('action', $(this).data('url'))
             })
 
-            $("#datatable-barang").on("click", ".delete-btn", function() {
+            $("#datatable-barang").on("click", ".delete-btn", function () {
                 const url = $(this).data("url");
                 const form = $(".form-delete").attr("action", url);
 
@@ -240,7 +290,7 @@
                 });
             });
 
-            $('.import-modal-btn').on('click', function() {
+            $('.import-modal-btn').on('click', function () {
                 const myModal = new bootstrap.Modal('#modalImport', {
                     show: true
                 })

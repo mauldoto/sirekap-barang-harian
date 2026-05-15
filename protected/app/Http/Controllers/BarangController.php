@@ -35,7 +35,7 @@ class BarangController extends Controller
 
         return response()->json([
             'status' => 'success',
-            'data'   => $barang
+            'data' => $barang
         ]);
     }
 
@@ -45,6 +45,8 @@ class BarangController extends Controller
             'kode' => 'nullable|string',
             'nama' => 'required|string',
             'satuan' => 'required|string',
+            'harga_baru' => 'nullable',
+            'harga_bekas' => 'nullable',
             'deskripsi' => 'nullable',
         ]);
 
@@ -59,6 +61,8 @@ class BarangController extends Controller
         $newBarang->nama = $request->nama;
         $newBarang->deskripsi = $request->deskripsi;
         $newBarang->satuan = $request->satuan;
+        $newBarang->h_new = str_replace('.', '', $request->harga_baru);
+        $newBarang->h_second = str_replace('.', '', $request->harga_bekas);
         $newBarang->input_by = $request->user()->id;
 
         if (!$newBarang->save()) {
@@ -73,6 +77,8 @@ class BarangController extends Controller
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string',
             'satuan' => 'required|string',
+            'harga_baru' => 'nullable',
+            'harga_bekas' => 'nullable',
             'deskripsi' => 'nullable',
         ]);
 
@@ -90,6 +96,8 @@ class BarangController extends Controller
         $barang->nama = $request->nama;
         $barang->deskripsi = $request->deskripsi;
         $barang->satuan = $request->satuan;
+        $barang->h_new = str_replace('.', '', $request->harga_baru);
+        $barang->h_second = str_replace('.', '', $request->harga_bekas);
 
         if (!$barang->save()) {
             return back()->withErrors(['Barang gagal terupdate.'])->withInput();
@@ -106,7 +114,8 @@ class BarangController extends Controller
         }
 
         $checkOnStock = LogStok::where('id_barang', $barang->id)->first();
-        if ($checkOnStock) return back()->withErrors(['Barang tidak bisa dihapus karena sudah ada dalam stok, silakan kontak Administrator!']);
+        if ($checkOnStock)
+            return back()->withErrors(['Barang tidak bisa dihapus karena sudah ada dalam stok, silakan kontak Administrator!']);
 
         if (!$barang->delete()) {
             return back()->withErrors(['Barang gagal dihapus.']);
