@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create('temp_carts', function (Blueprint $table) {
-            $table->unsignedBigInteger('id_stok');
+            $table->unsignedBigInteger('id_aktivitas');
             $table->unsignedBigInteger('id_barang');
             $table->boolean('is_new')->default(true);
             $table->double('qty')->default(0);
@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->unsignedBigInteger('id_gudang');
             $table->double('harga', 8, 2)->default(0);
             $table->timestamps();
-            $table->index('id_stok');
+            $table->index('id_aktivitas');
             $table->index('id_barang');
             $table->index('id_gudang');
         });

@@ -29,14 +29,46 @@
 
                     <form action="{{ route('stok.rencana.cetak') }}" method="post" target="_blank">
                         @csrf
+                        {{-- <div class="mb-2 col-lg-5">
+                            <label class="form-label">No Referensi</label>
+                            <input class="form-control" type="text" name="norefv" value="{{generateReference('SM')}}"
+                                disabled required>
+                            <input class="form-control" type="hidden" name="noref" value="{{generateReference('SM')}}"
+                                required>
+                        </div> --}}
 
                         <div class="mb-2 col-lg-5">
-                            <label class="form-label">Tiket</label>
-                            <select class="form-control" name="tiket[]" id="tiket" multiple>
-                                @foreach ($tiket as $key => $t)
-                                    <option value="{{ $t->no_referensi }}">
-                                        {{ $t->no_referensi . '|' . $t->lokasi->nama . '|' . $t->sublokasi->nama }}
-                                    </option>
+                            <label class="form-label">Tanggal</label>
+                            <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required>
+                        </div>
+
+                        {{-- <div class="mb-3 col-lg-5">
+                            <label class="form-label">Keterangan</label>
+                            <textarea class="form-control" name="keterangan" cols="30" rows="5"></textarea>
+                        </div> --}}
+
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">Lokasi</label>
+                            <select class="form-control" name="lokasi" id="lokasi">
+                                <option value=""></option>
+                                @foreach ($lokasi as $lok)
+                                    <option value="{{ $lok->id }}">{{ $lok->nama }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">Sub Lokasi</label>
+                            <select class="form-control" name="sublokasi[]" id="sublokasi" multiple>
+                                <option value=""></option>
+                            </select>
+                        </div>
+
+                        <div class="mb-2 col-lg-5">
+                            <label class="form-label">Teknisi</label>
+                            <select class="form-control" name="teknisi[]" id="teknisi" multiple>
+                                @foreach ($karyawan as $key => $p)
+                                    <option value="{{ $p->id }}">{{ $p->nama }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -67,7 +99,7 @@
         <div class="row">
             <div class="mb-2 col-lg-5">
                 <label class="form-label"></label>
-                <input id="selectedTiket" type="hidden" name="selected_tiket[]">
+                <input id="selectedSublokasi" type="hidden" name="selected_sublokasi[]">
             </div>
         </div>
         <div class="repeater-heading mb-2">
@@ -164,19 +196,18 @@
 
                 $(".review").empty()
 
-                let selectedTiket = $("#tiket").val()
-                let dataSelectedTiket = $("#tiket").select2('data')
+                let selectedSublokasi = $("#sublokasi").val()
 
                 setTimeout(() => {
-                    for (const tiket in selectedTiket) {
+                    for (const sub of selectedSublokasi) {
                         let shadow = $('#repeater-shadow').clone();
-                        let data = dataSelectedTiket[tiket].text.trim().split('|')
-                        shadow.attr('id', 'repeater-' + selectedTiket[tiket]).css('display', '')
-                        shadow.find('.form-label').html(data[0] + ' | ' + data[1] + ' | ' + data[2])
-                        shadow.find('.items').attr('data-group', 'tiket_' + selectedTiket[tiket])
-                        shadow.find('#selectedTiket').val(selectedTiket[tiket]);
+                        let data = sublokasi.find((item) => item.id == sub)
+                        shadow.attr('id', 'repeater-' + sub).css('display', '')
+                        shadow.find('.form-label').html(data.nama)
+                        shadow.find('.items').attr('data-group', 'lokasi_' + sub)
+                        shadow.find('#selectedSublokasi').val(sub);
                         shadow.find('.input-select2').addClass(['barang-select2',
-                            'barang-select2-' + selectedTiket[tiket]
+                            'barang-select2-' + sub
                         ])
                         // shadow.find('#inputCondition').attr('data-name', 'bekas.'+sub)
                         // shadow.find('#inputQty').attr('data-name', 'qty.'+sub)
@@ -188,7 +219,7 @@
                         //     templateResult: formatOption
                         // });
 
-                        $("#repeater-" + selectedTiket[tiket]).createRepeater({
+                        $("#repeater-" + sub).createRepeater({
                             showFirstItemToDefault: true,
                         });
 
@@ -263,9 +294,38 @@
                 })
             }
 
-            $('#tiket').select2({
-                placeholder: "-- Pilih Tiket --"
+            $('#teknisi').select2({
+                placeholder: "-- Pilih Teknisi --"
             });
+
+            let selectLokasi = $('#lokasi').select2({
+                'placeholder': ' -- pilih lokasi --'
+            });
+
+            let selectSubLokasi = $('#sublokasi').select2({
+                'placeholder': ' -- pilih sublokasi --'
+            });
+
+            selectLokasi.on('select2:select', function () {
+                selectSubLokasi.html('<option></option');
+                $(".review").empty()
+
+                getSubLokasi($(this).val())
+            })
+
+            function getSubLokasi(ids) {
+                $.get(location.origin + '/aktivitas/lokasi/' + ids).done(function (response) {
+                    let res = response
+                    if (!res.status) return
+
+                    sublokasi = res.data
+                    for (const data of res.data) {
+                        var newOption = new Option(data.nama, data.id, false, false);
+                        // Append it to the select
+                        selectSubLokasi.append(newOption).trigger('change');
+                    }
+                })
+            }
 
             $("#datatable-stok").on("click", ".delete-btn", function () {
                 const url = $(this).data("url");

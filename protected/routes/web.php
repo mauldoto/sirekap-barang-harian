@@ -91,7 +91,7 @@ Route::prefix('stok')->middleware(['web', 'auth', 'admin'])->group(function () {
     Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf');
     Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi');
     Route::get('/rencana-sk', [StokController::class, 'rencanaSK'])->name('stok.rencana');
-    Route::post('/rencana-sk', [StokController::class, 'cetakRencanaSK'])->name('stok.rencana.cetak');
+    Route::post('/rencana-sk', [StokController::class, 'storeRencanaSK'])->name('stok.rencana.cetak');
 
     Route::put('/log/update', [StokController::class, 'logupdate'])->name('stok.log.update')->middleware('super');
     Route::delete('/log/delete', [StokController::class, 'logdelete'])->name('stok.log.delete')->middleware('super');
@@ -118,7 +118,7 @@ Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function
     Route::get('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'editStockOut'])->name('aktivitas.editstokout.view');
     Route::post('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'postEditStockOut'])->name('aktivitas.editstokout.post');
     Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputStockOut'])->name('aktivitas.inputstokout.view');
-    Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputStockOut'])->name('aktivitas.inputstokout.post');
+    Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputStockOutTemp'])->name('aktivitas.inputstokout.post');
 });
 
 Route::prefix('alokasi')->middleware(['web', 'auth', 'admin'])->group(function () {

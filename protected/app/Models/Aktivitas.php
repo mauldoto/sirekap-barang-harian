@@ -38,4 +38,9 @@ class Aktivitas extends Model
     {
         return $this->belongsToMany(Akomodasi::class, 'akomodasi_aktivitas', 'id_aktivitas', 'id_akomodasi');
     }
+
+    public function tempCart()
+    {
+        return $this->hasMany(TempCart::class, 'id_aktivitas', 'id');
+    }
 }

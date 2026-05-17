@@ -10,6 +10,7 @@ use App\Models\LogStok;
 use App\Models\Lokasi;
 use App\Models\Stok;
 use App\Models\SubLokasi;
+use App\Models\TempCart;
 use Carbon\Carbon;
 use Error;
 use Mccarlosen\LaravelMpdf\Facades\LaravelMpdf;
@@ -254,8 +255,97 @@ class StokController extends Controller
         $gudang = Gudang::all();
         $lokasi = Lokasi::all();
         $karyawan = Karyawan::all();
+        $tiket = Aktivitas::with('lokasi', 'sublokasi')->whereNotIn('status', ['done', 'cancel'])->get();
 
-        return view('contents.stok.rencana', compact('gudang', 'lokasi', 'karyawan'));
+        return view('contents.stok.rencana', compact('gudang', 'lokasi', 'karyawan', 'tiket'));
+    }
+
+    public function storeRencanaSK(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'tiket' => 'required|array',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $tiket = Aktivitas::with('lokasi', 'sublokasi')->whereNotIn('status', ['done', 'cancel'])->get()->toArray();
+        $dbBarang = Barang::get()->toArray();
+        $dbGudang = Gudang::get()->toArray();
+
+        $data = [];
+        foreach ($request->selected_tiket as $key => $tiketSelected) {
+            $dataSub = array_values(array_filter($tiket, function ($item) use ($tiketSelected) {
+                if ($item['no_referensi'] == $tiketSelected) {
+                    return $item;
+                }
+            }))[0];
+
+            if (count($dataSub) <= 0) {
+                continue;
+            }
+
+            $data[$tiketSelected] = $dataSub;
+
+            $barangIds = array_unique(array_column($request['tiket_' . $tiketSelected], 'item'));
+            $barangSelected = array_filter($dbBarang, function ($item) use ($barangIds) {
+                if (in_array($item['id'], $barangIds)) {
+                    return $item;
+                }
+            });
+
+            $barangFinal = [];
+            foreach ($request['tiket_' . $tiketSelected] as $key => $barang) {
+                foreach ($barangSelected as $key => $dbb) {
+                    if ($barang['item'] == $dbb['id']) {
+                        $dbb['kondisi'] = array_key_exists('bekas', $barang) ? 'Bekas' : 'Baru';
+                        $dbb['qty'] = $barang['qty'];
+                        foreach ($dbGudang as $key => $gudang) {
+                            if ($barang['gudang'] == $gudang['id']) {
+                                $dbb['gudang'] = $gudang['nama'];
+                                $dbb['gudang_id'] = $gudang['id'];
+                            }
+                        }
+
+                        array_push($barangFinal, $dbb);
+                    }
+                }
+            }
+
+            $data[$tiketSelected]['barang'] = $barangFinal;
+        }
+
+
+        DB::beginTransaction();
+
+        foreach ($data as $key => $dataInput) {
+            foreach ($dataInput['barang'] as $key => $barang) {
+                $newTempCart = new TempCart();
+                $newTempCart->id_aktivitas = $dataInput['id'];
+                $newTempCart->id_barang = $barang['id'];
+                $newTempCart->qty = $barang['qty'];
+                $newTempCart->id_gudang = $barang['gudang_id'];
+                $newTempCart->is_new = $barang['kondisi'] == 'Bekas' ? false : true;
+                $newTempCart->harga = $barang['kondisi'] == 'Bekas' ? $barang['h_second'] : $barang['h_new'];
+
+                if (!$newTempCart->save()) {
+                    DB::rollBack();
+                    return back()->withErrors(['Error input temp cart.'])->withInput();
+                }
+            }
+        }
+
+        DB::commit();
+
+        $pdf = LaravelMpdf::loadview('exports.pdf.cetak-pengajuan', [
+            'barang' => $data
+        ]);
+
+        return $pdf->stream('pengajuan-stok-' . date('dmY') . '.pdf');
+        // return redirect()->route('stok.rencana')->with(['success' => 'Input temp cart berhasil.']);
     }
 
     public function cetakRencanaSK(Request $request)
