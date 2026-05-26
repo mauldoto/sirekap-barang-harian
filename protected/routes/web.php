@@ -119,6 +119,9 @@ Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function
     Route::post('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'postEditStockOut'])->name('aktivitas.editstokout.post');
     Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputStockOut'])->name('aktivitas.inputstokout.view');
     Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputStockOutTemp'])->name('aktivitas.inputstokout.post');
+    Route::get('/{tiket}/review-stok-keluar', [AktivitasController::class, 'reviewStockOut'])->name('aktivitas.reviewstokout.view');
+    Route::post('/{tiket}/review-stok-keluar', [AktivitasController::class, 'postReviewStockOut'])->name('aktivitas.reviewstokout.post');
+    Route::post('/{tiket}/decline-review-stok-keluar', [AktivitasController::class, 'declineReviewStockOut'])->name('aktivitas.declinereviewstokout.post');
 });
 
 Route::prefix('alokasi')->middleware(['web', 'auth', 'admin'])->group(function () {

@@ -6,12 +6,12 @@
 
 @section('content')
     @component('components.breadcrumb')
-    @slot('li_1')
-    Log
-    @endslot
-    @slot('title')
-    Edit Stok Keluar
-    @endslot
+        @slot('li_1')
+            Log
+        @endslot
+        @slot('title')
+            Input Stok Keluar
+        @endslot
     @endcomponent
 
     <div class="row">
@@ -72,8 +72,12 @@
                                         <tr class="row-{{ $item->id_barang }}-{{ $item->is_new }}">
                                             <input type="hidden" name="input[{{ $key }}][barang]"
                                                 value="{{ $item->id_barang }}">
-                                            <input type="hidden" name="input[{{ $key }}][kondisi]" value="{{ $item->is_new }}">
-                                            <input type="hidden" name="input[{{ $key }}][qty]" value="{{ $item->sumqty }}">
+                                            <input type="hidden" name="input[{{ $key }}][kondisi]"
+                                                value="{{ $item->is_new }}">
+                                            <input type="hidden" name="input[{{ $key }}][qty]"
+                                                value="{{ $item->sumqty }}">
+                                            <input type="hidden" name="input[{{ $key }}][qty_used]"
+                                                value="{{ $item->sumqty_used }}">
                                             <input type="hidden" name="input[{{ $key }}][gudang]"
                                                 value="{{ $item->id_gudang }}">
 
@@ -81,14 +85,15 @@
                                             <td>{{ $item->is_new ? 'Baru' : 'Bekas' }}</td>
                                             <td>{{ $item->sumqty }}</td>
                                             <td>
-                                                <input type="number" class="col-2 form-control qty-terpakai" value=""
-                                                    name="input[{{ $key }}][qty_used]" max="{{ $item->sumqty }}" min="0" id="">
+                                                <input type="number" class="col-2 form-control qty-terpakai"
+                                                    name="input[{{ $key }}][qty_used]" max="{{ $item->sumqty }}"
+                                                    min="0" id="" value="{{ $item->sumqty_used }}">
                                             </td>
                                             <td>{{ $item->gudang->nama }}</td>
                                             <!-- <td>
-                                                                <button type="button" class="btn btn-sm btn-danger dlt-data"
-                                                                    data-key="{{ $item->id_barang }}-{{ $item->is_new }}">Remove</button>
-                                                            </td> -->
+                                                                                            <button type="button" class="btn btn-sm btn-danger dlt-data"
+                                                                                                data-key="{{ $item->id_barang }}-{{ $item->is_new }}">Remove</button>
+                                                                                        </td> -->
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -116,7 +121,8 @@
                                             <div class="col-lg-3">
                                                 {{-- <input type="text" class="form-control" id="inputName"
                                                     placeholder="Name" data-name="name"> --}}
-                                                <select class="form-control gudang-select2" id="inputWs" data-name="gudang">
+                                                <select class="form-control gudang-select2" id="inputWs"
+                                                    data-name="gudang">
                                                     <option value=""></option>
                                                     @foreach ($gudang as $ws)
                                                         <option value="{{ $ws->id }}">{{ $ws->nama }}
@@ -197,12 +203,12 @@
 
 @push('page-js')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $("#repeater").createRepeater({
                 showFirstItemToDefault: true,
             });
 
-            $(".repeater-add-btn").click(function () {
+            $(".repeater-add-btn").click(function() {
                 regenerateS2()
             })
 
@@ -215,7 +221,7 @@
                 templateResult: formatOption
             });
 
-            $('.gudang-select2').on('select2:select', function (e) {
+            $('.gudang-select2').on('select2:select', function(e) {
                 showLoadingScreen()
                 let select2this = $(this).parent().parent().find(".barang-select2")
                 getData(e.params.data.id, select2this)
@@ -268,20 +274,20 @@
 
             function regenerateS2() {
                 let select2Gudang = $('.gudang-select2')
-                select2Gudang.each(function (index, el) {
+                select2Gudang.each(function(index, el) {
                     $(el).select2({
                         placeholder: "-- Pilih Gudang --"
                     });
                 })
 
                 let select2Arr = $('.barang-select2')
-                select2Arr.each(function (index, el) {
+                select2Arr.each(function(index, el) {
                     $(el).select2({
                         placeholder: "-- Pilih Barang --"
                     });
                 })
 
-                select2Gudang.on('select2:select', function (e) {
+                select2Gudang.on('select2:select', function(e) {
                     showLoadingScreen()
                     let select2this = $(this).parent().parent().find(".barang-select2")
                     console.log(select2this)
@@ -290,13 +296,13 @@
                 })
             }
 
-            $(".dlt-data").on('click', function () {
+            $(".dlt-data").on('click', function() {
                 const keyy = $(this).data('key')
                 console.log(keyy)
                 $('.row-' + keyy).remove()
             })
 
-            $("#datatable-stok").on("click", ".delete-btn", function () {
+            $("#datatable-stok").on("click", ".delete-btn", function() {
                 const url = $(this).data("url");
                 const form = $(".form-delete").attr("action", url);
 

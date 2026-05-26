@@ -6,12 +6,12 @@
 
 @section('content')
     @component('components.breadcrumb')
-    @slot('li_1')
-    Log
-    @endslot
-    @slot('title')
-    Edit Stok Keluar
-    @endslot
+        @slot('li_1')
+            Log
+        @endslot
+        @slot('title')
+            Review Stok Keluar
+        @endslot
     @endcomponent
 
     <div class="row">
@@ -26,7 +26,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('aktivitas.inputstokout.post', $aktivitas->no_referensi) }}" method="post">
+                    <form action="{{ route('aktivitas.reviewstokout.post', $aktivitas->no_referensi) }}" method="post">
                         @csrf
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">No Referensi</label>
@@ -72,8 +72,10 @@
                                         <tr class="row-{{ $item->id_barang }}-{{ $item->is_new }}">
                                             <input type="hidden" name="input[{{ $key }}][barang]"
                                                 value="{{ $item->id_barang }}">
-                                            <input type="hidden" name="input[{{ $key }}][kondisi]" value="{{ $item->is_new }}">
-                                            <input type="hidden" name="input[{{ $key }}][qty]" value="{{ $item->sumqty }}">
+                                            <input type="hidden" name="input[{{ $key }}][kondisi]"
+                                                value="{{ $item->is_new }}">
+                                            <input type="hidden" name="input[{{ $key }}][qty]"
+                                                value="{{ $item->sumqty }}">
                                             <input type="hidden" name="input[{{ $key }}][gudang]"
                                                 value="{{ $item->id_gudang }}">
 
@@ -81,14 +83,11 @@
                                             <td>{{ $item->is_new ? 'Baru' : 'Bekas' }}</td>
                                             <td>{{ $item->sumqty }}</td>
                                             <td>
-                                                <input type="number" class="col-2 form-control qty-terpakai" value=""
-                                                    name="input[{{ $key }}][qty_used]" max="{{ $item->sumqty }}" min="0" id="">
+                                                <input type="number" class="col-2 form-control qty-terpakai"
+                                                    name="input[{{ $key }}][qty_used]" max="{{ $item->sumqty }}"
+                                                    min="0" id="" value="{{ $item->sumqty_used }}">
                                             </td>
                                             <td>{{ $item->gudang->nama }}</td>
-                                            <!-- <td>
-                                                                <button type="button" class="btn btn-sm btn-danger dlt-data"
-                                                                    data-key="{{ $item->id_barang }}-{{ $item->is_new }}">Remove</button>
-                                                            </td> -->
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -96,74 +95,14 @@
 
                             <hr>
 
-                            <label class="form-label">Input Barang Tambahan <small class="text-warning"> (Barang yang tidak
-                                    ada di pengajuan)</small></label>
-
-                            <!-- Repeater Html Start -->
-                            <div id="repeater">
-                                <!-- Repeater Heading -->
-                                <div class="repeater-heading mb-2">
-                                    <button type="button" class="btn btn-primary pull-right repeater-add-btn">
-                                        Add
-                                    </button>
-                                </div>
-                                <div class="clearfix"></div>
-                                <!-- Repeater Items -->
-                                <div class="items" data-group="barang">
-                                    <!-- Repeater Content -->
-                                    <div class="item-content">
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                {{-- <input type="text" class="form-control" id="inputName"
-                                                    placeholder="Name" data-name="name"> --}}
-                                                <select class="form-control gudang-select2" id="inputWs" data-name="gudang">
-                                                    <option value=""></option>
-                                                    @foreach ($gudang as $ws)
-                                                        <option value="{{ $ws->id }}">{{ $ws->nama }}
-                                                            ({{ $ws->kode }})
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                {{-- <input type="text" class="form-control" id="inputName"
-                                                    placeholder="Name" data-name="name"> --}}
-                                                <select class="form-control select2 barang-select2" id="inputItem"
-                                                    data-name="item" disabled>
-                                                    <option value=""></option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-1 pt-2">
-                                                <input class="form-check-input" type="checkbox" data-name="bekas"
-                                                    id="inputCondition" value="bekas">
-                                                <label class="form-check-label" for="inputCondition">
-                                                    Bekas
-                                                </label>
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <input type="text" class="form-control" id="inputQty" placeholder="Qty"
-                                                    data-name="qty">
-                                            </div>
-                                            <div class="col-lg-1 repeater-remove-btn">
-                                                <button class="btn btn-danger remove-btn">
-                                                    Remove
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    {{-- <!-- Repeater Remove Btn -->
-                                    <div class="pull-right repeater-remove-btn">
-                                        <button class="btn btn-danger remove-btn">
-                                            Remove
-                                        </button>
-                                    </div> --}}
-                                    <div class="clearfix"></div>
-                                </div>
-                                <!-- Repeater End -->
-                            </div>
-
                             <div class="btn-submit mt-5 d-flex justify-content-end">
-                                <button class="btn btn-md btn-primary">Simpan dan Ajukan Pengeluaran Barang</button>
+                                <button type="button" class="btn btn-md btn-danger me-2">
+                                    <i class="mdi mdi-thumb-down"></i> Tolak
+                                </button>
+                                <button type="" class="btn btn-md btn-success">
+                                    <i class="mdi mdi-thumb-up"></i>
+                                    Setujui
+                                </button>
                             </div>
                     </form>
                 </div>
@@ -197,124 +136,8 @@
 
 @push('page-js')
     <script>
-        $(document).ready(function () {
-            $("#repeater").createRepeater({
-                showFirstItemToDefault: true,
-            });
+        $(document).ready(function() {
 
-            $(".repeater-add-btn").click(function () {
-                regenerateS2()
-            })
-
-            $('.gudang-select2').select2({
-                placeholder: "-- Pilih Gudang --",
-            });
-
-            $('.barang-select2').select2({
-                placeholder: "-- Pilih Barang --",
-                templateResult: formatOption
-            });
-
-            $('.gudang-select2').on('select2:select', function (e) {
-                showLoadingScreen()
-                let select2this = $(this).parent().parent().find(".barang-select2")
-                getData(e.params.data.id, select2this)
-            })
-
-            async function getData(idGudang, s2element) {
-                const metaTag = document.querySelector(`meta[name="baseURL"]`);
-                const url = metaTag.content;
-                s2element.attr('disabled', true)
-                s2element.html('')
-
-                try {
-                    const response = await fetch(url + '/stok/gudang/' + idGudang);
-
-                    if (!response.ok) {
-                        throw new Error(`Gagal mengambil data, status: ${response.status}`);
-                    }
-
-                    const result = await response.json();
-                    let newOption = `<option></option>`
-                    for (const item of result.data) {
-                        newOption +=
-                            `<option value="${item.id}" title="Baru: ${item.new ? item.new : 0} | Bekas: ${item.second ? item.second : 0}">${item.nama} (${item.kode}) - ${item.satuan} </option>`
-                    }
-
-                    s2element.html(newOption)
-
-                    s2element.select2({
-                        placeholder: "-- Pilih Barang --",
-                        templateResult: formatOption
-                    });
-
-                    s2element.attr('disabled', false)
-                    hideLoadingScreen()
-                } catch (error) {
-                    // Tangani kesalahan jaringan ATAU kesalahan HTTP/konversi data
-                    console.error('Proses Fetch Gagal:', error);
-                    hideLoadingScreen()
-                }
-            }
-
-            function formatOption(option) {
-                var $option = $('<div>' + option.text + '</div><small> ' + option.title + ' </small>');
-                return $option;
-            };
-
-            $('.job-select2').select2({
-                placeholder: "-- Pilih Aktivitas/Job --"
-            });
-
-            function regenerateS2() {
-                let select2Gudang = $('.gudang-select2')
-                select2Gudang.each(function (index, el) {
-                    $(el).select2({
-                        placeholder: "-- Pilih Gudang --"
-                    });
-                })
-
-                let select2Arr = $('.barang-select2')
-                select2Arr.each(function (index, el) {
-                    $(el).select2({
-                        placeholder: "-- Pilih Barang --"
-                    });
-                })
-
-                select2Gudang.on('select2:select', function (e) {
-                    showLoadingScreen()
-                    let select2this = $(this).parent().parent().find(".barang-select2")
-                    console.log(select2this)
-
-                    getData(e.params.data.id, select2this)
-                })
-            }
-
-            $(".dlt-data").on('click', function () {
-                const keyy = $(this).data('key')
-                console.log(keyy)
-                $('.row-' + keyy).remove()
-            })
-
-            $("#datatable-stok").on("click", ".delete-btn", function () {
-                const url = $(this).data("url");
-                const form = $(".form-delete").attr("action", url);
-
-                Swal.fire({
-                    title: "Apakah anda yakin?",
-                    text: "Data akan dialihkan ke folder sampah!",
-                    icon: "warning",
-                    showCancelButton: true,
-                    confirmButtonColor: "#3085d6",
-                    cancelButtonColor: "#d33",
-                    confirmButtonText: "Ya, Hapus!",
-                    cancelButtonText: "Batalkan",
-                }).then((result) => {
-                    if (result.isConfirmed) {
-                        form[0].submit();
-                    }
-                });
-            });
 
         })
     </script>

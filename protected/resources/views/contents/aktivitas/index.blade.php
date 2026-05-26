@@ -1,12 +1,17 @@
 @extends('layouts.master')
 
-@section('title') Aktivitas @endsection
+@section('title')
+    Aktivitas
+@endsection
 
 @section('content')
-
     @component('components.breadcrumb')
-    @slot('li_1') Log @endslot
-    @slot('title') Aktivitas @endslot
+        @slot('li_1')
+            Log
+        @endslot
+        @slot('title')
+            Aktivitas
+        @endslot
     @endcomponent
 
     <div class="row">
@@ -16,7 +21,7 @@
                     <div class="d-sm-flex flex-wrap justify-content-between">
                         <h4 class="card-title mb-4">Log Aktivitas/Job</h4>
                         <div class="button-group">
-                            <a href="{{route('aktivitas.input')}}" class="btn btn-sm btn-success"><i
+                            <a href="{{ route('aktivitas.input') }}" class="btn btn-sm btn-success"><i
                                     class='bx bx-archive-in'></i> Input Aktivitas</a>
                             {{-- <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i>
                                 Export Aktivitas</a> --}}
@@ -30,12 +35,12 @@
                             <div class="mb-2 col-lg-2">
                                 <label class="form-label">Dari</label>
                                 <input class="form-control" type="date" name="dari" placeholder="Masukkan tanggal"
-                                    value="{{$startDate}}" required>
+                                    value="{{ $startDate }}" required>
                             </div>
                             <div class="mb-2 col-lg-2">
                                 <label class="form-label">Sampai</label>
                                 <input class="form-control" type="date" name="ke" placeholder="Masukkan tanggal"
-                                    value="{{$endDate}}" required>
+                                    value="{{ $endDate }}" required>
                             </div>
                             <div class="mb-2 col-lg-2 d-flex align-items-end">
                                 <button class="btn btn-primary">Filter</button>
@@ -63,7 +68,7 @@
 
 
                         <tbody>
-                            @foreach($aktivitas as $key => $i)
+                            @foreach ($aktivitas as $key => $i)
                                 <tr>
                                     <td>{{ $i->tanggal_berangkat }} s/d {{ $i->tanggal_pulang }}</td>
                                     <td>{{ $i->no_referensi }}</td>
@@ -92,30 +97,39 @@
                                                     class="mdi mdi-chevron-down"></i></button>
                                             <div class="dropdown-menu" style="">
                                                 <a class="dropdown-item detail-btn d-flex align-items-center" href="#"
-                                                    data-url="" data-id="{{$i->id}}"><i class='bx bx-search-alt-2 me-1'></i>
+                                                    data-url="" data-id="{{ $i->id }}"><i
+                                                        class='bx bx-search-alt-2 me-1'></i>
                                                     Detail</a>
                                                 <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item d-flex align-items-center"
-                                                    href="{{route('aktivitas.print.tiket', $i->no_referensi)}}" target="_blank"
-                                                    data-url=""><i class='bx bxs-discount me-1'></i> Print Tiket</a>
+                                                    href="{{ route('aktivitas.print.tiket', $i->no_referensi) }}"
+                                                    target="_blank" data-url=""><i class='bx bxs-discount me-1'></i>
+                                                    Print Tiket</a>
                                                 @if (auth()->user()->username == 'superadmin' || !in_array($i->status, ['done', 'cancel']))
                                                     <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item d-flex align-items-center update-status-btn" href="#"
-                                                        data-url="{{route('aktivitas.update.status', $i->no_referensi)}}"
-                                                        data-status="{{$i->status}}"
-                                                        data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i
+                                                    <a class="dropdown-item d-flex align-items-center update-status-btn"
+                                                        href="#"
+                                                        data-url="{{ route('aktivitas.update.status', $i->no_referensi) }}"
+                                                        data-status="{{ $i->status }}"
+                                                        data-stok="{{ $i->stok ? $i->stok->no_referensi : '' }}"><i
                                                             class='bx bx-task me-1'></i> Update Status</a>
 
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{route('aktivitas.edit', $i->no_referensi)}}" data-url=""><i
-                                                            class='bx bxs-edit me-1'></i> Edit Tiket</a>
+                                                        href="{{ route('aktivitas.edit', $i->no_referensi) }}"
+                                                        data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a>
 
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{route('aktivitas.inputstokout.view', $i->no_referensi)}}"
+                                                        href="{{ route('aktivitas.inputstokout.view', $i->no_referensi) }}"
+                                                        data-url=""><i class='bx bx-archive-out me-1'></i>Ajukan Stok
+                                                        Keluar</a>
+
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('aktivitas.reviewstokout.view', $i->no_referensi) }}"
                                                         data-url=""><i class='bx bx-archive-out me-1'></i>
-                                                        {{ auth()->user()->username == 'ktu' ? 'Review Stok Keluar' : 'Ajukan Stok Keluar' }}</a>
+                                                        Review Stok Keluar</a>
 
                                                     {{-- <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center hapus-btn" style="color: red"
@@ -127,8 +141,9 @@
                                                 @if (auth()->user()->username == 'superadmin')
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{route('aktivitas.editstokout.view', $i->no_referensi)}}"
-                                                        data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok Keluar</a>
+                                                        href="{{ route('aktivitas.editstokout.view', $i->no_referensi) }}"
+                                                        data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok
+                                                        Keluar</a>
                                                 @endif
 
                                             </div>
@@ -198,8 +213,8 @@
         </div><!-- /.modal-dialog -->
     </div>
 
-    <div id="modalExportPdf" class="modal fade" tabindex="-1" aria-labelledby="modalExportPdfLabel" style="display: none;"
-        aria-hidden="true">
+    <div id="modalExportPdf" class="modal fade" tabindex="-1" aria-labelledby="modalExportPdfLabel"
+        style="display: none;" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -208,17 +223,17 @@
                 </div>
 
                 <div class="modal-body">
-                    <form action="{{route('aktivitas.export.pdf')}}" method="GET" target="_blank">
+                    <form action="{{ route('aktivitas.export.pdf') }}" method="GET" target="_blank">
                         <div class="row">
                             <div class="mb-2 col-lg-6">
                                 <label class="form-label">Dari</label>
                                 <input class="form-control" type="date" name="dari" placeholder="Masukkan tanggal"
-                                    value="{{$startDate}}" required>
+                                    value="{{ $startDate }}" required>
                             </div>
                             <div class="mb-2 col-lg-6">
                                 <label class="form-label">Sampai</label>
                                 <input class="form-control" type="date" name="ke" placeholder="Masukkan tanggal"
-                                    value="{{$endDate}}" required>
+                                    value="{{ $endDate }}" required>
                             </div>
                             <div class="mb-2 col-lg-2 d-flex align-items-end">
                                 <button class="btn btn-primary">Export</button>
@@ -245,25 +260,29 @@
                     <div class="modal-body">
                         <div class="row">
                             <div class="mb-3 col-3">
-                                <input class="form-check-input" type="radio" name="status" id="waiting" value="waiting">
+                                <input class="form-check-input" type="radio" name="status" id="waiting"
+                                    value="waiting">
                                 <label class="form-check-label" for="waiting">
                                     <span class="p-1 rounded text-white bg-secondary">Waiting</span>
                                 </label>
                             </div>
                             <div class="mb-3 col-3">
-                                <input class="form-check-input" type="radio" name="status" id="progress" value="progress">
+                                <input class="form-check-input" type="radio" name="status" id="progress"
+                                    value="progress">
                                 <label class="form-check-label" for="progress">
                                     <span class="p-1 rounded text-white bg-warning">Progress</span>
                                 </label>
                             </div>
                             <div class="mb-3 col-3">
-                                <input class="form-check-input" type="radio" name="status" id="done" value="done">
+                                <input class="form-check-input" type="radio" name="status" id="done"
+                                    value="done">
                                 <label class="form-check-label" for="done">
                                     <span class="p-1 rounded text-white bg-success">Done</span>
                                 </label>
                             </div>
                             <div class="mb-3 col-3">
-                                <input class="form-check-input" type="radio" name="status" id="cancel" value="cancel">
+                                <input class="form-check-input" type="radio" name="status" id="cancel"
+                                    value="cancel">
                                 <label class="form-check-label" for="cancel">
                                     <span class="p-1 rounded text-white bg-danger">Cancel</span>
                                 </label>
@@ -273,13 +292,14 @@
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Deskripsi</label>
-                            <textarea class="form-control edit-deskripsi" name="deskripsi" cols="30" rows="5"
-                                disabled></textarea>
+                            <textarea class="form-control edit-deskripsi" name="deskripsi" cols="30" rows="5" disabled></textarea>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary waves-effect" data-bs-dismiss="modal">Tutup</button>
-                        <button type="button" class="btn btn-primary waves-effect waves-light btn-submit-u">Simpan</button>
+                        <button type="button" class="btn btn-secondary waves-effect"
+                            data-bs-dismiss="modal">Tutup</button>
+                        <button type="button"
+                            class="btn btn-primary waves-effect waves-light btn-submit-u">Simpan</button>
                     </div>
                 </form>
             </div><!-- /.modal-content -->
@@ -289,7 +309,6 @@
     <form class="hidden" id="hapusTiket" action="" method="POST">
         @csrf
     </form>
-
 @endsection
 
 @section('css')
@@ -312,7 +331,7 @@
 
 @push('page-js')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $("#datatable-aktivitas").dataTable({
                 "aaSorting": [
                     [0, "desc"]
@@ -324,7 +343,7 @@
             // });
 
             function getDetailAktivitas(ids) {
-                $.get('aktivitas/' + ids + '/detail').done(function (response) {
+                $.get('aktivitas/' + ids + '/detail').done(function(response) {
                     let res = response
                     if (!res.status) return
 
@@ -341,7 +360,9 @@
 
                     let tempBarang = ''
                     for (const item of res.data.barang) {
-                        tempBarang += '- ' + item.barang.nama + ' (' + (item.qty < 1 ? item.qty * -1 : item.qty) + " " + item.barang.satuan + ')' + ' [' + (item.is_new ? 'Baru' : 'Bekas') + ']' + '<br />'
+                        tempBarang += '- ' + item.barang.nama + ' (' + (item.qty < 1 ? item.qty * -1 : item
+                            .qty) + " " + item.barang.satuan + ')' + ' [' + (item.is_new ? 'Baru' :
+                            'Bekas') + ']' + '<br />'
                     }
 
                     $('.teknisi').html(tempTeknisi)
@@ -355,8 +376,9 @@
             }
 
             document.querySelectorAll('input[type="radio"][name="status"]').forEach(element => {
-                element.addEventListener('change', function (e) {
-                    if (e.target.checked && (e.target.value == 'cancel' || e.target.value == 'done')) {
+                element.addEventListener('change', function(e) {
+                    if (e.target.checked && (e.target.value == 'cancel' || e.target.value ==
+                            'done')) {
                         document.querySelector('.edit-deskripsi').disabled = false;
                     } else {
                         document.querySelector('.edit-deskripsi').disabled = true;
@@ -392,11 +414,11 @@
                 myModal.show()
             }
 
-            $('#datatable-aktivitas').on('click', '.detail-btn', function () {
+            $('#datatable-aktivitas').on('click', '.detail-btn', function() {
                 getDetailAktivitas($(this).data('id'))
             })
 
-            $('#datatable-aktivitas').on('click', '.update-status-btn', function () {
+            $('#datatable-aktivitas').on('click', '.update-status-btn', function() {
                 getDetailStatus($(this).data('status'))
                 let checkStok = document.querySelector('input[name="stokStatus"]');
                 checkStok.value = $(this).data('stok')
@@ -405,21 +427,20 @@
                 const form = $("#formUpdateStatus").attr("action", url);
             })
 
-            $('#datatable-aktivitas').on('click', '.hapus-btn', function () {
+            $('#datatable-aktivitas').on('click', '.hapus-btn', function() {
                 const url = $(this).data("url");
                 const form = $("#hapusTiket").attr("action", url);
 
                 if ($(this).data("stok")) {
                     Swal.fire({
-                        title: "No tiket memiliki data stok keluar, Apakah anda yakin?"
-                        , text: "Data akan dialihkan ke folder sampah dan data stok keluar akan kembali ke stok aktif!"
-                        , icon: "warning"
-                        , showCancelButton: true
-                        , confirmButtonColor: "#3085d6"
-                        , cancelButtonColor: "#d33"
-                        , confirmButtonText: "Ya, Hapus!"
-                        , cancelButtonText: "Batalkan"
-                        ,
+                        title: "No tiket memiliki data stok keluar, Apakah anda yakin?",
+                        text: "Data akan dialihkan ke folder sampah dan data stok keluar akan kembali ke stok aktif!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Ya, Hapus!",
+                        cancelButtonText: "Batalkan",
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form[0].submit();
@@ -427,15 +448,14 @@
                     });
                 } else {
                     Swal.fire({
-                        title: "Apakah anda yakin?"
-                        , text: "Data akan dialihkan ke folder sampah!"
-                        , icon: "warning"
-                        , showCancelButton: true
-                        , confirmButtonColor: "#3085d6"
-                        , cancelButtonColor: "#d33"
-                        , confirmButtonText: "Ya, Hapus!"
-                        , cancelButtonText: "Batalkan"
-                        ,
+                        title: "Apakah anda yakin?",
+                        text: "Data akan dialihkan ke folder sampah!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Ya, Hapus!",
+                        cancelButtonText: "Batalkan",
                     }).then((result) => {
                         if (result.isConfirmed) {
                             form[0].submit();
@@ -444,21 +464,21 @@
                 }
             })
 
-            $('.btn-submit-u').on('click', function () {
+            $('.btn-submit-u').on('click', function() {
                 let checkStok = document.querySelector('input[name="stokStatus"]').value;
-                let checkStatus = document.querySelector('input[type="radio"][name="status"]:checked').value;
+                let checkStatus = document.querySelector('input[type="radio"][name="status"]:checked')
+                    .value;
 
                 if (checkStatus == 'done' && !checkStok) {
                     Swal.fire({
-                        title: "Stok belum diinput, Apakah anda yakin?"
-                        , text: "No tiket belum memiliki data stok keluar"
-                        , icon: "warning"
-                        , showCancelButton: true
-                        , confirmButtonColor: "#3085d6"
-                        , cancelButtonColor: "#d33"
-                        , confirmButtonText: "Ya, Update!"
-                        , cancelButtonText: "Batalkan"
-                        ,
+                        title: "Stok belum diinput, Apakah anda yakin?",
+                        text: "No tiket belum memiliki data stok keluar",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Ya, Update!",
+                        cancelButtonText: "Batalkan",
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $('#formUpdateStatus')[0].submit();
@@ -473,15 +493,14 @@
                     });
                 } else {
                     Swal.fire({
-                        title: "Apakah anda yakin?"
-                        , text: "Status aktivitas akan diupdate!"
-                        , icon: "warning"
-                        , showCancelButton: true
-                        , confirmButtonColor: "#3085d6"
-                        , cancelButtonColor: "#d33"
-                        , confirmButtonText: "Ya, Update!"
-                        , cancelButtonText: "Batalkan"
-                        ,
+                        title: "Apakah anda yakin?",
+                        text: "Status aktivitas akan diupdate!",
+                        icon: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#3085d6",
+                        cancelButtonColor: "#d33",
+                        confirmButtonText: "Ya, Update!",
+                        cancelButtonText: "Batalkan",
                     }).then((result) => {
                         if (result.isConfirmed) {
                             $('#formUpdateStatus')[0].submit();
@@ -492,13 +511,12 @@
                 return
             })
 
-            $('.exportpdf-modal-btn').on('click', function () {
+            $('.exportpdf-modal-btn').on('click', function() {
                 const myModal = new bootstrap.Modal('#modalExportPdf', {
                     show: true
                 })
                 myModal.show()
             })
         })
-
     </script>
 @endpush

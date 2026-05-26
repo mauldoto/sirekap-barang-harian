@@ -442,7 +442,7 @@ class AktivitasController extends Controller
     {
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
         $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
-        $pengajuanStok = TempCart::select('id_barang', 'id_gudang', DB::raw('SUM(qty) as sumqty'), 'is_new', 'harga')
+        $pengajuanStok = TempCart::select('id_barang', 'id_gudang', DB::raw('SUM(qty) as sumqty'), DB::raw('SUM(qty_used) as sumqty_used'), 'is_new', 'harga')
             ->with('barang')
             ->where('id_aktivitas', $aktivitas->id)
             ->groupBy('id_barang', 'is_new', 'id_gudang', 'harga')
@@ -474,8 +474,9 @@ class AktivitasController extends Controller
         }
 
         $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
-
-        DB::beginTransaction();
+        if ($aktivitas) {
+            return back()->withErrors(['Tiket tidak tersedia']);
+        }
 
         $idsBarang = array_map(function ($value) {
             return $value['item'];
@@ -484,6 +485,8 @@ class AktivitasController extends Controller
         $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', 'id_gudang', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new', 'id_gudang')->get()->toArray();
 
         $newStokOut = Stok::where('id_aktivitas', $aktivitas->id)->first();
+
+        DB::beginTransaction();
 
         if (!$newStokOut) {
             $newStokOut = new Stok();
@@ -551,15 +554,17 @@ class AktivitasController extends Controller
 
         TempCart::where('id_aktivitas', $aktivitas->id)->delete();
 
-        foreach ($request->input as $key => $oldInput) {
-            $tempCart = new TempCart();
-            $tempCart->id_aktivitas = $aktivitas->id;
-            $tempCart->id_barang = $oldInput['barang'];
-            $tempCart->qty = $oldInput['qty'];
-            $tempCart->qty_used = $oldInput['qty_used'];
-            $tempCart->id_gudang = $oldInput['gudang'];
-            $tempCart->is_new = array_key_exists('bekas', $oldInput) ? false : true;
-            $tempCart->save();
+        if ($request->input) {
+            foreach ($request->input as $key => $oldInput) {
+                $tempCart = new TempCart();
+                $tempCart->id_aktivitas = $aktivitas->id;
+                $tempCart->id_barang = $oldInput['barang'];
+                $tempCart->qty = $oldInput['qty'];
+                $tempCart->qty_used = $oldInput['qty_used'];
+                $tempCart->id_gudang = $oldInput['gudang'];
+                $tempCart->is_new = array_key_exists('bekas', $oldInput) ? false : true;
+                $tempCart->save();
+            }
         }
 
         $idsBarang = array_map(function ($value) {
@@ -604,6 +609,105 @@ class AktivitasController extends Controller
         DB::commit();
         return redirect(route('aktivitas.index'))->with(['success' => 'Input stok keluar berhasil. [' . $tiket . ']']);
     }
+
+    public function reviewStockOut(request $request, $tiket)
+    {
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
+        $realStok = Stok::where('id_aktivitas', $aktivitas->id)->first();
+        $pengajuanStok = TempCart::select('id_barang', 'id_gudang', DB::raw('SUM(qty) as sumqty'), 'is_new', 'harga')
+            ->with('barang')
+            ->where('id_aktivitas', $aktivitas->id)
+            ->groupBy('id_barang', 'is_new', 'id_gudang', 'harga')
+            ->get();
+        $gudang = Gudang::all();
+
+        if ($realStok) {
+            return back()->withErrors(['Stok untuk tiket ' . $aktivitas->no_referensi . ' sudah terinput, silakan menggunakan fitur edit.']);
+        }
+
+        return view('contents.aktivitas.review-stok', compact('aktivitas', 'gudang', 'pengajuanStok'));
+    }
+
+    public function postReviewStockOut(request $request, $tiket)
+    {
+        $validator = Validator::make($request->all(), [
+            'noref' => 'required|string',
+            'barang' => 'required|array',
+            'barang.*.item' => 'required',
+            'barang.*.qty' => 'required|numeric|min:1',
+            'barang.*.bekas' => 'nullable',
+            'barang.*.gudang' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
+        if ($aktivitas) {
+            return back()->withErrors(['Tiket tidak tersedia']);
+        }
+
+        $tempCart = TempCart::where('id_aktivitas', $aktivitas->id)->get();
+        $idsBarang = $tempCart->map(function ($item) {
+            return (array) $item->id_barang;
+        })->toArray();
+
+        dd($idsBarang);
+
+        $stokLogs = LogStok::whereIn('id_barang', $idsBarang)->select('id_barang', 'is_new', 'id_gudang', DB::raw('SUM(qty) as sumqty'))->groupBy('id_barang', 'is_new', 'id_gudang')->get()->toArray();
+
+        $newStokOut = Stok::where('id_aktivitas', $aktivitas->id)->first();
+
+        DB::beginTransaction();
+
+        if (!$newStokOut) {
+            $newStokOut = new Stok();
+            $newStokOut->no_referensi = $request->noref;
+            $newStokOut->id_aktivitas = $aktivitas->id;
+            $newStokOut->tanggal = $aktivitas->tanggal_pulang;
+            $newStokOut->type = 'keluar';
+            $newStokOut->input_by = $request->user()->id;
+        }
+
+        if (!$newStokOut->save()) {
+            DB::rollBack();
+            return back()->withErrors(['Input stok keluar gagal.'])->withInput();
+        }
+
+        foreach ($request->barang as $key => $barang) {
+
+            $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
+                if ($value['id_gudang'] == $barang['gudang'] && $value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang) && $value['sumqty'] >= $barang['qty']) {
+                    return true;
+                }
+            });
+
+            if (!$checkStok) {
+                DB::rollBack();
+                return back()->withErrors(['Error input log stok, ada barang dengan stok minus.'])->withInput();
+            }
+
+            $newLogStok = new LogStok();
+            $newLogStok->id_stok = $newStokOut->id;
+            $newLogStok->id_barang = $barang['item'];
+            $newLogStok->qty = -$barang['qty'];
+            $newLogStok->id_gudang = $barang['gudang'];
+            $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
+
+            if (!$newLogStok->save()) {
+                DB::rollBack();
+                return back()->withErrors(['Error input log stok.'])->withInput();
+            }
+        }
+
+        DB::commit();
+        return redirect(route('aktivitas.index'))->with(['success' => 'Input stok keluar berhasil.']);
+    }
+
+    public function declineReviewStockOutTemp(request $request, $tiket) {}
 
     public function hapusTiket(Request $request, $tiket)
     {
