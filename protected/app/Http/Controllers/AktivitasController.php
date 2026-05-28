@@ -294,8 +294,6 @@ class AktivitasController extends Controller
             $deskripsi = $activity->deskripsi; // tidak ada #[, biarkan tetap
         }
 
-        $activity->deskripsi = $deskripsi;
-        $activity->status = $request->status;
         if ($request->status == 'cancel') {
             $activity->deskripsi = $deskripsi . ' #[CANCEL]: ' . $request->deskripsi;
 
@@ -314,8 +312,19 @@ class AktivitasController extends Controller
         }
 
         if ($request->status == 'done') {
+            if ($activity->status == 'stock_verification') {
+                return back()->withErrors(['Aktivitas dalam tahap verifikasi stok, tidak dapat update status menjadi DONE.']);
+            }
+
             $activity->deskripsi = $deskripsi . ' #[DONE]: ' . $request->deskripsi;
         }
+
+        if (in_array($activity->status, ['stock_verified', 'stock_verification']) && in_array($request->status, ['waiting', 'progress'])) {
+            return back()->withErrors(['Aktivitas sudah dalam tahap verifikasi stok, tidak dapat update status menjadi WAITING atau PROGRESS.']);
+        }
+
+        $activity->deskripsi = $deskripsi;
+        $activity->status = $request->status;
 
         if (!$activity->save()) {
             return back()->withErrors(['Update status aktivitas gagal.'])->withInput();

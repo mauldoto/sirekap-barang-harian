@@ -392,13 +392,13 @@
             });
 
             function getDetailStatus(status) {
-
+                console.log(status)
                 let radioStatus = document.querySelectorAll('input[type="radio"][name="status"]');
                 radioStatus.forEach(elm => {
                     elm.checked = false
                 });
 
-                document.getElementById(status).checked = true
+                if (document.getElementById(status)) document.getElementById(status).checked = true
 
                 setTimeout(() => {
                     showModalUpdate();
