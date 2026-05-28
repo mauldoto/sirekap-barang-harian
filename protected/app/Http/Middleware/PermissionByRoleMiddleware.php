@@ -6,21 +6,20 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class PermissionByRoleMiddleware
 {
     /**
      * Handle an incoming request.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    public function handle(Request $request, Closure $next, String $role = 'admin'): Response
+    public function handle(Request $request, Closure $next, String ...$roles): Response
     {
-        if (auth()->user()->role == 'admin') {
+
+        if (in_array(auth()->user()->role, $roles)) {
             return $next($request);
-        } elseif (auth()->user()->role == 'finance') {
-            return redirect('akomodasi');
-        } else {
-            return redirect('report');
         }
+
+        return back()->withErrors(['Anda tidak memiliki izin untuk mengakses halaman dan fitur tersebut!!!.']);
     }
 }

@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('log_stok', function (Blueprint $table) {
-            $table->double('harga', 8, 2)->default(0)->after('qty');
+            $table->double('harga', 12, 2)->default(0)->after('qty');
         });
     }
 

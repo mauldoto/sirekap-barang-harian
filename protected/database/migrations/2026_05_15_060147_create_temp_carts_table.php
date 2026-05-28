@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->double('qty')->default(0);
             $table->double('qty_used')->default(0);
             $table->unsignedBigInteger('id_gudang');
-            $table->double('harga', 8, 2)->default(0);
+            $table->double('harga', 12, 2)->default(0);
             $table->timestamps();
             $table->index('id_aktivitas');
             $table->index('id_barang');

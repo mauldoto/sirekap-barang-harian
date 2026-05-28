@@ -21,16 +21,18 @@
                     <div class="d-sm-flex flex-wrap justify-content-between">
                         <h4 class="card-title mb-4">Log Stok</h4>
                         <div class="button-group">
-                            <a href="{{ route('stok.masuk.view') }}" class="btn btn-sm btn-success"><i
-                                    class='bx bx-archive-in'></i> Stok Masuk</a>
-                            @if (auth()->user()->username == 'superadmin')
+                            @if (in_array(auth()->user()->username, ['superadmin', 'verifikator']))
+                                <a href="{{ route('stok.masuk.view') }}" class="btn btn-sm btn-success"><i
+                                        class='bx bx-archive-in'></i> Stok Masuk</a>
                                 <a href="{{ route('stok.keluar.view') }}" class="btn btn-sm btn-warning"><i
                                         class='bx bx-archive-out'></i> Stok Keluar</a>
                             @endif
                             <a href="{{ route('stok.log') }}" class="btn btn-sm btn-primary"><i
                                     class='bx bx-search-alt-2'></i> Cek Log</a>
-                            <a href="{{ route('stok.rencana') }}" class="btn btn-sm btn-secondary"><i
-                                    class='bx bx-print-alt-2'></i> Lembar Stok</a>
+                            @if (in_array(auth()->user()->username, ['superadmin', 'admin']))
+                                <a href="{{ route('stok.rencana') }}" class="btn btn-sm btn-secondary"><i
+                                        class='bx bx-print-alt-2'></i> Lembar Stok</a>
+                            @endif
                             {{-- <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export PDF</a> --}}
                         </div>
                     </div>

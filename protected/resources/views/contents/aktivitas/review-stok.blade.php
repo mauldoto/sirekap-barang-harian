@@ -26,7 +26,8 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('aktivitas.reviewstokout.post', $aktivitas->no_referensi) }}" method="post">
+                    <form class="form-approve"
+                        action="{{ route('aktivitas.reviewstokout.post', $aktivitas->no_referensi) }}" method="post">
                         @csrf
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">No Referensi</label>
@@ -85,7 +86,7 @@
                                             <td>
                                                 <input type="number" class="col-2 form-control qty-terpakai"
                                                     name="input[{{ $key }}][qty_used]" max="{{ $item->sumqty }}"
-                                                    min="0" id="" value="{{ $item->sumqty_used }}">
+                                                    min="0" value="{{ $item->sumqty_used }}" disabled>
                                             </td>
                                             <td>{{ $item->gudang->nama }}</td>
                                         </tr>
@@ -96,14 +97,20 @@
                             <hr>
 
                             <div class="btn-submit mt-5 d-flex justify-content-end">
-                                <button type="button" class="btn btn-md btn-danger me-2">
+                                <button type="button" class="btn btn-md btn-danger me-2 btn-decline">
                                     <i class="mdi mdi-thumb-down"></i> Tolak
                                 </button>
-                                <button type="" class="btn btn-md btn-success">
+                                <button type="button" class="btn btn-md btn-success btn-approve">
                                     <i class="mdi mdi-thumb-up"></i>
                                     Setujui
                                 </button>
                             </div>
+                    </form>
+
+                    <form class="hidden form-decline"
+                        action="{{ route('aktivitas.declinereviewstokout.post', $aktivitas->no_referensi) }}"
+                        method="post">
+                        @csrf
                     </form>
                 </div>
             </div>
@@ -138,7 +145,41 @@
     <script>
         $(document).ready(function() {
 
+            $(".btn-approve").on("click", function() {
+                Swal.fire({
+                    title: "Apakah anda yakin?",
+                    text: "Pengajuan stok keluar akan disetujui!",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Setujui!",
+                    cancelButtonText: "Batalkan"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $(".form-approve").submit();
+                    }
+                });
+            });
 
+            $(".btn-decline").on("click", function() {
+                const form = $(".form-decline").attr("action", $(this).data("url"));
+
+                Swal.fire({
+                    title: "Apakah anda yakin?",
+                    text: "Pengajuan stok keluar akan ditolak!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Tolak!",
+                    cancelButtonText: "Batalkan"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form[0].submit();
+                    }
+                });
+            });
         })
     </script>
 @endpush

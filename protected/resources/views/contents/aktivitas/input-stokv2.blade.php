@@ -86,14 +86,14 @@
                                             <td>{{ $item->sumqty }}</td>
                                             <td>
                                                 <input type="number" class="col-2 form-control qty-terpakai"
-                                                    name="input[{{ $key }}][qty_used]" max="{{ $item->sumqty }}"
-                                                    min="0" id="" value="{{ $item->sumqty_used }}">
+                                                    name="input[{{ $key }}][qty_used]" min="0"
+                                                    id="" value="{{ $item->sumqty_used }}">
                                             </td>
                                             <td>{{ $item->gudang->nama }}</td>
                                             <!-- <td>
-                                                                                            <button type="button" class="btn btn-sm btn-danger dlt-data"
-                                                                                                data-key="{{ $item->id_barang }}-{{ $item->is_new }}">Remove</button>
-                                                                                        </td> -->
+                                                                                                    <button type="button" class="btn btn-sm btn-danger dlt-data"
+                                                                                                        data-key="{{ $item->id_barang }}-{{ $item->is_new }}">Remove</button>
+                                                                                                </td> -->
                                         </tr>
                                     @endforeach
                                 </tbody>

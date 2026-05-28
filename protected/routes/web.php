@@ -34,7 +34,7 @@ Route::prefix('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->middleware(['web', 'auth'])->name('logout');
 });
 
-Route::prefix('barang')->middleware(['web', 'auth', 'admin'])->group(function () {
+Route::prefix('barang')->middleware(['web', 'auth', 'permission:admin,verifikator,superadmin'])->group(function () {
     Route::get('/', [BarangController::class, 'index'])->name('barang.index');
     Route::get('/{id}/detail', [BarangController::class, 'detail'])->name('barang.detail');
     Route::post('/store', [BarangController::class, 'store'])->name('barang.store');
@@ -45,7 +45,7 @@ Route::prefix('barang')->middleware(['web', 'auth', 'admin'])->group(function ()
     Route::post('/import', [BarangController::class, 'import'])->name('barang.import');
 });
 
-Route::prefix('gudang')->middleware(['web', 'auth', 'admin'])->group(function () {
+Route::prefix('gudang')->middleware(['web', 'auth', 'permission:admin,verifikator,superadmin'])->group(function () {
     Route::get('/', [GudangController::class, 'index'])->name('gudang.index');
     Route::get('/{id}/detail', [GudangController::class, 'detail'])->name('gudang.detail');
     Route::post('/store', [GudangController::class, 'store'])->name('gudang.store');
@@ -53,7 +53,7 @@ Route::prefix('gudang')->middleware(['web', 'auth', 'admin'])->group(function ()
     Route::post('/{id}/delete', [GudangController::class, 'delete'])->name('gudang.delete');
 });
 
-Route::prefix('lokasi')->middleware(['web', 'auth', 'admin'])->group(function () {
+Route::prefix('lokasi')->middleware(['web', 'auth', 'permission:admin,superadmin'])->group(function () {
     Route::get('/', [LokasiController::class, 'index'])->name('lokasi.index');
     Route::post('/store', [LokasiController::class, 'store'])->name('lokasi.store');
     Route::put('/{id}/update', [LokasiController::class, 'update'])->name('lokasi.update');
@@ -71,7 +71,7 @@ Route::prefix('lokasi')->middleware(['web', 'auth', 'admin'])->group(function ()
     });
 });
 
-Route::prefix('karyawan')->middleware(['web', 'auth', 'admin'])->group(function () {
+Route::prefix('karyawan')->middleware(['web', 'auth', 'permission:admin,superadmin'])->group(function () {
     Route::get('/', [KaryawanController::class, 'index'])->name('karyawan.index');
     Route::get('/{id}/detail', [KaryawanController::class, 'detail'])->name('karyawan.detail');
     Route::post('/store', [KaryawanController::class, 'store'])->name('karyawan.store');
@@ -80,51 +80,51 @@ Route::prefix('karyawan')->middleware(['web', 'auth', 'admin'])->group(function 
     Route::post('/import', [KaryawanController::class, 'import'])->name('karyawan.import');
 });
 
-Route::prefix('stok')->middleware(['web', 'auth', 'admin'])->group(function () {
-    Route::get('/', [StokController::class, 'index'])->name('stok.index');
+Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
+    Route::get('/', [StokController::class, 'index'])->name('stok.index')->middleware('permission:admin,verifikator,superadmin');
     Route::get('/log', [StokController::class, 'log'])->name('stok.log');
-    Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view');
-    Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store');
-    Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view')->middleware('super');
-    Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store')->middleware('super');
+    Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view')->middleware('permission:admin,verifikator,superadmin');
+    Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store')->middleware('permission:admin,verifikator,superadmin');
+    Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view')->middleware('permission:superadmin');
+    Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store')->middleware('permission:superadmin');
 
-    Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf');
-    Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi');
-    Route::get('/rencana-sk', [StokController::class, 'rencanaSK'])->name('stok.rencana');
-    Route::post('/rencana-sk', [StokController::class, 'storeRencanaSK'])->name('stok.rencana.cetak');
+    Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf')->middleware('permission:admin,verifikator,superadmin');
+    Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi')->middleware('permission:admin,verifikator,superadmin');
+    Route::get('/rencana-sk', [StokController::class, 'rencanaSK'])->name('stok.rencana')->middleware('permission:admin,verifikator,superadmin');
+    Route::post('/rencana-sk', [StokController::class, 'storeRencanaSK'])->name('stok.rencana.cetak')->middleware('permission:admin,verifikator,superadmin');
 
-    Route::put('/log/update', [StokController::class, 'logupdate'])->name('stok.log.update')->middleware('super');
-    Route::delete('/log/delete', [StokController::class, 'logdelete'])->name('stok.log.delete')->middleware('super');
+    Route::put('/log/update', [StokController::class, 'logupdate'])->name('stok.log.update')->middleware('permission:superadmin');
+    Route::delete('/log/delete', [StokController::class, 'logdelete'])->name('stok.log.delete')->middleware('permission:superadmin');
 
-    Route::get('/invoice/{noref}', [StokController::class, 'invoice'])->name('stok.invoice');
-    Route::get('/invoice/{noref}/print', [StokController::class, 'printInvoice'])->name('stok.invoice.print');
+    Route::get('/invoice/{noref}', [StokController::class, 'invoice'])->name('stok.invoice')->middleware('permission:jpn,admin,verifikator,superadmin');
+    Route::get('/invoice/{noref}/print', [StokController::class, 'printInvoice'])->name('stok.invoice.print')->middleware('permission:jpn,admin,verifikator,superadmin');
 
-    Route::get('/gudang/{idgudang}/{level?}', [StokController::class, 'getItemWithStock'])->name('stok.keluar.bygudang');
+    Route::get('/gudang/{idgudang}/{level?}', [StokController::class, 'getItemWithStock'])->name('stok.keluar.bygudang')->middleware('permission:admin,verifikator,superadmin');
 });
 
-Route::prefix('aktivitas')->middleware(['web', 'auth', 'admin'])->group(function () {
-    Route::get('/', [AktivitasController::class, 'index'])->name('aktivitas.index');
-    Route::get('/{id}/detail', [AktivitasController::class, 'getDetail'])->name('aktivitas.getdetail');
-    Route::get('/{tiket}/edit', [AktivitasController::class, 'edit'])->name('aktivitas.edit');
-    Route::get('/input', [AktivitasController::class, 'input'])->name('aktivitas.input');
-    Route::get('/lokasi/{id}', [AktivitasController::class, 'getSubLokasi'])->name('aktivitas.sublokasi');
-    Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store');
-    Route::post('/{tiket}/update', [AktivitasController::class, 'update'])->name('aktivitas.update');
-    Route::post('/{tiket}/hapus', [AktivitasController::class, 'hapusTiket'])->name('aktivitas.hapus');
-    Route::put('/{tiket}/update-status', [AktivitasController::class, 'updateStatus'])->name('aktivitas.update.status');
+Route::prefix('aktivitas')->middleware(['web', 'auth'])->group(function () {
+    Route::get('/', [AktivitasController::class, 'index'])->name('aktivitas.index')->middleware('permission:jpn,admin,verifikator,superadmin');
+    Route::get('/{id}/detail', [AktivitasController::class, 'getDetail'])->name('aktivitas.getdetail')->middleware('permission:jpn,admin,verifikator,superadmin');
+    Route::get('/{tiket}/edit', [AktivitasController::class, 'edit'])->name('aktivitas.edit')->middleware('permission:admin,superadmin');
+    Route::get('/input', [AktivitasController::class, 'input'])->name('aktivitas.input')->middleware('permission:admin,superadmin');
+    Route::get('/lokasi/{id}', [AktivitasController::class, 'getSubLokasi'])->name('aktivitas.sublokasi')->middleware('permission:admin,superadmin');
+    Route::post('/store', [AktivitasController::class, 'store'])->name('aktivitas.store')->middleware('permission:admin,superadmin');
+    Route::post('/{tiket}/update', [AktivitasController::class, 'update'])->name('aktivitas.update')->middleware('permission:admin,superadmin');
+    Route::post('/{tiket}/hapus', [AktivitasController::class, 'hapusTiket'])->name('aktivitas.hapus')->middleware('permission:superadmin');
+    Route::put('/{tiket}/update-status', [AktivitasController::class, 'updateStatus'])->name('aktivitas.update.status')->middleware('permission:admin,superadmin');
 
-    Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf');
-    Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket');
-    Route::get('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'editStockOut'])->name('aktivitas.editstokout.view');
-    Route::post('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'postEditStockOut'])->name('aktivitas.editstokout.post');
-    Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputStockOut'])->name('aktivitas.inputstokout.view');
-    Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputStockOutTemp'])->name('aktivitas.inputstokout.post');
-    Route::get('/{tiket}/review-stok-keluar', [AktivitasController::class, 'reviewStockOut'])->name('aktivitas.reviewstokout.view');
-    Route::post('/{tiket}/review-stok-keluar', [AktivitasController::class, 'postReviewStockOut'])->name('aktivitas.reviewstokout.post');
-    Route::post('/{tiket}/decline-review-stok-keluar', [AktivitasController::class, 'declineReviewStockOut'])->name('aktivitas.declinereviewstokout.post');
+    Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf')->middleware('permission:admin,superadmin');
+    Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket')->middleware('permission:admin,superadmin');
+    Route::get('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'editStockOut'])->name('aktivitas.editstokout.view')->middleware('permission:superadmin');
+    Route::post('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'postEditStockOut'])->name('aktivitas.editstokout.post')->middleware('permission:superadmin');
+    Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputStockOut'])->name('aktivitas.inputstokout.view')->middleware('permission:admin,superadmin');
+    Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputStockOutTemp'])->name('aktivitas.inputstokout.post')->middleware('permission:admin,superadmin');
+    Route::get('/{tiket}/review-stok-keluar', [AktivitasController::class, 'reviewStockOut'])->name('aktivitas.reviewstokout.view')->middleware('permission:verifikator,superadmin');
+    Route::post('/{tiket}/review-stok-keluar', [AktivitasController::class, 'postReviewStockOut'])->name('aktivitas.reviewstokout.post')->middleware('permission:verifikator,superadmin');
+    Route::post('/{tiket}/decline-review-stok-keluar', [AktivitasController::class, 'declineReviewStockOut'])->name('aktivitas.declinereviewstokout.post')->middleware('permission:verifikator,superadmin');
 });
 
-Route::prefix('alokasi')->middleware(['web', 'auth', 'admin'])->group(function () {
+Route::prefix('alokasi')->middleware(['web', 'auth', 'permission:admin,superadmin'])->group(function () {
     Route::get('/', [AlokasiController::class, 'index'])->name('alokasi');
     Route::post('/process', [AlokasiController::class, 'processAlokasi'])->name('alokasi.process');
 });

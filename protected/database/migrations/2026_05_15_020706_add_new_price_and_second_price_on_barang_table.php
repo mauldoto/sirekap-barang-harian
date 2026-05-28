@@ -11,8 +11,8 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('barang', function (Blueprint $table) {
-            $table->double('h_new', 8, 2)->default(0)->after('satuan');
-            $table->double('h_second', 8, 2)->default(0)->after('h_new');
+            $table->double('h_new', 12, 2)->default(0)->after('satuan');
+            $table->double('h_second', 12, 2)->default(0)->after('h_new');
         });
     }
 

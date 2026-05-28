@@ -83,7 +83,7 @@
                                             <span class="p-1 text-white rounded bg-success">Done</span>
                                         @elseif ($i->status === 'stock_verification')
                                             <span class="p-1 text-white rounded bg-warning">Stock Verification</span>
-                                        @elseif ($i->status === 'stock_verified`')
+                                        @elseif ($i->status === 'stock_verified')
                                             <span class="p-1 text-white rounded bg-primary">Stock Verified</span>
                                         @else
                                             <span class="p-1 text-white rounded bg-danger">Cancel</span>
@@ -119,31 +119,36 @@
                                                         href="{{ route('aktivitas.edit', $i->no_referensi) }}"
                                                         data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a>
 
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('aktivitas.inputstokout.view', $i->no_referensi) }}"
-                                                        data-url=""><i class='bx bx-archive-out me-1'></i>Ajukan Stok
-                                                        Keluar</a>
+                                                    @if (auth()->user()->username == 'superadmin' ||
+                                                            (auth()->user()->username != 'ktu' && !in_array($i->status, ['stock_verification', 'stock_verified'])))
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item d-flex align-items-center"
+                                                            href="{{ route('aktivitas.inputstokout.view', $i->no_referensi) }}"
+                                                            data-url=""><i class='bx bx-archive-out me-1'></i>Ajukan Stok
+                                                            Keluar</a>
+                                                    @endif
 
-                                                    <div class="dropdown-divider"></div>
-                                                    <a class="dropdown-item d-flex align-items-center"
-                                                        href="{{ route('aktivitas.reviewstokout.view', $i->no_referensi) }}"
-                                                        data-url=""><i class='bx bx-archive-out me-1'></i>
-                                                        Review Stok Keluar</a>
+                                                    @if (auth()->user()->username == 'superadmin' || auth()->user()->username == 'ktu')
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item d-flex align-items-center"
+                                                            href="{{ route('aktivitas.reviewstokout.view', $i->no_referensi) }}"
+                                                            data-url=""><i class='bx bx-archive-out me-1'></i>
+                                                            Review Stok Keluar</a>
 
-                                                    {{-- <div class="dropdown-divider"></div>
+                                                        {{-- <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center hapus-btn" style="color: red"
                                                         href="#" data-url="{{route('aktivitas.hapus', $i->no_referensi)}}"
                                                         data-stok="{{$i->stok ? $i->stok->no_referensi : ''}}"><i
                                                             class='bx bx-trash me-1'></i> Hapus</a> --}}
-                                                @endif
+                                                    @endif
 
-                                                @if (auth()->user()->username == 'superadmin')
+                                                    {{-- @if (auth()->user()->username == 'superadmin')
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center"
                                                         href="{{ route('aktivitas.editstokout.view', $i->no_referensi) }}"
                                                         data-url=""><i class='bx bx-archive-out me-1'></i> Edit Stok
                                                         Keluar</a>
+                                                    @endif --}}
                                                 @endif
 
                                             </div>

@@ -17,11 +17,50 @@
                     </a>
                 </li> --}}
 
+                <li class="menu-title" key="t-masters">Master Data</li>
+
+                <li>
+                    <a href="{{ route('barang.index') }}" class="waves-effect">
+                        <i class='bx bx-book-bookmark'></i>
+                        <span key="t-kursus">Barang</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('gudang.index') }}" class="waves-effect">
+                        <i class='bx bx-building-house'></i>
+                        <span key="t-gudang">Gudang</span>
+                    </a>
+                </li>
+
+                <li class="menu-title" key="t-masters">Log Stok & Aktivitas</li>
+
+                <li>
+                    <a href="{{ route('stok.index') }}" class="waves-effect">
+                        <i class='bx bx-archive'></i>
+                        <span key="t-guru">Stok</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('aktivitas.index') }}" class="waves-effect">
+                        <i class='bx bx-calendar-event'></i>
+                        <span key="t-kursus">Aktivitas/Job</span>
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{{ route('alokasi') }}" class="waves-effect">
+                        <i class='bx bxs-directions'></i>
+                        <span key="t-kursus">Alokasi Perangkat</span>
+                    </a>
+                </li>
+
                 <li class="menu-title" key="t-menu">Finance</li>
 
                 <li>
-                    <a href="{{route('akomodasi.index')}}" class="waves-effect">
-                        <i class='bx bx-dollar-circle' ></i>
+                    <a href="{{ route('akomodasi.index') }}" class="waves-effect">
+                        <i class='bx bx-dollar-circle'></i>
                         <span key="t-kursus">Rekapan Akomodasi</span>
                     </a>
                 </li>
@@ -29,7 +68,7 @@
                 <li class="menu-title" key="t-masters">Report</li>
 
                 <li>
-                    <a href="{{route('report')}}" class="waves-effect">
+                    <a href="{{ route('report') }}" class="waves-effect">
                         <i class='bx bxs-report'></i>
                         <span key="t-guru">Report</span>
                     </a>
@@ -45,7 +84,7 @@
                         <span key="t-kursus">Logout</span>
                     </a>
 
-                    <form id="logoutForm" action="{{route('logout')}}" method="POST">
+                    <form id="logoutForm" action="{{ route('logout') }}" method="POST">
                         @csrf
                     </form>
                 </li>
