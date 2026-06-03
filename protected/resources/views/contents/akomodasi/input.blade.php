@@ -1,12 +1,17 @@
 @extends('layouts.master')
 
-@section('title') Akomodasi @endsection
+@section('title')
+    Akomodasi
+@endsection
 
 @section('content')
-
     @component('components.breadcrumb')
-    @slot('li_1') Log @endslot
-    @slot('title') Input Akomodasi @endslot
+        @slot('li_1')
+            Log
+        @endslot
+        @slot('title')
+            Input Akomodasi
+        @endslot
     @endcomponent
 
     <div class="row">
@@ -16,33 +21,34 @@
                     <div class="d-sm-flex flex-wrap justify-content-between">
                         <h4 class="card-title mb-4">Input Akomodasi</h4>
                         <div class="button-group">
-                            <a href="{{route('akomodasi.index')}}" class="btn btn-sm btn-warning"><i
+                            <a href="{{ route('akomodasi.index') }}" class="btn btn-sm btn-warning"><i
                                     class='bx bx-arrow-back'></i> Kembali</a>
                         </div>
                     </div>
 
-                    <form action="{{route('akomodasi.store')}}" method="post" enctype="multipart/form-data">
+                    <form action="{{ route('akomodasi.store') }}" method="post" enctype="multipart/form-data">
                         @csrf
                         <div class="row">
                             <div class="mb-2 col-lg-5">
                                 <label class="form-label">No Referensi</label>
-                                <input class="form-control" type="text" name="norefv" value="{{generateReference('AKM')}}"
-                                    disabled required>
-                                <input class="form-control" type="hidden" name="noref" value="{{generateReference('AKM')}}"
-                                    required>
+                                <input class="form-control" type="text" name="norefv"
+                                    value="{{ generateReference('AKM') }}" disabled required>
+                                <input class="form-control" type="hidden" name="noref"
+                                    value="{{ generateReference('AKM') }}" required>
                             </div>
 
                             <div class="mb-2 col-lg-5">
                                 <label class="form-label">Tanggal Terbit</label>
                                 <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal"
-                                    value="{{$dateNow}}" required>
+                                    value="{{ $dateNow }}" required>
                             </div>
 
                             <div class="mb-2 col-lg-5">
                                 <label class="form-label">Nominal Pengajuan</label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="basic-addon1">Rp.</span>
-                                    <input class="form-control" id="np" type="text" name="nominal_pengajuan" required>
+                                    <input class="form-control" id="np" type="text" name="nominal_pengajuan"
+                                        required>
                                 </div>
                             </div>
 
@@ -50,7 +56,8 @@
                                 <label class="form-label">Nominal Realisasi</label>
                                 <div class="input-group mb-3">
                                     <span class="input-group-text" id="basic-addon1">Rp.</span>
-                                    <input class="form-control" id="nr" type="text" name="nominal_realisasi" required>
+                                    <input class="form-control" id="nr" type="text" name="nominal_realisasi"
+                                        required>
                                 </div>
                             </div>
 
@@ -60,7 +67,8 @@
                                     required> --}}
                                 <select class="form-control job-select2" name="aktivitas[]" id="ak" multiple>
                                     @foreach ($aktivitas as $act)
-                                        <option value="{{$act->id}}">[{{ $act->no_referensi }}] {{ $act->lokasi->nama }} -
+                                        <option value="{{ $act->id }}">[{{ $act->no_referensi }}]
+                                            {{ $act->lokasi->nama }} -
                                             {{ $act->sublokasi->nama }}
                                         </option>
                                     @endforeach
@@ -86,7 +94,6 @@
             </div>
         </div>
     </div>
-
 @endsection
 
 @section('css')
@@ -110,43 +117,42 @@
 
 @push('page-js')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
             $('.job-select2').select2({
                 placeholder: "-- Pilih Job --"
             });
 
             IMask(
                 document.getElementById('np'), {
-                mask: Number
-                , min: 0
-                , max: 10000000
-                , thousandsSeparator: '.'
-            }
+                    mask: Number,
+                    min: 0,
+                    max: 10000000,
+                    thousandsSeparator: '.'
+                }
             )
 
             IMask(
                 document.getElementById('nr'), {
-                mask: Number
-                , min: 0
-                , max: 10000000
-                , thousandsSeparator: '.'
-            }
+                    mask: Number,
+                    min: 0,
+                    max: 10000000,
+                    thousandsSeparator: '.'
+                }
             )
 
-            $("#datatable-stok").on("click", ".delete-btn", function () {
+            $("#datatable-stok").on("click", ".delete-btn", function() {
                 const url = $(this).data("url");
                 const form = $(".form-delete").attr("action", url);
 
                 Swal.fire({
-                    title: "Apakah anda yakin?"
-                    , text: "Data akan dialihkan ke folder sampah!"
-                    , icon: "warning"
-                    , showCancelButton: true
-                    , confirmButtonColor: "#3085d6"
-                    , cancelButtonColor: "#d33"
-                    , confirmButtonText: "Ya, Hapus!"
-                    , cancelButtonText: "Batalkan"
-                    ,
+                    title: "Apakah anda yakin?",
+                    text: "Data akan dialihkan ke folder sampah!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Hapus!",
+                    cancelButtonText: "Batalkan",
                 }).then((result) => {
                     if (result.isConfirmed) {
                         form[0].submit();
@@ -154,6 +160,5 @@
                 });
             });
         })
-
     </script>
 @endpush

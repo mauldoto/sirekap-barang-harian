@@ -103,6 +103,7 @@ class StokController extends Controller
             $newLogStok->qty = $barang['qty'];
             $newLogStok->id_gudang = $barang['gudang'];
             $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
+            $newLogStok->harga = str_replace('.', '', $barang['price']);
 
             if (!$newLogStok->save()) {
                 DB::rollBack();
@@ -150,8 +151,7 @@ class StokController extends Controller
                         }
                     }
                 }
-            }
-            ;
+            };
 
             if (count($barang) <= 0)
                 throw new Error('Tidak ada stok di gudang ini.');
@@ -224,7 +224,7 @@ class StokController extends Controller
             $newLogStok->qty = -$barang['qty'];
             $newLogStok->id_gudang = $barang['gudang'];
             $newLogStok->is_new = array_key_exists('bekas', $barang) ? false : true;
-            $newLogStok->harga = $barang['harga'];
+            $newLogStok->harga = str_replace('.', '', $barang['harga']);
 
             if (!$newLogStok->save()) {
                 DB::rollBack();

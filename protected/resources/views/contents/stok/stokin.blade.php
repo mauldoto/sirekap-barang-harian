@@ -64,7 +64,7 @@
                                     <!-- Repeater Content -->
                                     <div class="item-content">
                                         <div class="row">
-                                            <div class="col-lg-3">
+                                            <div class="col-lg-2">
                                                 {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
                                                 <select class="form-control select2-gudang" id="inputWs"
                                                     data-name="gudang">
@@ -76,7 +76,7 @@
                                                     @endforeach
                                                 </select>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 {{-- <input type="text" class="form-control" id="inputName" placeholder="Name" data-name="name"> --}}
                                                 <select class="form-control select2-item" id="inputItem" data-name="item">
                                                     <option value=""></option>
@@ -94,10 +94,18 @@
                                                     Bekas
                                                 </label>
                                             </div>
-                                            <div class="col-lg-2">
+                                            <div class="col-lg-1">
                                                 <input type="text" class="form-control" id="inputQty" placeholder="Qty"
                                                     data-name="qty">
                                             </div>
+                                            <div class="col-lg-2">
+                                                <input type="text" class="form-control input-price"
+                                                    placeholder="Harga Beli" data-name="price">
+                                            </div>
+                                            {{-- <div class="col-lg-2 ">
+                                                <span>Total:</span><br />
+                                                <strong>Rp. 500.000.000,00</strong>
+                                            </div> --}}
 
                                             <div class="col-lg-1 repeater-remove-btn">
                                                 <button class="btn btn-danger remove-btn">
@@ -148,6 +156,7 @@
     <script src="{{ URL::asset('assets/libs/sweetalert2/sweetalert2.min.js') }}"></script>
     <script src="{{ URL::asset('assets/libs/select2/js/select2.min.js') }}"></script>
     <script src="{{ URL::asset('assets/libs/repeater.js') }}"></script>
+    <script src="{{ URL::asset('assets/libs/imask.js') }}"></script>
 @endsection
 
 @push('page-js')
@@ -156,6 +165,17 @@
             $("#repeater").createRepeater({
                 showFirstItemToDefault: true,
             });
+
+            function applyNumberMask(element) {
+                var maskOptions = {
+                    mask: Number,
+                    min: 0,
+                    max: 100000000,
+                    thousandsSeparator: '.'
+                };
+                // Pastikan element adalah element DOM murni, bukan jQuery object
+                IMask(element, maskOptions);
+            }
 
             $(".repeater-add-btn").click(function() {
                 let select2Gudang = $('.select2-gudang')
@@ -170,7 +190,22 @@
                         placeholder: "-- Pilih Barang --"
                     });
                 })
+
+                setTimeout(() => {
+                    $('.input-price').each(function() {
+                        applyNumberMask(this);
+                    });
+                }, 500);
             })
+
+            IMask(
+                document.querySelector('.input-price'), {
+                    mask: Number,
+                    min: 0,
+                    max: 100000000,
+                    thousandsSeparator: '.'
+                }
+            )
 
             $('.select2-gudang').select2({
                 placeholder: "-- Pilih Gudang --"

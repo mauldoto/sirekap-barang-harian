@@ -6,12 +6,12 @@
 
 @section('content')
     @component('components.breadcrumb')
-    @slot('li_1')
-    Log
-    @endslot
-    @slot('title')
-    Rencana Pengeluaran Stok
-    @endslot
+        @slot('li_1')
+            Log
+        @endslot
+        @slot('title')
+            Rencana Pengeluaran Stok
+        @endslot
     @endcomponent
 
     <div class="row">
@@ -21,8 +21,7 @@
                     <div class="d-sm-flex flex-wrap justify-content-between">
                         <h4 class="card-title mb-4">Cetak Rencana Pengeluaran Stok</h4>
                         <div class="button-group">
-                            <a href="{{ route('stok.index') }}" class="btn btn-sm btn-warning"><i
-                                    class='bx bx-arrow-back'></i>
+                            <a href="{{ route('stok.index') }}" class="btn btn-sm btn-warning"><i class='bx bx-arrow-back'></i>
                                 Kembali</a>
                         </div>
                     </div>
@@ -39,7 +38,8 @@
 
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">Tanggal</label>
-                            <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal" required>
+                            <input class="form-control" type="date" name="tanggal" placeholder="Masukkan tanggal"
+                                required>
                         </div>
 
                         {{-- <div class="mb-3 col-lg-5">
@@ -129,7 +129,8 @@
                         </select>
                     </div>
                     <div class="col-lg-1 pt-2">
-                        <input class="form-check-input" type="checkbox" data-name="bekas" id="inputCondition" value="bekas">
+                        <input class="form-check-input" type="checkbox" data-name="bekas" id="inputCondition"
+                            value="bekas">
                         <label class="form-check-label" for="inputCondition">
                             Bekas
                         </label>
@@ -181,11 +182,11 @@
 
 @push('page-js')
     <script>
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             let sublokasi
 
-            $(".generate-btn").click(function () {
+            $(".generate-btn").click(function() {
                 if ($('.barang-select2').hasClass("select2-hidden-accessible")) {
                     $('.barang-select2').select2('destroy');
                 }
@@ -223,7 +224,7 @@
                             showFirstItemToDefault: true,
                         });
 
-                        $(".repeater-add-btn").click(function () {
+                        $(".repeater-add-btn").click(function() {
                             regenerateS2()
                         })
                     }
@@ -275,19 +276,19 @@
 
             function regenerateS2() {
                 let select2Gudang = $('.gudang-select2')
-                select2Gudang.each(function (index, el) {
+                select2Gudang.each(function(index, el) {
                     $(el).select2({
                         placeholder: "-- Pilih Gudang --"
                     });
                 })
                 let select2Arr = $('.barang-select2')
-                select2Arr.each(function (index, el) {
+                select2Arr.each(function(index, el) {
                     $(el).select2({
                         placeholder: "-- Pilih Barang --"
                     });
                 })
 
-                select2Gudang.on('select2:select', function (e) {
+                select2Gudang.on('select2:select', function(e) {
                     showLoadingScreen()
                     let select2this = $(this).parent().parent().find(".barang-select2")
                     getData(e.params.data.id, select2this)
@@ -306,7 +307,7 @@
                 'placeholder': ' -- pilih sublokasi --'
             });
 
-            selectLokasi.on('select2:select', function () {
+            selectLokasi.on('select2:select', function() {
                 selectSubLokasi.html('<option></option');
                 $(".review").empty()
 
@@ -314,7 +315,7 @@
             })
 
             function getSubLokasi(ids) {
-                $.get(location.origin + '/aktivitas/lokasi/' + ids).done(function (response) {
+                $.get(location.origin + '/aktivitas/lokasi/' + ids).done(function(response) {
                     let res = response
                     if (!res.status) return
 
@@ -327,7 +328,7 @@
                 })
             }
 
-            $("#datatable-stok").on("click", ".delete-btn", function () {
+            $("#datatable-stok").on("click", ".delete-btn", function() {
                 const url = $(this).data("url");
                 const form = $(".form-delete").attr("action", url);
 
