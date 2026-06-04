@@ -63,7 +63,7 @@
                                         <th>Nama Barang</th>
                                         <th>Kondisi</th>
                                         <th>Jumlah Stok Dibawa</th>
-                                        <th style="width:15%">Jumlah Stok Terpakai</th>
+                                        {{-- <th style="width:15%">Jumlah Stok Terpakai</th> --}}
                                         <th>Gudang</th>
                                         <!-- <th></th> -->
                                     </tr>
@@ -83,11 +83,11 @@
                                             <td>{{ $item->barang->nama }}</td>
                                             <td>{{ $item->is_new ? 'Baru' : 'Bekas' }}</td>
                                             <td>{{ $item->sumqty }}</td>
-                                            <td>
+                                            {{-- <td>
                                                 <input type="number" class="col-2 form-control qty-terpakai"
                                                     name="input[{{ $key }}][qty_used]" max="{{ $item->sumqty }}"
                                                     min="0" value="{{ $item->sumqty_used }}" disabled>
-                                            </td>
+                                            </td> --}}
                                             <td>{{ $item->gudang->nama }}</td>
                                         </tr>
                                     @endforeach

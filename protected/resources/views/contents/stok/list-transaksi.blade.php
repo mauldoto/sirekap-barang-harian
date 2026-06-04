@@ -19,7 +19,7 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-sm-flex flex-wrap justify-content-between">
-                        <h4 class="card-title mb-4">Log Stok Masuk/Keluar</h4>
+                        <h4 class="card-title mb-4">Daftar Stok Masuk/Keluar</h4>
                         <div class="button-group">
                             <a href="{{ route('stok.index') }}" class="btn btn-sm btn-warning"><i class='bx bx-arrow-back'></i>
                                 Kembali</a>
@@ -67,10 +67,7 @@
                                 <th>Jenis Stok</th>
                                 <th>Aktivitas</th>
                                 <th>Diinput Oleh</th>
-                                <th>Barang</th>
-                                <th>Kondisi</th>
-                                <th>Jumlah</th>
-                                <th>Gudang</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
 
@@ -78,34 +75,59 @@
                         <tbody>
                             @foreach ($stok as $key => $i)
                                 <tr>
-                                    <td>{{ $i->stok->tanggal }}</td>
+                                    <td>{{ $i->tanggal }}</td>
                                     <td>
-                                        <a href="{{ route('stok.invoice', $i->stok->no_referensi) }}"
+                                        <a href="{{ route('stok.invoice', $i->no_referensi) }}"
                                             class="text-primary fw-bold">
-                                            {{ $i->stok->no_referensi }}
+                                            {{ $i->no_referensi }}
                                         </a>
                                     </td>
                                     <td class="text-white"><span
-                                            class="rounded p-1 {{ $i->stok->type == 'masuk' ? 'bg-success' : 'bg-danger' }}">{{ $i->stok->type }}</span>
+                                            class="rounded p-1 {{ $i->type == 'masuk' ? 'bg-success' : 'bg-danger' }}">{{ $i->type }}</span>
                                     </td>
                                     <td>
-                                        @if ($i->stok->aktivitas)
-                                            - {{ $i->stok->aktivitas->no_referensi }} </br>
-                                            - {{ $i->stok->aktivitas->lokasi->nama }} </br>
-                                            - {{ $i->stok->aktivitas->sublokasi->nama }}
+                                        @if ($i->aktivitas)
+                                            - {{ $i->aktivitas->no_referensi }} </br>
+                                            - {{ $i->aktivitas->lokasi->nama }} </br>
+                                            - {{ $i->aktivitas->sublokasi->nama }}
                                         @endif
 
                                     </td>
-                                    <td>{{ $i->stok->user->username }}</td>
-                                    <td>{{ $i->barang->nama }}</td>
-                                    <td><span
-                                            class="badge rounded-pill {{ $i->is_new ? 'bg-primary' : 'bg-warning' }}">{{ $i->is_new ? 'Baru' : 'Bekas' }}</span>
+                                    <td>{{ $i->user->username }}</td>
+                                    <td class="text-center">
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-info dropdown-toggle btn-sm"
+                                                data-bs-toggle="dropdown" aria-expanded="false">Aksi <i
+                                                    class="mdi mdi-chevron-down"></i></button>
+                                            <div class="dropdown-menu" style="">
+                                                <a class="dropdown-item detail-btn d-flex align-items-center" href="#"
+                                                    data-url="" data-id="{{ $i->id }}"><i
+                                                        class='bx bx-search-alt-2 me-1'></i>
+                                                    Detail</a>
+                                                <div class="dropdown-divider"></div>
+                                                <a class="dropdown-item d-flex align-items-center"
+                                                    href="{{ route('aktivitas.print.tiket', $i->no_referensi) }}"
+                                                    target="_blank" data-url=""><i class='bx bxs-discount me-1'></i>
+                                                    Print Nota</a>
+                                                @if (auth()->user()->username == 'superadmin' || !in_array($i->status, ['done', 'cancel']))
+                                                    {{-- <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('aktivitas.edit', $i->no_referensi) }}"
+                                                        data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a> --}}
+
+                                                    @if (auth()->user()->username == 'superadmin' ||
+                                                            (auth()->user()->username != 'ktu' && !in_array($i->status, ['stock_verification', 'stock_verified'])))
+                                                        <div class="dropdown-divider"></div>
+                                                        <a class="dropdown-item d-flex align-items-center"
+                                                            href="{{ route('aktivitas.inputstokout.view', $i->no_referensi) }}"
+                                                            data-url=""><i class='bx bx-archive-out me-1'></i>Input
+                                                            Retur</a>
+                                                    @endif
+                                                @endif
+
+                                            </div>
+                                        </div>
                                     </td>
-                                    <td><span
-                                            class="{{ $i->qty < 0 ? 'text-danger' : 'text-success' }}">{{ $i->qty < 0 ? -1 * $i->qty : $i->qty }}</span>
-                                        ({{ $i->barang->satuan }})
-                                    </td>
-                                    <td>{{ $i->gudang->nama }}</td>
                                 </tr>
                             @endforeach
                         </tbody>

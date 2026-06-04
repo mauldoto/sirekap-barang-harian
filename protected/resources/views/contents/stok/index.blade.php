@@ -27,6 +27,8 @@
                                 <a href="{{ route('stok.keluar.view') }}" class="btn btn-sm btn-warning"><i
                                         class='bx bx-archive-out'></i> Stok Keluar</a>
                             @endif
+                            <a href="{{ route('stok.transaksi') }}" class="btn btn-sm btn-info"><i class='bx bx-menu'></i>
+                                Daftar Transaksi</a>
                             <a href="{{ route('stok.log') }}" class="btn btn-sm btn-primary"><i
                                     class='bx bx-search-alt-2'></i> Cek Log</a>
                             @if (in_array(auth()->user()->username, ['superadmin', 'admin']))

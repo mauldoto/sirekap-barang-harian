@@ -82,6 +82,7 @@ Route::prefix('karyawan')->middleware(['web', 'auth', 'permission:admin,superadm
 
 Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [StokController::class, 'index'])->name('stok.index')->middleware('permission:admin,verifikator,superadmin');
+    Route::get('/daftar-transaksi', [StokController::class, 'listTransaction'])->name('stok.transaksi');
     Route::get('/log', [StokController::class, 'log'])->name('stok.log');
     Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view')->middleware('permission:admin,verifikator,superadmin');
     Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store')->middleware('permission:admin,verifikator,superadmin');
@@ -117,8 +118,8 @@ Route::prefix('aktivitas')->middleware(['web', 'auth'])->group(function () {
     Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket')->middleware('permission:admin,superadmin');
     Route::get('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'editStockOut'])->name('aktivitas.editstokout.view')->middleware('permission:superadmin');
     Route::post('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'postEditStockOut'])->name('aktivitas.editstokout.post')->middleware('permission:superadmin');
-    Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputStockOut'])->name('aktivitas.inputstokout.view')->middleware('permission:admin,superadmin');
-    Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputStockOutTemp'])->name('aktivitas.inputstokout.post')->middleware('permission:admin,superadmin');
+    Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputPengajuanStock'])->name('aktivitas.inputstokout.view')->middleware('permission:admin,superadmin');
+    Route::post('/{tiket}/input-stok-keluar', [AktivitasController::class, 'postInputPengajuanStock'])->name('aktivitas.inputstokout.post')->middleware('permission:admin,superadmin');
     Route::get('/{tiket}/review-stok-keluar', [AktivitasController::class, 'reviewStockOut'])->name('aktivitas.reviewstokout.view')->middleware('permission:verifikator,superadmin');
     Route::post('/{tiket}/review-stok-keluar', [AktivitasController::class, 'postReviewStockOut'])->name('aktivitas.reviewstokout.post')->middleware('permission:verifikator,superadmin');
     Route::post('/{tiket}/decline-review-stok-keluar', [AktivitasController::class, 'declineReviewStockOut'])->name('aktivitas.declinereviewstokout.post')->middleware('permission:verifikator,superadmin');

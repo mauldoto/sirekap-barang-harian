@@ -29,6 +29,31 @@ class StokController extends Controller
         return view('contents.stok.index', compact('stok'));
     }
 
+    public function listTransaction(Request $request)
+    {
+        $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
+        $endDate = $request->ke ? Carbon::createFromFormat('Y-m-d', $request->ke)->format('Y-m-d') : Carbon::now()->format('Y-m-d');
+        $type = $request->filter_type;
+
+        if ($startDate > $endDate) {
+            $temp = $startDate;
+            $startDate = $endDate;
+            $endDate = $temp;
+        }
+
+        $stok = Stok::where('tanggal', '>=', $startDate)
+            ->where('tanggal', '<=', $endDate)
+            ->with('aktivitas', 'user');
+
+        if ($type) {
+            $stok = $stok->where('type', $type);
+        }
+
+        $stok = $stok->get();
+
+        return view('contents.stok.list-transaksi', compact('stok', 'startDate', 'endDate', 'type'));
+    }
+
     public function log(Request $request)
     {
         $startDate = $request->dari ? Carbon::createFromFormat('Y-m-d', $request->dari)->format('Y-m-d') : Carbon::now()->subDays(30)->format('Y-m-d');
