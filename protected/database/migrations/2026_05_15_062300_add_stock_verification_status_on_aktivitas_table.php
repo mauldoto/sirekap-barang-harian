@@ -12,6 +12,7 @@ return new class extends Migration {
     public function up(): void
     {
         DB::statement("ALTER TABLE aktivitas MODIFY COLUMN status ENUM('waiting', 'progress', 'done', 'cancel', 'stock_out_verification', 'stock_out_verified') DEFAULT 'done'");
+        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('superadmin', 'admin', 'verifikator', 'finance', 'jpn') DEFAULT 'jpn'");
     }
 
     /**
@@ -20,5 +21,6 @@ return new class extends Migration {
     public function down(): void
     {
         DB::statement("ALTER TABLE aktivitas MODIFY COLUMN status ENUM('waiting', 'progress', 'done', 'cancel') DEFAULT 'done'");
+        DB::statement("ALTER TABLE users MODIFY COLUMN role ENUM('admin', 'finance', 'jpn') DEFAULT 'jpn'");
     }
 };

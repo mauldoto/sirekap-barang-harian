@@ -264,7 +264,7 @@
                     @method('put')
                     <div class="modal-body">
                         <div class="row">
-                            <div class="mb-3 col-3">
+                            {{-- <div class="mb-3 col-3">
                                 <input class="form-check-input" type="radio" name="status" id="waiting"
                                     value="waiting">
                                 <label class="form-check-label" for="waiting">
@@ -277,7 +277,7 @@
                                 <label class="form-check-label" for="progress">
                                     <span class="p-1 rounded text-white bg-warning">Progress</span>
                                 </label>
-                            </div>
+                            </div> --}}
                             <div class="mb-3 col-3">
                                 <input class="form-check-input" type="radio" name="status" id="done"
                                     value="done">

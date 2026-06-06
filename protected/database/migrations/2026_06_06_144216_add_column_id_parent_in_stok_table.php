@@ -1,0 +1,33 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('stok', function (Blueprint $table) {
+            $table->unsignedBigInteger('id_parent')->nullable()->after('id');
+        });
+
+        DB::statement("ALTER TABLE stok MODIFY COLUMN type ENUM('masuk', 'keluar') DEFAULT 'masuk'");
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('stok', function (Blueprint $table) {
+            $table->dropColumn('id_parent');
+        });
+
+        DB::statement("ALTER TABLE stok MODIFY COLUMN type ENUM('masuk', 'keluar') DEFAULT 'masuk'");
+    }
+};

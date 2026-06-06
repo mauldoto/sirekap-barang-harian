@@ -312,7 +312,7 @@ class AktivitasController extends Controller
         }
 
         if ($request->status == 'done') {
-            if ($activity->status == 'stock_verification') {
+            if ($activity->status == 'stock_out_verification') {
                 return back()->withErrors(['Aktivitas dalam tahap verifikasi stok, tidak dapat update status menjadi DONE.']);
             }
 
@@ -849,7 +849,7 @@ class AktivitasController extends Controller
             }
         }
 
-        $aktivitas->status = 'stock_verified';
+        $aktivitas->status = 'progress';
         if (!$aktivitas->save()) {
             DB::rollBack();
             return back()->withErrors(['Error update status aktivitas.'])->withInput();
@@ -866,7 +866,7 @@ class AktivitasController extends Controller
             return back()->withErrors(['Tiket tidak tersedia']);
         }
 
-        $aktivitas->status = 'progress';
+        $aktivitas->status = 'waiting';
         if (!$aktivitas->save()) {
             DB::rollBack();
             return back()->withErrors(['Error update status aktivitas.'])->withInput();
