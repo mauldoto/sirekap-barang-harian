@@ -31,10 +31,10 @@
                                 Daftar Transaksi</a>
                             <a href="{{ route('stok.log') }}" class="btn btn-sm btn-primary"><i
                                     class='bx bx-search-alt-2'></i> Cek Log</a>
-                            @if (in_array(auth()->user()->username, ['superadmin', 'admin']))
+                            {{-- @if (in_array(auth()->user()->username, ['superadmin', 'admin']))
                                 <a href="{{ route('stok.rencana') }}" class="btn btn-sm btn-secondary"><i
                                         class='bx bx-print-alt-2'></i> Lembar Stok</a>
-                            @endif
+                            @endif --}}
                             {{-- <a class="btn btn-sm btn-danger exportpdf-modal-btn"><i class='bx bx-archive-out'></i> Export PDF</a> --}}
                         </div>
                     </div>
