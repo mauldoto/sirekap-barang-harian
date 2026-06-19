@@ -25,4 +25,14 @@ class Stok extends Model
     {
         return $this->hasMany(LogStok::class, 'id_stok', 'id');
     }
+
+    public function retur()
+    {
+        return $this->hasOne(Stok::class, 'id_parent', 'id')->where('type', 'retur');
+    }
+
+    public function getHasReturAttribute()
+    {
+        return $this->retur()->exists();
+    }
 }

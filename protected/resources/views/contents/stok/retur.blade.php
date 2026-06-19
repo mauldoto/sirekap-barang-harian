@@ -26,7 +26,7 @@
                         </div>
                     </div>
 
-                    <form action="{{ route('aktivitas.inputstokout.post', $StokOut->no_referensi) }}" method="post">
+                    <form action="{{ route('stok.retur.store', $StokOut->no_referensi) }}" method="post">
                         @csrf
                         <div class="mb-2 col-lg-5">
                             <label class="form-label">No Referensi</label>

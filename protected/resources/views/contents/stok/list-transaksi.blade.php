@@ -79,10 +79,14 @@
                                 <tr>
                                     <td>{{ $i->tanggal }}</td>
                                     <td>
-                                        <a href="{{ route('stok.invoice', $i->no_referensi) }}"
-                                            class="text-primary fw-bold">
+                                        @if (in_array($i->type, ['masuk', 'keluar', 'retur']))
+                                            <a href="{{ route('stok.invoice', $i->no_referensi) }}"
+                                                class="text-primary fw-bold">
+                                                {{ $i->no_referensi }}
+                                            </a>
+                                        @else
                                             {{ $i->no_referensi }}
-                                        </a>
+                                        @endif
                                     </td>
                                     <td class="text-white"><span
                                             class="rounded p-1 {{ $i->type == 'masuk' ? 'bg-success' : ($i->type == 'koreksi' ? 'bg-info' : ($i->type == 'retur' ? 'bg-secondary' : 'bg-danger')) }}">{{ $i->type }}</span>
@@ -102,7 +106,8 @@
                                                 data-bs-toggle="dropdown" aria-expanded="false">Aksi <i
                                                     class="mdi mdi-chevron-down"></i></button>
                                             <div class="dropdown-menu" style="">
-                                                <a class="dropdown-item detail-btn d-flex align-items-center" href="#"
+                                                <a class="dropdown-item detail-btn d-flex align-items-center"
+                                                    href="{{ route('stok.transaksi.detail', $i->no_referensi) }}"
                                                     data-url="" data-id="{{ $i->id }}"><i
                                                         class='bx bx-search-alt-2 me-1'></i>
                                                     Detail</a>
@@ -120,15 +125,14 @@
                                                     @if (
                                                         $i->type == 'keluar' &&
                                                             (auth()->user()->username == 'superadmin' ||
-                                                                (auth()->user()->username != 'ktu' && !in_array($i->status, ['stock_verification', 'stock_verified']))))
+                                                                !in_array($i->status, ['stock_out_verification', 'stock_out_verified'])))
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item d-flex align-items-center"
-                                                            href="{{ route('aktivitas.inputstokout.view', $i->no_referensi) }}"
-                                                            data-url=""><i class='bx bx-archive-out me-1'></i>Input
-                                                            Retur</a>
+                                                            href="{{ $i->has_retur ? route('stok.retur.edit', $i->retur->no_referensi) : route('stok.retur.view', $i->no_referensi) }}"
+                                                            data-url=""><i class='bx bx-rotate-left me-1'></i>
+                                                            {{ $i->has_retur ? 'Edit Retur' : 'Input Retur' }}</a>
                                                     @endif
                                                 @endif
-
                                             </div>
                                         </div>
                                     </td>

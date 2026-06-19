@@ -83,15 +83,18 @@ Route::prefix('karyawan')->middleware(['web', 'auth', 'permission:admin,superadm
 Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::get('/', [StokController::class, 'index'])->name('stok.index')->middleware('permission:admin,verifikator,superadmin');
     Route::get('/daftar-transaksi', [StokController::class, 'listTransaction'])->name('stok.transaksi');
+    Route::get('/transaksi/{noref}/detail', [StokController::class, 'detailTransaksi'])->name('stok.transaksi.detail');
     Route::get('/log', [StokController::class, 'log'])->name('stok.log');
     Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view')->middleware('permission:admin,verifikator,superadmin');
     Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store')->middleware('permission:admin,verifikator,superadmin');
-    Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view')->middleware('permission:superadmin');
-    Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store')->middleware('permission:superadmin');
-    Route::get('/stok-koreksi', [StokController::class, 'viewStokKoreksi'])->name('stok.koreksi.view')->middleware('permission:admin,verifikator,superadmin');
-    Route::post('/stok-koreksi', [StokController::class, 'storeStokKoreksi'])->name('stok.koreksi.store')->middleware('permission:admin,verifikator,superadmin');
-    Route::get('/{noref}/retur', [StokController::class, 'viewRetur'])->name('stok.retur.view')->middleware('permission:superadmin');
-    Route::post('/{noref}/retur', [StokController::class, 'storeRetur'])->name('stok.retur.store')->middleware('permission:superadmin');
+    Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view')->middleware('permission:superadmin,verifikator');
+    Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store')->middleware('permission:superadmin,verifikator');
+    Route::get('/stok-koreksi', [StokController::class, 'viewStokKoreksi'])->name('stok.koreksi.view')->middleware('permission:verifikator,superadmin');
+    Route::post('/stok-koreksi', [StokController::class, 'storeStokKoreksi'])->name('stok.koreksi.store')->middleware('permission:verifikator,superadmin');
+    Route::get('/{noref}/retur', [StokController::class, 'viewRetur'])->name('stok.retur.view')->middleware('permission:superadmin,verifikator');
+    Route::post('/{noref}/retur', [StokController::class, 'storeRetur'])->name('stok.retur.store')->middleware('permission:superadmin,verifikator');
+    Route::get('/{noref}/edit-retur', [StokController::class, 'editRetur'])->name('stok.retur.edit')->middleware('permission:superadmin,verifikator');
+    Route::post('/{noref}/edit-retur', [StokController::class, 'updateRetur'])->name('stok.retur.update')->middleware('permission:superadmin,verifikator');
 
     Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf')->middleware('permission:admin,verifikator,superadmin');
     Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi')->middleware('permission:admin,verifikator,superadmin');
