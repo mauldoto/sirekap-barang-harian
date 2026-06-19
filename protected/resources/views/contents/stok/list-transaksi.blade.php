@@ -46,6 +46,8 @@
                                     <option value=""> -- filter jenis -- </option>
                                     <option value="masuk" {{ $type == 'masuk' ? 'selected' : '' }}> Masuk </option>
                                     <option value="keluar" {{ $type == 'keluar' ? 'selected' : '' }}> Keluar </option>
+                                    <option value="koreksi" {{ $type == 'koreksi' ? 'selected' : '' }}> Koreksi </option>
+                                    <option value="retur" {{ $type == 'retur' ? 'selected' : '' }}> Retur </option>
                                 </select>
                             </div>
                             <div class="mb-2 col-lg-2 d-flex align-items-end">
@@ -83,7 +85,7 @@
                                         </a>
                                     </td>
                                     <td class="text-white"><span
-                                            class="rounded p-1 {{ $i->type == 'masuk' ? 'bg-success' : 'bg-danger' }}">{{ $i->type }}</span>
+                                            class="rounded p-1 {{ $i->type == 'masuk' ? 'bg-success' : ($i->type == 'koreksi' ? 'bg-info' : ($i->type == 'retur' ? 'bg-secondary' : 'bg-danger')) }}">{{ $i->type }}</span>
                                     </td>
                                     <td>
                                         @if ($i->aktivitas)
@@ -115,8 +117,10 @@
                                                         href="{{ route('aktivitas.edit', $i->no_referensi) }}"
                                                         data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a> --}}
 
-                                                    @if (auth()->user()->username == 'superadmin' ||
-                                                            (auth()->user()->username != 'ktu' && !in_array($i->status, ['stock_verification', 'stock_verified'])))
+                                                    @if (
+                                                        $i->type == 'keluar' &&
+                                                            (auth()->user()->username == 'superadmin' ||
+                                                                (auth()->user()->username != 'ktu' && !in_array($i->status, ['stock_verification', 'stock_verified']))))
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item d-flex align-items-center"
                                                             href="{{ route('aktivitas.inputstokout.view', $i->no_referensi) }}"

@@ -98,6 +98,32 @@ if (!function_exists('generateReference')) {
                 return $code;
                 break;
 
+            case 'KS':
+                $kode = App\Models\Stok::where('type', 'koreksi')->pluck('no_referensi')->toArray();
+
+                do {
+                    $code = $prefix . '-' . date('y');
+                    for ($i = 0; $i < $length; $i++) {
+                        $code .= $characters[rand(0, strlen($characters) - 1)];
+                    }
+                } while (in_array($code, $kode));
+
+                return $code;
+                break;
+
+            case 'RTR':
+                $kode = App\Models\Stok::where('type', 'retur')->pluck('no_referensi')->toArray();
+
+                do {
+                    $code = $prefix . '-' . date('y');
+                    for ($i = 0; $i < $length; $i++) {
+                        $code .= $characters[rand(0, strlen($characters) - 1)];
+                    }
+                } while (in_array($code, $kode));
+
+                return $code;
+                break;
+
             case 'JOB':
                 $kode = App\Models\Aktivitas::pluck('no_referensi')->toArray();
 

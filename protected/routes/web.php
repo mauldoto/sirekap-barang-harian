@@ -88,6 +88,8 @@ Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store')->middleware('permission:admin,verifikator,superadmin');
     Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view')->middleware('permission:superadmin');
     Route::post('/stok-keluar', [StokController::class, 'storeStokKeluar'])->name('stok.keluar.store')->middleware('permission:superadmin');
+    Route::get('/stok-koreksi', [StokController::class, 'viewStokKoreksi'])->name('stok.koreksi.view')->middleware('permission:admin,verifikator,superadmin');
+    Route::post('/stok-koreksi', [StokController::class, 'storeStokKoreksi'])->name('stok.koreksi.store')->middleware('permission:admin,verifikator,superadmin');
     Route::get('/{noref}/retur', [StokController::class, 'viewRetur'])->name('stok.retur.view')->middleware('permission:superadmin');
     Route::post('/{noref}/retur', [StokController::class, 'storeRetur'])->name('stok.retur.store')->middleware('permission:superadmin');
 

@@ -655,4 +655,101 @@ class StokController extends Controller
         DB::commit();
         return back()->with(['success' => 'Input retur stok berhasil.']);
     }
+
+    // -------------------------------------------------------
+    // Koreksi Stok
+    // -------------------------------------------------------
+    public function viewStokKoreksi()
+    {
+        $gudang = Gudang::all();
+        $barang = Barang::all();
+        return view('contents.stok.stokkoreksi', compact('barang', 'gudang'));
+    }
+
+    public function storeStokKoreksi(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'noref'            => 'required|string',
+            'tanggal'          => 'required|date',
+            'keterangan'       => 'nullable|string',
+            'barang'           => 'required|array',
+            'barang.*.item'    => 'required',
+            'barang.*.qty'     => 'required|numeric|min:1',
+            'barang.*.gudang'  => 'required',
+            'barang.*.aksi'    => 'required|in:tambah,kurangi',
+            'barang.*.bekas'   => 'nullable',
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        DB::beginTransaction();
+
+        // Validate that 'kurangi' items won't result in negative stock
+        $idsBarang = array_column($request->barang, 'item');
+        $stokLogs  = LogStok::whereIn('id_barang', $idsBarang)
+            ->select('id_barang', 'id_gudang', 'is_new', DB::raw('SUM(qty) as sumqty'))
+            ->groupBy('id_barang', 'is_new', 'id_gudang')
+            ->get()
+            ->toArray();
+
+        foreach ($request->barang as $barang) {
+            if ($barang['aksi'] === 'kurangi') {
+                $isNew = !array_key_exists('bekas', $barang);
+
+                $checkStok = array_filter($stokLogs, function ($value) use ($barang, $isNew) {
+                    return $value['id_gudang'] == $barang['gudang']
+                        && $value['id_barang']  == $barang['item']
+                        && $value['is_new']     == $isNew
+                        && $value['sumqty']     >= $barang['qty'];
+                });
+
+                if (!$checkStok) {
+                    DB::rollBack();
+                    return back()->withErrors([
+                        'Koreksi gagal: salah satu barang akan menghasilkan stok minus.'
+                    ])->withInput();
+                }
+            }
+        }
+
+        $newKoreksi               = new Stok();
+        $newKoreksi->no_referensi = $request->noref;
+        $newKoreksi->tanggal      = $request->tanggal;
+        $newKoreksi->type         = 'koreksi';
+        $newKoreksi->input_by     = $request->user()->id;
+        $newKoreksi->deskripsi    = $request->keterangan;
+
+        if (!$newKoreksi->save()) {
+            DB::rollBack();
+            return back()->withErrors(['Input koreksi stok gagal.'])->withInput();
+        }
+
+        foreach ($request->barang as $barang) {
+            $qty = (int) $barang['qty'];
+            // 'tambah' = positive, 'kurangi' = negative
+            if ($barang['aksi'] === 'kurangi') {
+                $qty = -$qty;
+            }
+
+            $newLogStok           = new LogStok();
+            $newLogStok->id_stok  = $newKoreksi->id;
+            $newLogStok->id_barang = $barang['item'];
+            $newLogStok->qty      = $qty;
+            $newLogStok->id_gudang = $barang['gudang'];
+            $newLogStok->is_new   = array_key_exists('bekas', $barang) ? false : true;
+            $newLogStok->harga    = isset($barang['price']) ? str_replace('.', '', $barang['price']) : 0;
+
+            if (!$newLogStok->save()) {
+                DB::rollBack();
+                return back()->withErrors(['Error input log koreksi stok.'])->withInput();
+            }
+        }
+
+        DB::commit();
+        return back()->with(['success' => 'Input koreksi stok berhasil.']);
+    }
 }

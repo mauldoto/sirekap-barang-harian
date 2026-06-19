@@ -26,6 +26,8 @@
                                         class='bx bx-archive-in'></i> Stok Masuk</a>
                                 <a href="{{ route('stok.keluar.view') }}" class="btn btn-sm btn-warning"><i
                                         class='bx bx-archive-out'></i> Stok Keluar</a>
+                                <a href="{{ route('stok.koreksi.view') }}" class="btn btn-sm btn-secondary"><i
+                                        class='bx bx-edit-alt'></i> Koreksi Stok</a>
                             @endif
                             <a href="{{ route('stok.transaksi') }}" class="btn btn-sm btn-info"><i class='bx bx-menu'></i>
                                 Daftar Transaksi</a>
