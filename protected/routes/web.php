@@ -81,10 +81,10 @@ Route::prefix('karyawan')->middleware(['web', 'auth', 'permission:admin,superadm
 });
 
 Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
-    Route::get('/', [StokController::class, 'index'])->name('stok.index')->middleware('permission:admin,verifikator,superadmin');
-    Route::get('/daftar-transaksi', [StokController::class, 'listTransaction'])->name('stok.transaksi');
-    Route::get('/transaksi/{noref}/detail', [StokController::class, 'detailTransaksi'])->name('stok.transaksi.detail');
-    Route::get('/log', [StokController::class, 'log'])->name('stok.log');
+    Route::get('/', [StokController::class, 'index'])->name('stok.index')->middleware('permission:jpn,admin,verifikator,superadmin');
+    Route::get('/daftar-transaksi', [StokController::class, 'listTransaction'])->name('stok.transaksi')->middleware('permission:jpn,admin,verifikator,superadmin');
+    Route::get('/transaksi/{noref}/detail', [StokController::class, 'detailTransaksi'])->name('stok.transaksi.detail')->middleware('permission:jpn,admin,verifikator,superadmin');
+    Route::get('/log', [StokController::class, 'log'])->name('stok.log')->middleware('permission:jpn,admin,verifikator,superadmin');;
     Route::get('/stok-masuk', [StokController::class, 'viewStokMasuk'])->name('stok.masuk.view')->middleware('permission:admin,verifikator,superadmin');
     Route::post('/stok-masuk', [StokController::class, 'storeStokMasuk'])->name('stok.masuk.store')->middleware('permission:admin,verifikator,superadmin');
     Route::get('/stok-keluar', [StokController::class, 'viewStokKeluar'])->name('stok.keluar.view')->middleware('permission:superadmin,verifikator');
