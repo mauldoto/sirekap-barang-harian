@@ -81,10 +81,10 @@
                                             <span class="p-1 text-white rounded bg-warning">Progress</span>
                                         @elseif ($i->status === 'done')
                                             <span class="p-1 text-white rounded bg-success">Done</span>
-                                        @elseif ($i->status === 'stock_verification')
-                                            <span class="p-1 text-white rounded bg-warning">Stock Verification</span>
-                                        @elseif ($i->status === 'stock_verified')
-                                            <span class="p-1 text-white rounded bg-primary">Stock Verified</span>
+                                        @elseif ($i->status === 'stock_out_verification')
+                                            <span class="p-1 text-white rounded bg-warning">Stock Out Verification</span>
+                                        @elseif ($i->status === 'stock_out_verified')
+                                            <span class="p-1 text-white rounded bg-primary">Stock Out Verified</span>
                                         @else
                                             <span class="p-1 text-white rounded bg-danger">Cancel</span>
                                         @endif
@@ -105,6 +105,13 @@
                                                     href="{{ route('aktivitas.print.tiket', $i->no_referensi) }}"
                                                     target="_blank" data-url=""><i class='bx bxs-discount me-1'></i>
                                                     Print Tiket</a>
+                                                @if ($i->stok)
+                                                    <div class="dropdown-divider"></div>
+                                                    <a class="dropdown-item d-flex align-items-center"
+                                                        href="{{ route('aktivitas.print.pengajuan', $i->no_referensi) }}"
+                                                        target="_blank" data-url=""><i class='bx bx-printer me-1'></i>
+                                                        Print Lembar Stok</a>
+                                                @endif
                                                 @if (auth()->user()->username == 'superadmin' || !in_array($i->status, ['done', 'cancel']))
                                                     <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center update-status-btn"
@@ -119,16 +126,16 @@
                                                         href="{{ route('aktivitas.edit', $i->no_referensi) }}"
                                                         data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a>
 
-                                                    @if (auth()->user()->username == 'superadmin' ||
-                                                            (auth()->user()->username != 'ktu' && !in_array($i->status, ['stock_verification', 'stock_verified'])))
+                                                    @if (auth()->user()->role == 'superadmin' ||
+                                                            (auth()->user()->role != 'verifikator' && !in_array($i->status, ['progress', 'done', 'cancel'])))
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item d-flex align-items-center"
                                                             href="{{ route('aktivitas.inputstokout.view', $i->no_referensi) }}"
-                                                            data-url=""><i class='bx bx-archive-out me-1'></i>Ajukan Stok
-                                                            Keluar</a>
+                                                            data-url=""><i class='bx bx-archive-out me-1'></i>
+                                                            Pengajuan Stok Keluar</a>
                                                     @endif
 
-                                                    @if (auth()->user()->username == 'superadmin' || auth()->user()->username == 'ktu')
+                                                    @if (in_array(auth()->user()->role, ['superadmin', 'verifikator']) && in_array($i->status, ['stock_out_verification']))
                                                         <div class="dropdown-divider"></div>
                                                         <a class="dropdown-item d-flex align-items-center"
                                                             href="{{ route('aktivitas.reviewstokout.view', $i->no_referensi) }}"

@@ -54,121 +54,121 @@
                         <hr class="border-primary border-2">
 
                         <div class="mb-2">
-                            <label class="form-label">Input Jumlah Barang Berdasarkan Pengajuan Stok Keluar</label>
+                            @if ($aktivitas->tempCart && count($aktivitas->tempCart) > 0)
+                                <label class="form-label">Daftar Jumlah Barang Pengajuan Stok Keluar</label>
 
-                            <table class="table table-hover">
-                                <thead>
-                                    <tr>
-                                        <th>Nama Barang</th>
-                                        <th>Kondisi</th>
-                                        <th style="width:15%">Jumlah Stok Dibawa</th>
-                                        <th>Gudang</th>
-                                        <!-- <th></th> -->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach ($pengajuanStok as $key => $item)
-                                        <tr class="row-{{ $item->id_barang }}-{{ $item->is_new }}">
-                                            <input type="hidden" name="input[{{ $key }}][barang]"
-                                                value="{{ $item->id_barang }}">
-                                            <input type="hidden" name="input[{{ $key }}][kondisi]"
-                                                value="{{ $item->is_new }}">
-                                            <input type="hidden" name="input[{{ $key }}][qty]"
-                                                value="{{ $item->sumqty }}">
-                                            <input type="hidden" name="input[{{ $key }}][qty_used]"
-                                                value="{{ $item->sumqty_used }}">
-                                            <input type="hidden" name="input[{{ $key }}][gudang]"
-                                                value="{{ $item->id_gudang }}">
-
-                                            <td>{{ $item->barang->nama }}</td>
-                                            <td>{{ $item->is_new ? 'Baru' : 'Bekas' }}</td>
-                                            <td>
-                                                <input type="number" class="col-2 form-control qty-terpakai"
-                                                    name="input[{{ $key }}][qty_new]" min="0"
-                                                    id="" value="{{ $item->sumqty }}">
-                                            </td>
-                                            <td>{{ $item->gudang->nama }}</td>
-                                            <td>
-                                                <button type="button" class="btn btn-sm btn-danger dlt-data"
-                                                    data-key="{{ $item->id_barang }}-{{ $item->is_new }}">Remove</button>
-                                            </td>
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Nama Barang</th>
+                                            <th>Kondisi</th>
+                                            <th style="width:15%">Jumlah Stok Dibawa</th>
+                                            <th>Gudang</th>
+                                            <!-- <th></th> -->
                                         </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        @foreach ($pengajuanStok as $key => $item)
+                                            <tr class="row-{{ $item->id_barang }}-{{ $item->is_new }}">
+                                                <input type="hidden" name="input[{{ $key }}][barang]"
+                                                    value="{{ $item->id_barang }}">
+                                                <input type="hidden" name="input[{{ $key }}][kondisi]"
+                                                    value="{{ $item->is_new }}">
+                                                <input type="hidden" name="input[{{ $key }}][qty]"
+                                                    value="{{ $item->sumqty }}">
+                                                <input type="hidden" name="input[{{ $key }}][qty_used]"
+                                                    value="{{ $item->sumqty_used }}">
+                                                <input type="hidden" name="input[{{ $key }}][gudang]"
+                                                    value="{{ $item->id_gudang }}">
 
-                            <hr>
+                                                <td>{{ $item->barang->nama }}</td>
+                                                <td>{{ $item->is_new ? 'Baru' : 'Bekas' }}</td>
+                                                <td>
+                                                    <input type="number" class="col-2 form-control qty-terpakai"
+                                                        name="input[{{ $key }}][qty_new]" min="0"
+                                                        id="" value="{{ $item->sumqty }}">
+                                                </td>
+                                                <td>{{ $item->gudang->nama }}</td>
+                                                <td>
+                                                    <button type="button" class="btn btn-sm btn-danger dlt-data"
+                                                        data-key="{{ $item->id_barang }}-{{ $item->is_new }}">Remove</button>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
 
-                            <label class="form-label">Input Barang Tambahan <small class="text-warning"> (Barang yang tidak
-                                    ada di pengajuan)</small></label>
-
-                            <!-- Repeater Html Start -->
-                            <div id="repeater">
-                                <!-- Repeater Heading -->
-                                <div class="repeater-heading mb-2">
-                                    <button type="button" class="btn btn-primary pull-right repeater-add-btn">
-                                        Add
-                                    </button>
-                                </div>
-                                <div class="clearfix"></div>
-                                <!-- Repeater Items -->
-                                <div class="items" data-group="barang">
-                                    <!-- Repeater Content -->
-                                    <div class="item-content">
-                                        <div class="row">
-                                            <div class="col-lg-3">
-                                                {{-- <input type="text" class="form-control" id="inputName"
+                            @if ($aktivitas->status != 'stock_out_verification')
+                                <!-- Repeater Html Start -->
+                                <div id="repeater">
+                                    <!-- Repeater Heading -->
+                                    <div class="repeater-heading mb-2">
+                                        <button type="button" class="btn btn-primary pull-right repeater-add-btn">
+                                            Add
+                                        </button>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <!-- Repeater Items -->
+                                    <div class="items" data-group="barang">
+                                        <!-- Repeater Content -->
+                                        <div class="item-content">
+                                            <div class="row">
+                                                <div class="col-lg-3">
+                                                    {{-- <input type="text" class="form-control" id="inputName"
                                                     placeholder="Name" data-name="name"> --}}
-                                                <select class="form-control gudang-select2" id="inputWs"
-                                                    data-name="gudang">
-                                                    <option value=""></option>
-                                                    @foreach ($gudang as $ws)
-                                                        <option value="{{ $ws->id }}">{{ $ws->nama }}
-                                                            ({{ $ws->kode }})
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                {{-- <input type="text" class="form-control" id="inputName"
+                                                    <select class="form-control gudang-select2" id="inputWs"
+                                                        data-name="gudang">
+                                                        <option value=""></option>
+                                                        @foreach ($gudang as $ws)
+                                                            <option value="{{ $ws->id }}">{{ $ws->nama }}
+                                                                ({{ $ws->kode }})
+                                                            </option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-4">
+                                                    {{-- <input type="text" class="form-control" id="inputName"
                                                     placeholder="Name" data-name="name"> --}}
-                                                <select class="form-control select2 barang-select2" id="inputItem"
-                                                    data-name="item" disabled>
-                                                    <option value=""></option>
-                                                </select>
-                                            </div>
-                                            <div class="col-lg-1 pt-2">
-                                                <input class="form-check-input" type="checkbox" data-name="bekas"
-                                                    id="inputCondition" value="bekas">
-                                                <label class="form-check-label" for="inputCondition">
-                                                    Bekas
-                                                </label>
-                                            </div>
-                                            <div class="col-lg-2">
-                                                <input type="text" class="form-control" id="inputQty" placeholder="Qty"
-                                                    data-name="qty">
-                                            </div>
-                                            <div class="col-lg-1 repeater-remove-btn">
-                                                <button class="btn btn-danger remove-btn">
-                                                    Remove
-                                                </button>
+                                                    <select class="form-control select2 barang-select2" id="inputItem"
+                                                        data-name="item" disabled>
+                                                        <option value=""></option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-lg-1 pt-2">
+                                                    <input class="form-check-input" type="checkbox" data-name="bekas"
+                                                        id="inputCondition" value="bekas">
+                                                    <label class="form-check-label" for="inputCondition">
+                                                        Bekas
+                                                    </label>
+                                                </div>
+                                                <div class="col-lg-2">
+                                                    <input type="text" class="form-control" id="inputQty"
+                                                        placeholder="Qty" data-name="qty">
+                                                </div>
+                                                <div class="col-lg-1 repeater-remove-btn">
+                                                    <button class="btn btn-danger remove-btn">
+                                                        Remove
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    {{-- <!-- Repeater Remove Btn -->
+                                        {{-- <!-- Repeater Remove Btn -->
                                     <div class="pull-right repeater-remove-btn">
                                         <button class="btn btn-danger remove-btn">
                                             Remove
                                         </button>
                                     </div> --}}
-                                    <div class="clearfix"></div>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <!-- Repeater End -->
                                 </div>
-                                <!-- Repeater End -->
-                            </div>
 
-                            <div class="btn-submit mt-5 d-flex justify-content-end">
-                                <button class="btn btn-md btn-primary">Simpan dan Ajukan Pengeluaran Barang</button>
-                            </div>
+
+                                <div class="btn-submit mt-5 d-flex justify-content-end">
+                                    <button class="btn btn-md btn-primary">Simpan dan Ajukan Pengeluaran Barang</button>
+                                </div>
+                            @endif
                     </form>
                 </div>
             </div>

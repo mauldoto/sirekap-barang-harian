@@ -312,14 +312,14 @@ class AktivitasController extends Controller
         }
 
         if ($request->status == 'done') {
-            if ($activity->status == 'stock_out_verification') {
+            if ($activity->status == 'stock_out_out_verification') {
                 return back()->withErrors(['Aktivitas dalam tahap verifikasi stok, tidak dapat update status menjadi DONE.']);
             }
 
             $activity->deskripsi = $deskripsi . ' #[DONE]: ' . $request->deskripsi;
         }
 
-        if (in_array($activity->status, ['stock_verified', 'stock_verification']) && in_array($request->status, ['waiting', 'progress'])) {
+        if (in_array($activity->status, ['stock_out_verified', 'stock_out_verification']) && in_array($request->status, ['waiting', 'progress'])) {
             return back()->withErrors(['Aktivitas sudah dalam tahap verifikasi stok, tidak dapat update status menjadi WAITING atau PROGRESS.']);
         }
 
@@ -368,9 +368,52 @@ class AktivitasController extends Controller
         return $pdf->stream($aktivitas->no_referensi . '.pdf');
     }
 
+    public function printPengajuan(Request $request, $tiket)
+    {
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with(['lokasi', 'sublokasi'])->first();
+        if (!$aktivitas) {
+            return back()->withErrors(['Tiket tidak tersedia']);
+        }
+
+        $stokOut = Stok::where('id_aktivitas', $aktivitas->id)->where('type', 'keluar')->first();
+        if (!$stokOut) {
+            return back()->withErrors(['Stok belum di-approve / belum tersedia.']);
+        }
+
+        $logStok = LogStok::with(['barang', 'gudang'])->where('id_stok', $stokOut->id)->get();
+
+        $barangItems = [];
+        foreach ($logStok as $log) {
+            $barangItems[] = [
+                'kode' => $log->barang->kode ?? '-',
+                'nama' => $log->barang->nama ?? '-',
+                'kondisi' => $log->is_new ? 'Baru' : 'Bekas',
+                'qty' => abs($log->qty),
+                'satuan' => $log->barang->satuan ?? '-',
+                'gudang' => $log->gudang->nama ?? '-',
+            ];
+        }
+
+        $barang = [
+            [
+                'no_referensi' => $aktivitas->no_referensi,
+                'lokasi' => [
+                    'nama' => $aktivitas->lokasi->nama ?? '-'
+                ],
+                'sublokasi' => [
+                    'nama' => $aktivitas->sublokasi->nama ?? '-'
+                ],
+                'barang' => $barangItems
+            ]
+        ];
+
+        $pdf = LaravelMpdf::loadview('exports.pdf.cetak-pengajuan', ['barang' => $barang]);
+        return $pdf->stream('Pengajuan-' . $aktivitas->no_referensi . '.pdf');
+    }
+
     public function inputPengajuanStock(Request $request, $tiket)
     {
-        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi')->first();
+        $aktivitas = Aktivitas::where('no_referensi', $tiket)->with('lokasi', 'sublokasi', 'tempCart')->first();
         if (!$aktivitas) {
             return back()->withErrors(['Tiket tidak tersedia']);
         }
@@ -411,8 +454,8 @@ class AktivitasController extends Controller
 
         DB::beginTransaction();
 
+        TempCart::where('id_aktivitas', $aktivitas->id)->delete();
         if ($request->input) {
-            TempCart::where('id_aktivitas', $aktivitas->id)->delete();
             foreach ($request->input as $key => $oldInput) {
                 $barangDetail = array_filter($barangLengkap->toArray(), function ($value) use ($oldInput) {
                     if ($value['id'] == $oldInput['barang']) {
@@ -484,7 +527,7 @@ class AktivitasController extends Controller
             }
         }
 
-        $aktivitas->status = 'stock_verification';
+        $aktivitas->status = 'stock_out_verification';
         if (!$aktivitas->save()) {
             DB::rollBack();
             return back()->withErrors(['Error update status aktivitas.'])->withInput();
@@ -761,7 +804,7 @@ class AktivitasController extends Controller
             }
         }
 
-        $aktivitas->status = 'stock_verification';
+        $aktivitas->status = 'stock_out_verification';
         if (!$aktivitas->save()) {
             DB::rollBack();
             return back()->withErrors(['Error update status aktivitas.'])->withInput();
@@ -812,7 +855,7 @@ class AktivitasController extends Controller
             $newStokOut = new Stok();
             $newStokOut->no_referensi = $request->noref;
             $newStokOut->id_aktivitas = $aktivitas->id;
-            $newStokOut->tanggal = $aktivitas->tanggal_pulang;
+            $newStokOut->tanggal = now();
             $newStokOut->type = 'keluar';
             $newStokOut->input_by = $request->user()->id;
         }

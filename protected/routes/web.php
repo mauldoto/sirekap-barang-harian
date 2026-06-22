@@ -123,6 +123,7 @@ Route::prefix('aktivitas')->middleware(['web', 'auth'])->group(function () {
 
     Route::get('/export-pdf', [AktivitasController::class, 'exportPdf'])->name('aktivitas.export.pdf')->middleware('permission:admin,superadmin');
     Route::get('/print-tiket/{tiket}', [AktivitasController::class, 'printTiket'])->name('aktivitas.print.tiket')->middleware('permission:admin,superadmin');
+    Route::get('/print-pengajuan/{tiket}', [AktivitasController::class, 'printPengajuan'])->name('aktivitas.print.pengajuan')->middleware('permission:admin,superadmin,verifikator');
     Route::get('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'editStockOut'])->name('aktivitas.editstokout.view')->middleware('permission:superadmin');
     Route::post('/{tiket}/edit-stok-keluar', [AktivitasController::class, 'postEditStockOut'])->name('aktivitas.editstokout.post')->middleware('permission:superadmin');
     Route::get('/{tiket}/input-stok-keluar', [AktivitasController::class, 'inputPengajuanStock'])->name('aktivitas.inputstokout.view')->middleware('permission:admin,superadmin');
