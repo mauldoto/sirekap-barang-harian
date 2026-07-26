@@ -111,26 +111,33 @@
                                                     data-url="" data-id="{{ $i->id }}"><i
                                                         class='bx bx-search-alt-2 me-1'></i>
                                                     Detail</a>
-                                                <div class="dropdown-divider"></div>
+                                                {{-- <div class="dropdown-divider"></div>
                                                 <a class="dropdown-item d-flex align-items-center"
                                                     href="{{ route('aktivitas.print.tiket', $i->no_referensi) }}"
                                                     target="_blank" data-url=""><i class='bx bxs-discount me-1'></i>
-                                                    Print Nota</a>
+                                                    Print Nota</a> --}}
                                                 @if (auth()->user()->username == 'superadmin' || !in_array($i->status, ['done', 'cancel']))
                                                     {{-- <div class="dropdown-divider"></div>
                                                     <a class="dropdown-item d-flex align-items-center"
                                                         href="{{ route('aktivitas.edit', $i->no_referensi) }}"
                                                         data-url=""><i class='bx bxs-edit me-1'></i> Edit Tiket</a> --}}
 
-                                                    @if (
-                                                        $i->type == 'keluar' &&
+                                                    @if (in_array($i->type, ['keluar', 'retur']) &&
                                                             (auth()->user()->username == 'superadmin' ||
                                                                 !in_array($i->status, ['stock_out_verification', 'stock_out_verified'])))
                                                         <div class="dropdown-divider"></div>
-                                                        <a class="dropdown-item d-flex align-items-center"
-                                                            href="{{ $i->has_retur ? route('stok.retur.edit', $i->retur->no_referensi) : route('stok.retur.view', $i->no_referensi) }}"
-                                                            data-url=""><i class='bx bx-rotate-left me-1'></i>
-                                                            {{ $i->has_retur ? 'Edit Retur' : 'Input Retur' }}</a>
+                                                        @if ($i->type == 'keluar')
+                                                            <a class="dropdown-item d-flex align-items-center"
+                                                                href="{{ $i->has_retur ? route('stok.retur.edit', $i->retur->no_referensi) : route('stok.retur.view', $i->no_referensi) }}"
+                                                                data-url=""><i class='bx bx-rotate-left me-1'></i>
+                                                                {{ $i->has_retur ? 'Edit Retur' : 'Input Retur' }}</a>
+                                                        @endif
+                                                        @if ($i->type == 'retur')
+                                                            <a class="dropdown-item d-flex align-items-center"
+                                                                href="{{ route('stok.retur.edit', $i->no_referensi) }}"
+                                                                data-url=""><i class='bx bxs-edit me-1'></i>
+                                                                Edit Retur</a>
+                                                        @endif
                                                     @endif
                                                 @endif
                                             </div>

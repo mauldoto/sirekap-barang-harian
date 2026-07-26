@@ -117,7 +117,7 @@
                                                     <a class="dropdown-item d-flex align-items-center update-status-btn"
                                                         href="#"
                                                         data-url="{{ route('aktivitas.update.status', $i->no_referensi) }}"
-                                                        data-status="{{ $i->status }}"
+                                                        data-status="{{ $i->status }}" data-id="{{ $i->id }}"
                                                         data-stok="{{ $i->stok ? $i->stok->no_referensi : '' }}"><i
                                                             class='bx bx-task me-1'></i> Update Status</a>
 
@@ -258,17 +258,17 @@
         </div><!-- /.modal-dialog -->
     </div>
 
-    <div id="modalUpdateStatus" class="modal fade" tabindex="-1" aria-labelledby="modalUpdateStatusLabel"
-        style="display: none;" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="modalUpdateStatusLabel">Update Status Aktivitas</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form class="modal-form" id="formUpdateStatus" action="" method="post">
-                    @csrf
-                    @method('put')
+    <form class="modal-form" id="formUpdateStatus" action="" method="post">
+        @csrf
+        @method('put')
+        <div id="modalUpdateStatus" class="modal fade" tabindex="-1" aria-labelledby="modalUpdateStatusLabel"
+            style="display: none;" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="modalUpdateStatusLabel">Update Status Aktivitas</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
                     <div class="modal-body">
                         <div class="row">
                             {{-- <div class="mb-3 col-3">
@@ -301,6 +301,7 @@
                             </div>
 
                             <input type="hidden" name="stokStatus" id="stokStatus">
+                            <input type="hidden" name="aktivitasId" id="aktivitasId">
                         </div>
                         <div class="mb-2">
                             <label class="form-label">Deskripsi</label>
@@ -311,12 +312,43 @@
                         <button type="button" class="btn btn-secondary waves-effect"
                             data-bs-dismiss="modal">Tutup</button>
                         <button type="button"
-                            class="btn btn-primary waves-effect waves-light btn-submit-u">Simpan</button>
+                            class="btn btn-primary waves-effect waves-light btn-submit-u">Lanjut</button>
                     </div>
-                </form>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+
+        <div id="modalBarangTerpakai" class="modal fade" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Input Barang Terpakai</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Barang</th>
+                                    <th>Kondisi</th>
+                                    <th>Qty Out</th>
+                                    <th style="width: 120px;">Qty Terpakai</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyUsedItems">
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary waves-effect"
+                            data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-primary waves-effect waves-light btn-submit-final">Simpan
+                            Final</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
 
     <form class="hidden" id="hapusTiket" action="" method="POST">
         @csrf
@@ -387,6 +419,8 @@
                 })
             }
 
+            let currentBarang = [];
+
             document.querySelectorAll('input[type="radio"][name="status"]').forEach(element => {
                 element.addEventListener('change', function(e) {
                     if (e.target.checked && (e.target.value == 'cancel' || e.target.value ==
@@ -395,8 +429,42 @@
                     } else {
                         document.querySelector('.edit-deskripsi').disabled = true;
                     }
+
+                    if (e.target.checked && e.target.value == 'done') {
+                        renderUsedItemsForm();
+                    }
                 })
             });
+
+            function renderUsedItemsForm() {
+                let tbody = document.getElementById('tbodyUsedItems');
+                tbody.innerHTML = '';
+                if (currentBarang && currentBarang.length > 0) {
+                    currentBarang.forEach((item, index) => {
+                        let qty = item.qty < 1 ? item.qty * -1 : item.qty;
+                        let kondisi = item.is_new ? 'Baru' : 'Bekas';
+                        let html = `
+                            <tr>
+                                <td>${item.barang ? item.barang.nama : '-'}
+                                    <input type="hidden" name="barang_used[${index}][id_barang]" value="${item.id_barang}">
+                                    <input type="hidden" name="barang_used[${index}][is_new]" value="${item.is_new}">
+                                    <input type="hidden" name="barang_used[${index}][id_gudang]" value="${item.id_gudang}">
+                                    <input type="hidden" name="barang_used[${index}][qty]" value="${qty}">
+                                </td>
+                                <td>${kondisi}</td>
+                                <td>${qty}</td>
+                                <td>
+                                    <input type="number" name="barang_used[${index}][qty_used]" class="form-control form-control-sm" min="0" value="${qty}" required>
+                                </td>
+                            </tr>
+                        `;
+                        tbody.insertAdjacentHTML('beforeend', html);
+                    });
+                } else {
+                    tbody.innerHTML =
+                    '<tr><td colspan="4" class="text-center">Tidak ada data stok keluar</td></tr>';
+                }
+            }
 
             function getDetailStatus(status) {
                 console.log(status)
@@ -431,9 +499,28 @@
             })
 
             $('#datatable-aktivitas').on('click', '.update-status-btn', function() {
+                // Fetch the detail to get the barang checked out
+                let idAktivitas = $(this).data('id');
+                if (!idAktivitas) {
+                    // Try to find id if it's missing on this button
+                    // But we should make sure we add data-id to the button
+                }
+
+                $.get('aktivitas/' + idAktivitas + '/detail').done(function(response) {
+                    if (response.status) {
+                        currentBarang = response.data.barang;
+                        if (document.getElementById('done').checked) {
+                            renderUsedItemsForm();
+                        }
+                    }
+                });
+
                 getDetailStatus($(this).data('status'))
                 let checkStok = document.querySelector('input[name="stokStatus"]');
                 checkStok.value = $(this).data('stok')
+
+                let aktivitasIdInput = document.querySelector('input[name="aktivitasId"]');
+                if (aktivitasIdInput) aktivitasIdInput.value = idAktivitas;
 
                 const url = $(this).data("url");
                 const form = $("#formUpdateStatus").attr("action", url);
@@ -500,9 +587,12 @@
                 } else if (checkStatus == 'cancel' && checkStok) {
                     Swal.fire({
                         title: "Perhatian!",
-                        text: "No tiket memiliki data stok keluar, kontak Mas Udin / Bang Indra!",
+                        text: "No tiket memiliki data stok keluar, kontak Bang Indra!",
                         icon: "warning"
                     });
+                } else if (checkStatus == 'done' && checkStok) {
+                    $('#modalUpdateStatus').modal('hide');
+                    $('#modalBarangTerpakai').modal('show');
                 } else {
                     Swal.fire({
                         title: "Apakah anda yakin?",
@@ -522,6 +612,23 @@
 
                 return
             })
+
+            $('.btn-submit-final').on('click', function() {
+                Swal.fire({
+                    title: "Apakah anda yakin?",
+                    text: "Status aktivitas akan diupdate beserta data barang terpakai!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#3085d6",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Ya, Update!",
+                    cancelButtonText: "Batalkan",
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $('#formUpdateStatus')[0].submit();
+                    }
+                });
+            });
 
             $('.exportpdf-modal-btn').on('click', function() {
                 const myModal = new bootstrap.Modal('#modalExportPdf', {

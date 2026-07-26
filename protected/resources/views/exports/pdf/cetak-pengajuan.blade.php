@@ -4,8 +4,7 @@
 <head>
     <title>Rencana Pengeluaran Stok - JPN</title>
     {{-- @include('layouts.head-css') --}}
-    <link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet"
-        type="text/css" />
+    <link href="{{ URL::asset('assets/css/bootstrap.min.css') }}" id="bootstrap-style" rel="stylesheet" type="text/css" />
 
 </head>
 
@@ -87,7 +86,7 @@
                             <td style="text-align: center">{{ $item['nama'] }}</td>
                             <td style="text-align: center">{{ $item['kondisi'] }}</td>
                             <td style="text-align: center">{{ $item['qty'] }}</td>
-                            <td></td>
+                            <td style="text-align: center">{{ $item['qty_used'] }}</td>
                             <td style="text-align: center">{{ $item['satuan'] }}</td>
                             <td style="text-align: center">{{ $item['gudang'] }}</td>
                         </tr>

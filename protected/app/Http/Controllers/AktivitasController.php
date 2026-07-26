@@ -316,6 +316,29 @@ class AktivitasController extends Controller
                 return back()->withErrors(['Aktivitas dalam tahap verifikasi stok, tidak dapat update status menjadi DONE.']);
             }
 
+            if ($request->has('barang_used')) {
+                foreach ($request->barang_used as $b_used) {
+                    $updated = DB::table('temp_carts')
+                        ->where('id_aktivitas', $activity->id)
+                        ->where('id_barang', $b_used['id_barang'])
+                        ->where('is_new', $b_used['is_new'])
+                        ->where('id_gudang', $b_used['id_gudang'])
+                        ->update(['qty_used' => $b_used['qty_used']]);
+
+                    if ($updated == 0) {
+                        DB::table('temp_carts')->insert([
+                            'id_aktivitas' => $activity->id,
+                            'id_barang' => $b_used['id_barang'],
+                            'is_new' => $b_used['is_new'],
+                            'qty' => $b_used['qty'] ?? 0,
+                            'qty_used' => $b_used['qty_used'],
+                            'id_gudang' => $b_used['id_gudang'],
+                            'harga' => 0
+                        ]);
+                    }
+                }
+            }
+
             $activity->deskripsi = $deskripsi . ' #[DONE]: ' . $request->deskripsi;
         }
 
@@ -375,22 +398,21 @@ class AktivitasController extends Controller
             return back()->withErrors(['Tiket tidak tersedia']);
         }
 
-        $stokOut = Stok::where('id_aktivitas', $aktivitas->id)->where('type', 'keluar')->first();
-        if (!$stokOut) {
-            return back()->withErrors(['Stok belum di-approve / belum tersedia.']);
+        $tempCart = TempCart::with(['barang', 'gudang'])->where('id_aktivitas', $aktivitas->id)->get();
+        if ($tempCart->isEmpty()) {
+            return back()->withErrors(['Data pengajuan stok belum tersedia.']);
         }
 
-        $logStok = LogStok::with(['barang', 'gudang'])->where('id_stok', $stokOut->id)->get();
-
         $barangItems = [];
-        foreach ($logStok as $log) {
+        foreach ($tempCart as $cart) {
             $barangItems[] = [
-                'kode' => $log->barang->kode ?? '-',
-                'nama' => $log->barang->nama ?? '-',
-                'kondisi' => $log->is_new ? 'Baru' : 'Bekas',
-                'qty' => abs($log->qty),
-                'satuan' => $log->barang->satuan ?? '-',
-                'gudang' => $log->gudang->nama ?? '-',
+                'kode' => $cart->barang->kode ?? '-',
+                'nama' => $cart->barang->nama ?? '-',
+                'kondisi' => $cart->is_new ? 'Baru' : 'Bekas',
+                'qty' => abs($cart->qty),
+                'qty_used' => abs($cart->qty_used),
+                'satuan' => $cart->barang->satuan ?? '-',
+                'gudang' => $cart->gudang->nama ?? '-',
             ];
         }
 
@@ -857,7 +879,7 @@ class AktivitasController extends Controller
             $newStokOut->id_aktivitas = $aktivitas->id;
             $newStokOut->tanggal = now();
             $newStokOut->type = 'keluar';
-            $newStokOut->input_by = $request->user()->id;
+            $newStokOut->input_by = $aktivitas->input_by;
         }
 
         if (!$newStokOut->save()) {
