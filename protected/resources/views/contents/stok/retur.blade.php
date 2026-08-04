@@ -72,7 +72,7 @@
                                         <tr class="row-{{ $item->id_barang }}-{{ $item->is_new }}">
                                             <input type="hidden" name="input[{{ $key }}][barang]"
                                                 value="{{ $item->id_barang }}">
-                                            <input type="hidden" name="input[{{ $key }}][kondisi]"
+                                            <input type="hidden" name="input[{{ $key }}][bekas]"
                                                 value="{{ $item->is_new }}">
                                             <input type="hidden" name="input[{{ $key }}][qty]"
                                                 value="{{ $item->sumqty }}">
