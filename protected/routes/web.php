@@ -93,8 +93,7 @@ Route::prefix('stok')->middleware(['web', 'auth'])->group(function () {
     Route::post('/stok-koreksi', [StokController::class, 'storeStokKoreksi'])->name('stok.koreksi.store')->middleware('permission:verifikator,superadmin');
     Route::get('/{noref}/retur', [StokController::class, 'viewRetur'])->name('stok.retur.view')->middleware('permission:superadmin,verifikator');
     Route::post('/{noref}/retur', [StokController::class, 'storeRetur'])->name('stok.retur.store')->middleware('permission:superadmin,verifikator');
-    Route::get('/{noref}/edit-retur', [StokController::class, 'editRetur'])->name('stok.retur.edit')->middleware('permission:superadmin,verifikator');
-    Route::post('/{noref}/edit-retur', [StokController::class, 'updateRetur'])->name('stok.retur.update')->middleware('permission:superadmin,verifikator');
+    Route::delete('/{noref}/delete-retur', [StokController::class, 'deleteRetur'])->name('stok.retur.delete')->middleware('permission:superadmin,verifikator');
 
     Route::get('/export-pdf', [StokController::class, 'exportPdf'])->name('stok.export.pdf')->middleware('permission:admin,verifikator,superadmin');
     Route::get('/lokasi/{id}', [StokController::class, 'getSubLokasi'])->name('stok.sublokasi')->middleware('permission:admin,verifikator,superadmin');

@@ -127,16 +127,27 @@
                                                                 !in_array($i->status, ['stock_out_verification', 'stock_out_verified'])))
                                                         <div class="dropdown-divider"></div>
                                                         @if ($i->type == 'keluar')
-                                                            <a class="dropdown-item d-flex align-items-center"
-                                                                href="{{ $i->has_retur ? route('stok.retur.edit', $i->retur->no_referensi) : route('stok.retur.view', $i->no_referensi) }}"
-                                                                data-url=""><i class='bx bx-rotate-left me-1'></i>
-                                                                {{ $i->has_retur ? 'Edit Retur' : 'Input Retur' }}</a>
+                                                            @if ($i->has_retur)
+                                                                <form action="{{ route('stok.retur.delete', $i->retur->no_referensi) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi retur untuk stok keluar {{ $i->no_referensi }} ini?')">
+                                                                    @csrf
+                                                                    @method('DELETE')
+                                                                    <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                                                                        <i class='bx bx-trash me-1'></i> Hapus Retur
+                                                                    </button>
+                                                                </form>
+                                                            @else
+                                                                <a class="dropdown-item d-flex align-items-center"
+                                                                    href="{{ route('stok.retur.view', $i->no_referensi) }}"><i class='bx bx-rotate-left me-1'></i> Input Retur</a>
+                                                            @endif
                                                         @endif
                                                         @if ($i->type == 'retur')
-                                                            <a class="dropdown-item d-flex align-items-center"
-                                                                href="{{ route('stok.retur.edit', $i->no_referensi) }}"
-                                                                data-url=""><i class='bx bxs-edit me-1'></i>
-                                                                Edit Retur</a>
+                                                            <form action="{{ route('stok.retur.delete', $i->no_referensi) }}" method="post" onsubmit="return confirm('Apakah Anda yakin ingin menghapus transaksi retur {{ $i->no_referensi }} ini?')">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button type="submit" class="dropdown-item text-danger d-flex align-items-center">
+                                                                    <i class='bx bx-trash me-1'></i> Hapus Retur
+                                                                </button>
+                                                            </form>
                                                         @endif
                                                     @endif
                                                 @endif

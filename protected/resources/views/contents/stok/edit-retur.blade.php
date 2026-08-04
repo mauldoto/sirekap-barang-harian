@@ -40,7 +40,7 @@
                     @endif
 
                     <div class="alert alert-info">
-                        <strong>Perhatian:</strong> Anda sedang mengubah transaksi retur yang sudah dimasukkan. Pastikan jumlah barang retur tidak melebihi stok yang dikeluarkan pada transaksi <span class="fw-bold">{{ $StokOut->no_referensi }}</span>.
+                        <strong>Petunjuk:</strong> Ubah jumlah barang retur sesuai kebutuhan. Untuk <strong>menghapus retur suatu barang</strong>, ubah nilainya menjadi 0 atau tekan tombol <strong>"Batal Retur Item"</strong>.
                     </div>
 
                     <form action="{{ route('stok.retur.update', $Retur->no_referensi) }}" method="post">
@@ -64,14 +64,15 @@
                         <div class="mb-2">
                             <label class="form-label">Update Jumlah Barang Retur</label>
 
-                            <table class="table table-hover">
+                            <table class="table table-hover align-middle">
                                 <thead class="table-light">
                                     <tr>
                                         <th>Nama Barang</th>
                                         <th>Kondisi</th>
                                         <th>Total Stok Dibawa</th>
-                                        <th style="width:20%">Jumlah Stok Retur</th>
+                                        <th style="width:22%">Jumlah Stok Retur</th>
                                         <th>Gudang</th>
+                                        <th style="width:15%">Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -102,12 +103,18 @@
                                             <td>
                                                 <div class="input-group input-group-sm">
                                                     <input type="number" class="form-control qty-terpakai"
+                                                        id="qty_retur_{{ $key }}"
                                                         name="barang[{{ $key }}][qty_retur]" min="0" max="{{ abs($item->sumqty) }}"
                                                         value="{{ $currentReturQty }}" placeholder="0">
                                                     <span class="input-group-text">{{ $item->barang->satuan ?? 'pcs' }}</span>
                                                 </div>
                                             </td>
                                             <td>{{ $item->gudang->nama }}</td>
+                                            <td>
+                                                <button type="button" class="btn btn-sm btn-outline-danger" onclick="document.getElementById('qty_retur_{{ $key }}').value = 0;" title="Batal / Hapus retur barang ini">
+                                                    <i class="bx bx-trash me-1"></i> Batal Retur Item
+                                                </button>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 </tbody>
@@ -116,7 +123,7 @@
                             <hr>
 
                             <div class="btn-submit mt-5 d-flex justify-content-end">
-                                <button class="btn btn-md btn-primary"><i class="bx bx-save me-1"></i> Update Retur Barang</button>
+                                <button class="btn btn-md btn-primary"><i class="bx bx-save me-1"></i> Simpan Perubahan Retur</button>
                             </div>
                         </div>
                     </form>
