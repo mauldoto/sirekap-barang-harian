@@ -202,18 +202,22 @@
     @endphp
     <table class="info-table border-dashed-tb" style="margin-bottom: 8px;">
         <tr>
-            @if($stok->type == 'keluar' && $stok->aktivitas)
+            @if ($stok->type == 'keluar' && $stok->aktivitas)
                 <td style="width: 30%; border-right: 1px dashed #ccc;">
                     <div class="info-label">Aktivitas Terkait</div>
                     <div class="info-value">{{ $stok->aktivitas->no_referensi }}</div>
                 </td>
                 <td style="width: 35%; border-right: 1px dashed #ccc;">
                     <div class="info-label">Lokasi / Sublokasi Tujuan</div>
-                    <div class="info-value">{{ $stok->aktivitas->lokasi->nama ?? '-' }} — {{ $stok->aktivitas->sublokasi->nama ?? '-' }}</div>
+                    <div class="info-value">{{ $stok->aktivitas->lokasi->nama ?? '-' }} —
+                        {{ $stok->aktivitas->sublokasi->nama ?? '-' }}</div>
                 </td>
                 <td style="width: 35%;">
                     <div class="info-label">Gudang / Keterangan</div>
-                    <div class="info-value">{{ $gudangNames ?: '-' }} @if($stok->deskripsi) ({{ $stok->deskripsi }}) @endif</div>
+                    <div class="info-value">{{ $gudangNames ?: '-' }} @if ($stok->deskripsi)
+                            ({{ $stok->deskripsi }})
+                        @endif
+                    </div>
                 </td>
             @else
                 <td style="width: 50%; border-right: 1px dashed #ccc;">
@@ -245,7 +249,7 @@
             @php $subtotal = 0; @endphp
             @foreach ($items as $key => $item)
                 @php
-                    $harga = $item->is_new ? ($item->barang->h_new ?? 0) : ($item->barang->h_second ?? 0);
+                    $harga = $item->harga;
                     $qty = abs($item->qty);
                     $total = $harga * $qty;
                     $subtotal += $total;
@@ -254,7 +258,9 @@
                     <td class="text-center">{{ $key + 1 }}</td>
                     <td class="text-left">
                         {{ $item->barang->kode ?? '-' }}
-                        @if($harga == 0) <span style="font-size: 9.5px;">(Bonus)</span> @endif
+                        @if ($harga == 0)
+                            <span style="font-size: 9.5px;">(Bonus)</span>
+                        @endif
                     </td>
                     <td class="text-left">{{ $item->barang->nama }}</td>
                     <td class="text-center">{{ $item->is_new ? 'Baru' : 'Bekas' }}</td>
@@ -276,7 +282,8 @@
                 <table style="width: 100%;">
                     <tr>
                         <td class="sig-box" style="width: 50%;">
-                            <div class="info-label">{{ $stok->type == 'masuk' ? 'Penerima (Gudang)' : 'Disetujui Oleh' }}</div>
+                            <div class="info-label">
+                                {{ $stok->type == 'masuk' ? 'Penerima (Gudang)' : 'Disetujui Oleh' }}</div>
                             <div class="sig-line"></div>
                             <div style="font-size: 11px;">{{ $stok->user->username ?? '.....................' }}</div>
                         </td>

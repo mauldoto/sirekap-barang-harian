@@ -21,7 +21,7 @@
                     <div class="d-sm-flex flex-wrap justify-content-between">
                         <h4 class="card-title mb-4">Log Stok</h4>
                         <div class="button-group">
-                            @if (in_array(auth()->user()->username, ['superadmin', 'verifikator']))
+                            @if (in_array(auth()->user()->role, ['superadmin', 'verifikator']))
                                 <a href="{{ route('stok.masuk.view') }}" class="btn btn-sm btn-success"><i
                                         class='bx bx-archive-in'></i> Stok Masuk</a>
                                 <a href="{{ route('stok.keluar.view') }}" class="btn btn-sm btn-warning"><i

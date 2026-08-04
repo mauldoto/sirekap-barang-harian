@@ -6,12 +6,12 @@
 
 @section('content')
     @component('components.breadcrumb')
-    @slot('li_1')
-    Invoice
-    @endslot
-    @slot('title')
-    Stok
-    @endslot
+        @slot('li_1')
+            Invoice
+        @endslot
+        @slot('title')
+            Stok
+        @endslot
     @endcomponent
 
     <div class="row">
@@ -65,7 +65,7 @@
 
                     {{-- ====== INFO BOXES ====== --}}
                     <div class="row mb-4">
-                        @if($stok->type == 'keluar' && $stok->aktivitas)
+                        @if ($stok->type == 'keluar' && $stok->aktivitas)
                             <div class="col-md-6 mb-3">
                                 <div class="invoice-info-box">
                                     <div class="info-box-label">AKTIVITAS TERKAIT</div>
@@ -123,7 +123,7 @@
                                 @php $subtotal = 0; @endphp
                                 @foreach ($items as $key => $item)
                                     @php
-                                        $harga = $item->is_new ? ($item->barang->h_new ?? 0) : ($item->barang->h_second ?? 0);
+                                        $harga = $item->harga;
                                         $qty = abs($item->qty);
                                         $total = $harga * $qty;
                                         $subtotal += $total;
@@ -133,7 +133,7 @@
                                         <td>
                                             <span class="fw-medium {{ $harga == 0 ? 'text-success' : '' }}">
                                                 {{ $item->barang->kode ?? '-' }}
-                                                @if($harga == 0)
+                                                @if ($harga == 0)
                                                     (Bonus)
                                                 @endif
                                             </span>
@@ -142,7 +142,8 @@
                                             {{ $item->barang->nama }}
                                         </td>
                                         <td class="text-center">
-                                            <span class="kondisi-badge {{ $item->is_new ? 'kondisi-baru' : 'kondisi-bekas' }}">
+                                            <span
+                                                class="kondisi-badge {{ $item->is_new ? 'kondisi-baru' : 'kondisi-bekas' }}">
                                                 {{ $item->is_new ? 'Baru' : 'Bekas' }}
                                             </span>
                                         </td>
@@ -164,7 +165,7 @@
                     <div class="row mt-4">
                         {{-- Catatan --}}
                         <div class="col-md-6 mb-3">
-                            @if($stok->deskripsi && $stok->type == 'keluar')
+                            @if ($stok->deskripsi && $stok->type == 'keluar')
                                 <div class="invoice-catatan">
                                     <div class="catatan-label">CATATAN</div>
                                     <p class="mb-0">{{ $stok->deskripsi }}</p>
@@ -172,18 +173,18 @@
                             @endif
 
                             <!-- {{-- Tanda Tangan --}}
-                                <div class="row mt-4">
-                                    <div class="col-6">
-                                        <p class="sign-label">{{ $stok->type == 'masuk' ? 'PENERIMA (GUDANG)' : 'DISETUJUI OLEH' }}</p>
-                                        <div class="sign-line"></div>
-                                        <p class="sign-name">{{ $stok->user->username ?? '.....................' }}</p>
-                                    </div>
-                                    <div class="col-6">
-                                        <p class="sign-label">{{ $stok->type == 'masuk' ? 'PENGIRIM' : 'PENERIMA' }}</p>
-                                        <div class="sign-line"></div>
-                                        <p class="sign-name">.......................</p>
-                                    </div>
-                                </div> -->
+                                            <div class="row mt-4">
+                                                <div class="col-6">
+                                                    <p class="sign-label">{{ $stok->type == 'masuk' ? 'PENERIMA (GUDANG)' : 'DISETUJUI OLEH' }}</p>
+                                                    <div class="sign-line"></div>
+                                                    <p class="sign-name">{{ $stok->user->username ?? '.....................' }}</p>
+                                                </div>
+                                                <div class="col-6">
+                                                    <p class="sign-label">{{ $stok->type == 'masuk' ? 'PENGIRIM' : 'PENERIMA' }}</p>
+                                                    <div class="sign-line"></div>
+                                                    <p class="sign-name">.......................</p>
+                                                </div>
+                                            </div> -->
                         </div>
 
                         {{-- Subtotal & Total --}}
