@@ -537,6 +537,9 @@ class StokController extends Controller
             'stok' => $stok,
             'items' => $items,
             'tanggal' => Carbon::now()->format('d-m-Y H:i')
+        ], [], [
+            'format' => 'A4-L',
+            'orientation' => 'L'
         ]);
 
         return $pdf->stream('invoice-' . $noref . '.pdf');
@@ -604,7 +607,7 @@ class StokController extends Controller
         foreach ($request->input as $key => $barang) {
 
             $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
-                if ($value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['barang'] && $value['is_new'] == !array_key_exists('bekas', $barang) && ($value['sumqty'] * -1) >= $barang['qty_retur']) {
+                if ($value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['barang'] && $value['is_new'] == $barang['bekas'] && ($value['sumqty'] * -1) >= $barang['qty_retur']) {
                     return $value;
                 } else {
                     return false;
@@ -738,7 +741,7 @@ class StokController extends Controller
 
             if ($barang['qty_retur'] > 0) {
                 $checkStok = array_filter($stokLogs, function ($value) use ($barang) {
-                    if ($value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['item'] && $value['is_new'] == !array_key_exists('bekas', $barang)) {
+                    if ($value['id_gudang'] == $barang['gudang'] && $value['id_barang'] == $barang['item'] && $value['is_new'] == $barang['bekas']) {
                         // compare absolute values since StokOut qty is negative
                         if (abs($value['sumqty']) >= $barang['qty_retur']) {
                             return $value;
